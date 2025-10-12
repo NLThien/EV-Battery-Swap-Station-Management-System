@@ -1,0 +1,36 @@
+server:
+  port: 8761
+
+spring:
+  application:
+    name: eureka-server
+
+eureka:
+  client:
+    register-with-eureka: false    # Eureka server không tự đăng ký với chính nó
+    fetch-registry: false          # Không fetch registry từ server khác
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+# Eureka Server Configuration
+  instance:
+    hostname: localhost
+  server:
+    enable-self-preservation: false  # Tắt self-preservation mode cho dev
+    eviction-interval-timer-in-ms: 5000  # Clean cache mỗi 5s
+
+# Management endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Logging
+logging:
+  level:
+    com.netflix.eureka: INFO
+    com.netflix.discovery: INFO

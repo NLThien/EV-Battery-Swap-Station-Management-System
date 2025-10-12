@@ -27,6 +27,13 @@ This project is a microservice-based system designed to manage electric vehicle 
    ```
 
 ### Running the Applications
+- To start the eureka server
+cd eureka-server
+mvn spring-boot:run
+
+- To start the api-gateway
+cd api-gateway  
+mvn spring-boot:run
 
 - To start the web application:
   ```
