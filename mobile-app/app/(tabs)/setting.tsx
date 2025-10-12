@@ -1,22 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const SettingScreen = () => {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Cài đặt quản lý người dùng</Text>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Thêm người dùng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Danh sách người dùng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Phân quyền người dùng</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Đổi mật khẩu</Text>
-            </TouchableOpacity>
+          <View className="flex-1 items-center justify-center bg-white">
+      <Text className="text-xl font-bold text-red-500">
+        Welcome to Nativewind!
+      </Text>
+    </View>
         </View>
     );
 };
