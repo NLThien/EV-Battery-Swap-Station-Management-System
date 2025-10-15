@@ -1,0 +1,66 @@
+.transaction-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.transaction-form:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+.transaction-form input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.6rem 0.8rem;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.transaction-form input:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+}
+
+.transaction-form button {
+  background: #4a90e2;
+  color: #fff;
+  border: none;
+  padding: 0.65rem 1.4rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.transaction-form button:hover {
+  background: #3a7bd5;
+  transform: scale(1.03);
+}
+
+.transaction-form button:active {
+  transform: scale(0.97);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .transaction-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .transaction-form input,
+  .transaction-form button {
+    width: 100%;
+  }
+}
