@@ -22,7 +22,7 @@ function CardItem({
   return (
     <Pressable onPress={onPress}>
       <View
-        className="h-20 flex-row justify-between items-center bg-card border border-card p-4 mx-3 rounded-lg shadow-lg elevation-lg  my-1 "
+        className="h-20 flex-row justify-between items-center bg-card   p-4  rounded-lg shadow-lg elevation-lg  my-1 "
         style={style}
       >
         <View>

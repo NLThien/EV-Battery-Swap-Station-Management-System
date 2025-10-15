@@ -11,6 +11,10 @@ function ProfileLayout() {
         name="profileUser"
         options={{ headerTitle: "Profile", headerShown: false }}
       />
+      <Stack.Screen
+        name="feedback"
+        options={{ headerTitle: "feedback", headerShown: false }}
+      />
     </Stack>
   );
 }
