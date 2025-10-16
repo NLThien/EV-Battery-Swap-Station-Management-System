@@ -17,7 +17,7 @@ export const Header = ({ onAuthClick }: HeaderProps) => {
       
       <nav className="header-nav">
         <a href="#features">Tính năng</a>
-        <a href="#about">Giới thiệu</a>
+        <Link to="/about">Giới thiệu</Link>
         <Link to="/stations">Chi tiết trạm</Link>
       </nav>
 

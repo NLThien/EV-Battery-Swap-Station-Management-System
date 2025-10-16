@@ -18,36 +18,30 @@
   z-index: 1000;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
 }
-
 .nav-brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2E7D32;
+  color: #2E7D32;   /* #2E7D32 */
 }
-
 .nav-brand .logo {
   font-size: 2rem;
 }
-
 .nav-links {
   display: flex;
   gap: 2rem;
 }
-
 .nav-links a {
   text-decoration: none;
   color: #333;
   font-weight: 500;
   transition: color 0.3s ease;
 }
-
 .nav-links a:hover {
   color: #2E7D32;
 }
-
 .nav-auth {
   display: flex;
   background: #f8f9fa;
@@ -55,7 +49,6 @@
   padding: 0.25rem;
   border: 2px solid #e9ecef;
 }
-
 .auth-tab {
   padding: 0.5rem 1.5rem;
   border: none;
@@ -65,13 +58,12 @@
   font-weight: 500;
   transition: all 0.3s ease;
 }
-
 .auth-tab.active {
   background: #2E7D32;
   color: white;
 }
 
-/* Hero Section */
+/* Hero Section ./HomePages.tsx */
 .hero-section {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -82,7 +74,6 @@
   margin: 0 auto;
   gap: 4rem;
 }
-
 .hero-content h1 {
   font-size: 3.5rem;
   font-weight: 800;
@@ -90,37 +81,31 @@
   margin-bottom: 1.5rem;
   line-height: 1.2;
 }
-
 .hero-subtitle {
   font-size: 1.25rem;
   color: #666;
   margin-bottom: 2rem;
   line-height: 1.6;
 }
-
 .hero-stats {
   display: flex;
   gap: 2rem;
   margin-bottom: 2rem;
 }
-
 .stat {
   text-align: center;
 }
-
 .stat h3 {
   font-size: 2rem;
   color: #2E7D32;
   margin: 0;
   font-weight: 700;
 }
-
 .stat p {
   color: #666;
   margin: 0.5rem 0 0 0;
   font-size: 0.9rem;
 }
-
 .cta-button {
   display: inline-block;
   padding: 1rem 2rem;
@@ -133,19 +118,16 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
 }
-
 .cta-button:hover {
   background: #1B5E20;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
 }
-
 .hero-visual {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
 .battery-animation {
   display: flex;
   align-items: center;
@@ -153,140 +135,40 @@
   font-size: 4rem;
   animation: float 3s ease-in-out infinite;
 }
-
 .swap-arrow {
   font-size: 3rem;
   color: #2E7D32;
   animation: bounce 2s ease-in-out infinite;
 }
-
 .battery.charged {
   animation: pulse 2s ease-in-out infinite;
 }
 
+/* Animations */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }
 }
-
 @keyframes bounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.1); }
 }
-
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.7; }
 }
 
-/* Auth Modal */
-.auth-modal {
-  background: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content h2 {
-  text-align: center;
-  color: #2E7D32;
-  margin-bottom: 1.5rem;
-}
-
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group label {
-  margin-bottom: 0.5rem;
-  color: #333;
-  font-weight: 500;
-}
-
-.form-group input {
-  padding: 0.75rem;
-  border: 2px solid #e9ecef;
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: #2E7D32;
-}
-
-.submit-btn {
-  padding: 0.75rem;
-  background: #2E7D32;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.3s ease;
-  margin-top: 1rem;
-}
-
-.submit-btn:hover {
-  background: #1B5E20;
-}
-
-.auth-footer {
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.auth-footer p {
-  color: #666;
-}
-
-.auth-footer span {
-  color: #2E7D32;
-  cursor: pointer;
-  font-weight: 500;
-}
-
-.auth-footer span:hover {
-  text-decoration: underline;
-}
-
-/* Features Section */
+/* Features Section Tính năng nổi bật*/
 .features-section {
   padding: 6rem 2rem;
   background: white;
   text-align: center;
 }
-
 .features-section h2 {
   font-size: 2.5rem;
   color: #1b5e20;
   margin-bottom: 3rem;
 }
-
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -294,46 +176,39 @@
   max-width: 1200px;
   margin: 0 auto;
 }
-
 .feature-card {
   padding: 2rem;
   background: #f8f9fa;
   border-radius: 16px;
   transition: transform 0.3s ease;
 }
-
 .feature-card:hover {
   transform: translateY(-10px);
 }
-
 .feature-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
 }
-
 .feature-card h3 {
   color: #2E7D32;
   margin-bottom: 1rem;
 }
-
 .feature-card p {
   color: #666;
   line-height: 1.6;
 }
 
-/* How It Works */
+/* How It Works Cách thức hoạt động */
 .how-it-works {
   padding: 6rem 2rem;
   background: #f8f9fa;
   text-align: center;
 }
-
 .how-it-works h2 {
   font-size: 2.5rem;
   color: #1b5e20;
   margin-bottom: 3rem;
 }
-
 .steps {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -341,11 +216,9 @@
   max-width: 1200px;
   margin: 0 auto;
 }
-
 .step {
   padding: 2rem;
 }
-
 .step-number {
   width: 60px;
   height: 60px;
@@ -359,54 +232,13 @@
   font-weight: bold;
   margin: 0 auto 1rem;
 }
-
 .step h3 {
   color: #333;
   margin-bottom: 1rem;
 }
-
 .step p {
   color: #666;
   line-height: 1.6;
-}
-
-/* Footer */
-.home-footer {
-  background: #1b5e20;
-  color: white;
-  padding: 3rem 2rem 1rem;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.footer-section h3,
-.footer-section h4 {
-  margin-bottom: 1rem;
-}
-
-.footer-section a {
-  color: #e8f5e9;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.footer-section a:hover {
-  text-decoration: underline;
-}
-
-.footer-bottom {
-  text-align: center;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #2e7d32;
-  color: #a5d6a7;
 }
 
 /* Responsive */
@@ -416,25 +248,20 @@
     gap: 1rem;
     padding: 1rem;
   }
-
   .hero-section {
     grid-template-columns: 1fr;
     text-align: center;
     padding: 8rem 1rem 2rem;
   }
-
   .hero-content h1 {
     font-size: 2.5rem;
   }
-
   .hero-stats {
     justify-content: center;
   }
-
   .battery-animation {
     font-size: 3rem;
   }
-
   .features-grid,
   .steps {
     grid-template-columns: 1fr;

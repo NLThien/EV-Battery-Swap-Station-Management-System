@@ -1,5 +1,9 @@
 :root {
   /* ===== COLOR PALETTE ===== */
+  /* màu này hợp vl #2E7D32 */
+  --matching-color: #2E7D32;
+  --macthing-color-light: #A5D6A7;
+  --macthing-color-dark: #1b5e20;
   /* Primary Colors - Cyan Theme */
   --primary-color: #00FFFF;
   --primary-dark: #00CCCC;

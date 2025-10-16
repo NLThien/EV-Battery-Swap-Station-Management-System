@@ -32,7 +32,8 @@ const Home = () => {
         <Header onAuthClick={handleAuthClick} />
 
         <main className="home-main">
-                    {/* Hero Section */}
+
+        {/* Hero Section */}
         <section className="hero-section">
             <div className="hero-content">
 
@@ -63,7 +64,6 @@ const Home = () => {
                 <Link to="/stations" className="cta-button">
                     Khám phá trạm ngay →
                 </Link>
-
             </div>
 
             <div className="hero-visual">
