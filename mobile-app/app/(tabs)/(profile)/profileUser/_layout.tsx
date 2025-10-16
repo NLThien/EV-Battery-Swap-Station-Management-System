@@ -7,6 +7,10 @@ function ProfileUserLayout() {
         name="[id]"
         options={{ headerTitle: "Profile User", headerShown: false }}
       />
+      <Stack.Screen
+        name="editUser"
+        options={{ headerTitle: "Profile", headerShown: false }}
+      />
     </Stack>
   );
 }

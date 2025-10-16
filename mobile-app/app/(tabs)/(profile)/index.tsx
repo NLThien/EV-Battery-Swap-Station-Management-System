@@ -15,6 +15,9 @@ const Profile: React.FC = () => {
     router.push("../../profileUser");
   };
 
+  const onPresFeedback = () => {
+    router.push("../../feedback");
+  };
   return (
     <SafeAreaView className="flex-1 ">
       <ScrollView>
@@ -25,7 +28,7 @@ const Profile: React.FC = () => {
               <UserAvatar name="Nguyen Van A" size={70} />
             </View>
             <View>
-              <Text className="text-[30px] font-semibold">
+              <Text className="text-3xl font-semibold">
                 Nguyen Van Alo 999 994949 3ii
               </Text>
             </View>
@@ -42,8 +45,14 @@ const Profile: React.FC = () => {
               title="Gửi phản hồi hỗ trợ"
               iconName="feedback"
               isArrowRight
+              onPress={onPresFeedback}
+            />
+            <CardItem
+              title="Phản hồi"
+              iconName="reply"
+              isArrowRight
               onPress={() => {
-                console.log("Feedback Pressed");
+                console.log("Phản hồi");
               }}
             />
             <CardItem
@@ -84,7 +93,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-
+    paddingHorizontal: 10,
     paddingVertical: 20,
   },
 });

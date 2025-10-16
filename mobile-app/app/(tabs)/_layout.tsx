@@ -9,7 +9,12 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
-  const HiddenTabsRouter = [["(tabs)", "(profile)", "profileUser"]];
+  const HiddenTabsRouter = [
+    ["(tabs)", "(profile)", "profileUser", "[id]"],
+    ["(tabs)", "(profile)", "profileUser", "editUser"],
+    ["(tabs)", "(profile)", "profileUser"],
+    ["(tabs)", "(profile)", "feedback"],
+  ];
 
   //kiêm tra xem tab có nên ẩn hay không
   const segments = useSegments();
