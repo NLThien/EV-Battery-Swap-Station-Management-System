@@ -3,44 +3,35 @@ import './About.css';
 const About = () => {
   return (
     <div className="about-page">
-      {/* Hero Section */}
       <section className="about-hero">
-        <div className="hero-content">
-          <h1>Về Chúng Tôi</h1>
-          <p className="hero-subtitle">
-            Tiên phong trong giải pháp trao đổi pin xe điện thông minh,
-            mang đến trải nghiệm di chuyển xanh cho cộng đồng.
-          </p>
-        </div>
-        <div className="hero-visual">
-          <div className="floating-elements">
-            <div className="element battery">🔋</div>
-            <div className="element car">🚗</div>
-            <div className="element station">🏢</div>
+        <div className="about-hero-content">
+          <div className="mission-vision-content">
+            <div className="mission-section">
+              <h3>🎯Sứ Mệnh</h3>
+              <p>
+                Cung cấp giải pháp trao đổi pin xe điện nhanh chóng, tiện lợi 
+                và thân thiện với môi trường, góp phần thúc đẩy quá trình 
+                chuyển đổi sang giao thông xanh tại Việt Nam.
+              </p>
+            </div>
+            <div className="vision-section">
+              <h3>🔭Tầm Nhìn</h3>
+              <p>
+                Trở thành hệ thống trao đổi pin xe điện hàng đầu tại Việt Nam, 
+                với mạng lưới trạm swap phủ rộng khắp các thành phố lớn 
+                và tỉnh thành trọng điểm.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      {/* Mission & Vision */}
-      <section className="mission-vision">
-        <div className="container">
-          <div className="mission-card">
-            <div className="card-icon">🎯</div>
-            <h3>Sứ Mệnh</h3>
-            <p>
-              Cung cấp giải pháp trao đổi pin xe điện nhanh chóng, tiện lợi
-              và thân thiện với môi trường, góp phần thúc đẩy quá trình
-              chuyển đổi sang giao thông xanh tại Việt Nam.
-            </p>
-          </div>
-          <div className="vision-card">
-            <div className="card-icon">🔭</div>
-            <h3>Tầm Nhìn</h3>
-            <p>
-              Trở thành hệ thống trao đổi pin xe điện hàng đầu tại Việt Nam,
-              với mạng lưới trạm swap phủ rộng khắp các thành phố lớn
-              và tỉnh thành trọng điểm.
-            </p>
+          
+          <div className="about-hero-visual">
+            <div className="floating-elements">
+              <div className="element battery">🔋</div>
+              <div className="element car">🚗</div>
+              <div className="element station">🏢</div>
+              <div className="element tram">🛵</div>
+              <div className="element electric">⚡️</div>
+            </div>
           </div>
         </div>
       </section>
@@ -54,7 +45,7 @@ const About = () => {
               <div className="timeline-year">01/10/2025</div>
               <div className="timeline-content">
                 <h4>Thành lập</h4>
-                <p>Ra mắt nhóm 5 thằng học UTH bắt đầu triển khai dự án trạm swap đầu tiên tại TP.HCM</p>
+                <p>Ra mắt nhóm 5 con khỉ UTH bắt đầu triển khai dự án trạm swap đầu tiên tại TP.HCM</p>
               </div>
             </div>
             <div className="timeline-item">
@@ -133,18 +124,6 @@ const About = () => {
               <h4>Chất Lượng</h4>
               <p>Đảm bảo dịch vụ tốt nhất cho khách hàng</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="about-cta">
-        <div className="container">
-          <h2>Sẵn Sàng Trải Nghiệm?</h2>
-          <p>Tham gia cùng chúng tôi trong hành trình kiến tạo tương lai di chuyển xanh</p>
-          <div className="cta-buttons">
-            <button className="cta-btn primary">Đăng Ký Ngay</button>
-            <button className="cta-btn secondary">Liên Hệ Tư Vấn</button>
           </div>
         </div>
       </section>

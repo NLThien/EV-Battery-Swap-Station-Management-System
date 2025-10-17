@@ -1,6 +1,6 @@
 .main-footer {
-  background: #1b5e20;
-  color: white;
+  background: var(--primary-dark); /* màu cũ --macthing-color-dark  */
+  color: var(--text-on-primary);
   padding: 3rem 2rem 1rem;
 }
 
@@ -43,8 +43,8 @@
   align-items: center;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #2e7d32;
-  color: #a5d6a7;
+  border-top: 1px solid white; /*màu cũ #2e7d32*/
+  color: var(--text-on-primary);  /*màu cũ #a5d6a7*/
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;

@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Header } from '../components/layouts/Header/Header';
 import { Footer } from '../components/layouts/Footer/Footer';
 import { AuthModal } from '../components/layouts/AuthModal/AuthModal';
+import About from '../pages/About/About';
 import '../styles/Home.css';
 
 const Home = () => {
-    const navigate = useNavigate();
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [isLogin, setIsLogin] = useState(true);
 
@@ -19,12 +19,23 @@ const Home = () => {
         e.preventDefault();
         // Xử lý login/register
         setShowAuthModal(false);
-        navigate('/stations');
+        // navigate('/stations'); // Tạm comment nếu chưa cần
     };
 
     const handleToggleAuthMode = () => {
         setIsLogin(!isLogin);
     };
+
+    // Xử lý hash khi load trang
+    if (window.location.hash) {
+        const elementId = window.location.hash.replace('#', '');
+        setTimeout(() => {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
 
     return (
         <div className="home-page">
@@ -66,7 +77,7 @@ const Home = () => {
                 </Link>
             </div>
 
-            <div className="hero-visual">
+            <div className="hero-visual-homepage">
                 <div className="battery-animation">
                     <div className="battery">🔋</div>
                     <div className="swap-arrow">⇄</div>
@@ -106,28 +117,35 @@ const Home = () => {
         <section className="how-it-works">
             <h2>Cách Thức Hoạt Động</h2>
             <div className="steps">
-            <div className="step">
-                <div className="step-number">1</div>
-                <h3>Tìm Trạm</h3>
-                <p>Tìm trạm swap gần bạn qua app hoặc website</p>
-            </div>
-            <div className="step">
-                <div className="step-number">2</div>
-                <h3>Đến Trạm</h3>
-                <p>Đến trạm và quét mã QR để xác thực</p>
-            </div>
-            <div className="step">
-                <div className="step-number">3</div>
-                <h3>Trao Đổi Pin</h3>
-                <p>Thay pin cũ lấy pin mới đã được sạc đầy</p>
-            </div>
-            <div className="step">
-                <div className="step-number">4</div>
-                <h3>Tiếp Tục Hành Trình</h3>
-                <p>Thanh toán và tiếp tục di chuyển</p>
-            </div>
+                <div className="step">
+                    <div className="step-number">1</div>
+                    <h3>Tìm Trạm</h3>
+                    <p>Tìm trạm swap gần bạn qua app hoặc website</p>
+                </div>
+
+                <div className="step">
+                    <div className="step-number">2</div>
+                    <h3>Đến Trạm</h3>
+                    <p>Đến trạm và quét mã QR để xác thực</p>
+                </div>
+
+                <div className="step">
+                    <div className="step-number">3</div>
+                    <h3>Trao Đổi Pin</h3>
+                    <p>Thay pin cũ lấy pin mới đã được sạc đầy</p>
+                </div>
+
+                <div className="step">
+                    <div className="step-number">4</div>
+                    <h3>Tiếp Tục Hành Trình</h3>
+                    <p>Thanh toán và tiếp tục di chuyển</p>
+                </div>
             </div>
         </section>
+
+        <div id="about">
+            <About />
+        </div>
 
         </main>
 
