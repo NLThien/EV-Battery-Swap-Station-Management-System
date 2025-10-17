@@ -1,8 +1,13 @@
 :root {
   /* ===== COLOR PALETTE ===== */
+  /* màu này hợp vl #2E7D32 */
+  --matching-color: #2E7D32;
+  --macthing-color-light: #A5D6A7;
+  --macthing-color-dark: #1b5e20;
   /* Primary Colors - Cyan Theme */
   --primary-color: #00FFFF;
   --primary-dark: #00CCCC;
+  --primary-supper-dark: #009999;
   --primary-light: #33FFFF;
   --primary-bg: #E6FFFF;
   --text-on-primary: #003333;
@@ -38,12 +43,15 @@
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
   --font-size-3xl: 2rem;
+  --font-size-4xl: 2.5rem;
+  --font-size-5xl: 3rem;
   
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-super-bold: 1000;
   
   /* ===== SPACING ===== */
   --spacing-xs: 0.25rem;
