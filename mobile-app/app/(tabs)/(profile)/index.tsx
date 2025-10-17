@@ -28,9 +28,7 @@ const Profile: React.FC = () => {
               <UserAvatar name="Nguyen Van A" size={70} />
             </View>
             <View>
-              <Text className="text-3xl font-semibold">
-                Nguyen Van Alo 999 994949 3ii
-              </Text>
+              <Text className="text-3xl font-semibold">Nguyen Van Alo</Text>
             </View>
           </View>
           {/* Chỗ này để hiển thị thông tin tài khoản */}
@@ -47,14 +45,7 @@ const Profile: React.FC = () => {
               isArrowRight
               onPress={onPresFeedback}
             />
-            <CardItem
-              title="Phản hồi"
-              iconName="reply"
-              isArrowRight
-              onPress={() => {
-                console.log("Phản hồi");
-              }}
-            />
+
             <CardItem
               title="Đổi mật khẩu"
               iconName="lock"

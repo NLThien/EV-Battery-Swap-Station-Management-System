@@ -9,6 +9,18 @@ function FeedbackLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="[id]"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="createFeedback"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }
