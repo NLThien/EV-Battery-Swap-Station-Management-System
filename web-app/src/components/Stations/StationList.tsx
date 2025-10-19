@@ -1,4 +1,5 @@
 import { StationCard } from './StationCard';
+import './StationList.css';
 
 const mockStations = [
   {
