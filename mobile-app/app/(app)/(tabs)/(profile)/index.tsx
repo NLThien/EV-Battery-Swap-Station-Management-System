@@ -1,6 +1,7 @@
 import Button from "@/components/button";
 import CardItem from "@/components/cardItem";
 import UserAvatar from "@/components/user-avatar";
+import { useAuth } from "@/constants/authContext";
 import { VAR } from "@/constants/varriable";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -10,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile: React.FC = () => {
   const router = useRouter();
+  const { signOut } = useAuth();
 
   const onPressProfileUser = () => {
     router.push("../../profileUser");
@@ -18,6 +20,11 @@ const Profile: React.FC = () => {
   const onPresFeedback = () => {
     router.push("../../feedback");
   };
+  const pressSignOut = async () => {
+    await signOut(); // Gọi hàm signOut
+    router.replace("/(auth)/log-in"); // Chuyển hướng sau khi đã đăng xuất
+  };
+
   return (
     <SafeAreaView className="flex-1 ">
       <ScrollView>
@@ -68,9 +75,7 @@ const Profile: React.FC = () => {
               title="Đăng xuất"
               iconName="logout"
               colorIcon={VAR.TEXT_COLOR}
-              onPress={() => {
-                console.log("Logout Pressed");
-              }}
+              onPress={pressSignOut}
               style={{}}
             />
           </View>

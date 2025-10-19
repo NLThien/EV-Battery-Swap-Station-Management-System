@@ -10,12 +10,12 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   const HiddenTabsRouter = [
-    ["(tabs)", "(profile)", "profileUser", "[id]"],
-    ["(tabs)", "(profile)", "profileUser", "editUser"],
-    ["(tabs)", "(profile)", "profileUser"],
-    ["(tabs)", "(profile)", "feedback"],
-    ["(tabs)", "(profile)", "feedback", "[id]"],
-    ["(tabs)", "(profile)", "feedback", "createFeedback"],
+    ["(app)", "(tabs)", "(profile)", "profileUser", "[id]"],
+    ["(app)", "(tabs)", "(profile)", "profileUser"],
+    ["(app)", "(tabs)", "(profile)", "profileUser", "editUser"],
+    ["(app)", "(tabs)", "(profile)", "feedback"],
+    ["(app)", "(tabs)", "(profile)", "feedback", "[id]"],
+    ["(app)", "(tabs)", "(profile)", "feedback", "createFeedback"],
   ];
 
   //kiêm tra xem tab có nên ẩn hay không
