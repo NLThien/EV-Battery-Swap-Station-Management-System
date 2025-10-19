@@ -39,7 +39,7 @@ function Header({
       {/* Placeholder phải để cân đối với nút back */}
       <TouchableOpacity className=" rounded-full" onPress={onPressIconRight}>
         <View className="h-11 w-11 justify-center items-center ">
-          <MaterialIcons name={iconRight} size={40} color={"#fff"} />
+          <MaterialIcons name={iconRight} size={35} color={"#fff"} />
         </View>
       </TouchableOpacity>
     </View>
