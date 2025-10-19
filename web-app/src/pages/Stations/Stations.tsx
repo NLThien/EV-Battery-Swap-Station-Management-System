@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { QuickStats } from '@/components/common/QuickStats';
 import { StationMap } from '@/components/Stations/StationMap';
 import { RecentSwaps } from '@/components/common/RecentSwaps';
+import BatteryInventory from '../../components/Stations/BatteryInventory';
+import SwapTransactions from '../../components/Stations/SwapTransactions';
 import '../../styles/Stations.css';
 
 export const Stations = () => {
@@ -15,6 +17,7 @@ export const Stations = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Giả lập fetch dashboard stats từ API
     setTimeout(() => {
       setStats({
         totalStations: 25,
@@ -23,7 +26,7 @@ export const Stations = () => {
         totalUsers: 1247
       });
       setLoading(false);
-    }, 1500);
+    }, 1200);
   }, []);
 
   if (loading) {
@@ -37,30 +40,19 @@ export const Stations = () => {
 
   return (
     <div className="stations-page">
-      {/* Header với gradient */}
+      {/* Header */}
       <div className="stations-header">
         <h1>EV Battery Swap Dashboard</h1>
         <p>Monitor and manage all battery swap stations in real-time</p>
-        
-        {/* Quick Stats */}
+
         <div className="stats-section">
           <QuickStats stats={stats} />
         </div>
 
-        {/* Action Buttons */}
         <div className="stations-actions">
-          <button className="action-btn primary">
-            <span>📊</span>
-            Generate Report
-          </button>
-          <button className="action-btn secondary">
-            <span>➕</span>
-            Add New Station
-          </button>
-          <button className="action-btn primary">
-            <span>🔄</span>
-            Refresh Data
-          </button>
+          <button className="action-btn primary">📊 Generate Report</button>
+          <button className="action-btn secondary">➕ Add New Station</button>
+          <button className="action-btn primary">🔄 Refresh Data</button>
         </div>
       </div>
 
@@ -72,15 +64,22 @@ export const Stations = () => {
           <div className="map-container">
             <div className="map-placeholder">
               <h3>Interactive Station Map</h3>
-                <StationMap /> 
+              <StationMap />
               <p>Real-time visualization of all battery swap stations</p>
-              <div className="map-features">
-                <div className="feature">📍 25 Active Stations</div>
-                <div className="feature">🔋 156 Available Batteries</div>
-                <div className="feature">👥 1,247 Registered Users</div>
-              </div>
             </div>
           </div>
+        </div>
+
+        {/* Inventory Management */}
+        <div className="inventory-section">
+          <h2>🔋 Battery Inventory Management</h2>
+          <BatteryInventory />
+        </div>
+
+        {/* Swap Transaction Management */}
+        <div className="transactions-section">
+          <h2>🔁 Swap Transaction Management</h2>
+          <SwapTransactions />
         </div>
 
         {/* Recent Activity */}
