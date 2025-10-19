@@ -1,4 +1,4 @@
-import '../../styles/RecentSwaps.css';
+import './RecentSwaps.css';
 
 interface SwapItem {
   id: number;
@@ -124,7 +124,6 @@ export const RecentSwaps = () => {
           onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
           onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
         >
-          View All Activity →
         </a>
       </div>
     </div>
