@@ -1,8 +1,23 @@
-export async function getAllBatteries() {
-  // Giả lập API — thay bằng fetch hoặc axios
-  return Promise.resolve([
-    { id: 'BAT001', model: 'EVE-X1', capacity: '5.2 kWh', status: 'Full', health: 95 },
-    { id: 'BAT002', model: 'EVE-X1', capacity: '5.2 kWh', status: 'Charging', health: 90 },
-    { id: 'BAT003', model: 'EVE-X2', capacity: '7.5 kWh', status: 'Maintenance', health: 85 },
-  ]);
-}
+import axios from 'axios';
+
+const API_URL = 'http://localhost:3000/BatteryInventory';
+
+export const getAllBatteries = async () => {
+  const res = await axios.get(API_URL);
+  return res.data;
+};
+
+export const addBattery = async (battery: any) => {
+  const res = await axios.post(API_URL, battery);
+  return res.data;
+};
+
+export const updateBattery = async (id: string, data: any) => {
+  const res = await axios.put(`${API_URL}/${id}`, data);
+  return res.data;
+};
+
+export const deleteBattery = async (id: string) => {
+  const res = await axios.delete(`${API_URL}/${id}`);
+  return res.data;
+};

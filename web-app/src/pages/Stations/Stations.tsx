@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { QuickStats } from '@/components/common/QuickStats';
 import { StationMap } from '@/components/Stations/StationMap';
 import { RecentSwaps } from '@/components/common/RecentSwaps';
-import BatteryInventory from '../../components/Stations/BatteryInventory';
-import SwapTransactions from '../../components/Stations/SwapTransactions';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Stations.css';
 
 export const Stations = () => {
@@ -15,6 +14,7 @@ export const Stations = () => {
   });
 
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Giả lập fetch dashboard stats từ API
@@ -73,13 +73,25 @@ export const Stations = () => {
         {/* Inventory Management */}
         <div className="inventory-section">
           <h2>🔋 Battery Inventory Management</h2>
-          <BatteryInventory />
+          <p>Monitor and manage battery stock levels, charge status, and health.</p>
+          <button
+            className="action-btn primary"
+            onClick={() => navigate('/BatteryInventory')} // 👈 liên kết tới trang quản lý kho pin
+          >
+            Go to Battery Inventory
+          </button>
         </div>
 
         {/* Swap Transaction Management */}
         <div className="transactions-section">
           <h2>🔁 Swap Transaction Management</h2>
-          <SwapTransactions />
+          <p>Track, validate, and record swap transactions in real-time.</p>
+          <button
+            className="action-btn secondary"
+            onClick={() => navigate('/SwapTransactions')} // 👈 liên kết tới trang quản lý giao dịch đổi pin
+          >
+            Go to Swap Transactions
+          </button>
         </div>
 
         {/* Recent Activity */}
