@@ -13,6 +13,10 @@ import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { requireAuth } from "./utils/auth.ts";
 
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
+const DashboardStaffLayout = React.lazy(
+  () => import("./layouts/DashboardStaffLayout")
+);
+
 const HomePage = React.lazy(() => import("./pages/Home"));
 const StationPage = React.lazy(
   () => import("./pages/Stations/StationDetail.tsx")
@@ -22,6 +26,10 @@ const StationAdminPage = React.lazy(() => import("./pages/StationAdmin"));
 const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
 const Support = React.lazy(() => import("./pages/Support/index.tsx"));
 const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin"));
+const TransactionManagement = React.lazy(
+  () => import("./pages/TransactionManagement")
+);
+const StationStaff = React.lazy(() => import("./pages/StationStaff"));
 
 const withSuspense = (el: ReactNode) => (
   <Suspense fallback={<div className="p-6">Loading…</div>}>{el}</Suspense>
@@ -53,6 +61,32 @@ const router = createBrowserRouter([
       },
       {
         path: "reports",
+        element: withSuspense(<ReportAdmin />),
+      },
+    ],
+  },
+  {
+    path: "/staff",
+    loader: requireAuth,
+    element: withSuspense(<DashboardStaffLayout />),
+    errorElement: withSuspense(<NotFound />),
+    children: [
+      // các trang con năm trong layout Dashboard
+      {
+        index: true,
+        element: withSuspense(<DashboardPage />),
+      },
+      {
+        path: "stations", //quản lí trạm xem tồn kho pin
+        element: withSuspense(<StationStaff />),
+      },
+
+      {
+        path: "transaction-management",
+        element: withSuspense(<TransactionManagement />),
+      },
+      {
+        path: "reports", //báo cáo này là báo cáo nhà hàng thôi
         element: withSuspense(<ReportAdmin />),
       },
     ],
