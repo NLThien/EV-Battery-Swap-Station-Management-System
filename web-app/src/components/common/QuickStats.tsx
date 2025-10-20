@@ -1,32 +1,56 @@
+import "./QuickStats.css";
+
 interface Stats {
   totalStations: number;
   availableBatteries: number;
   activeSwaps: number;
   totalUsers: number;
+  averageChargingTime: number
 }
 
 interface QuickStatsProps {
   stats: Stats;
 }
 
+var fullSlotStaions = 2; // Số trạm đầy pin cố định, sau có hàm cập nhật từ API
+
 export const QuickStats = ({ stats }: QuickStatsProps) => {
   return (
     <div className="quick-stats">
-      <div className="stat-item">
-        <h3>Total Stations</h3>
-        <p className="stat-number">{stats.totalStations}</p>
+      <div className="stats-header">
+        <h3>📊 Thống Kê Trong Ngày</h3>
       </div>
-      <div className="stat-item">
-        <h3>Available Batteries</h3>
-        <p className="stat-number">{stats.availableBatteries}</p>
-      </div>
-      <div className="stat-item">
-        <h3>Active Swaps</h3>
-        <p className="stat-number">{stats.activeSwaps}</p>
-      </div>
-      <div className="stat-item">
-        <h3>Total Users</h3>
-        <p className="stat-number">{stats.totalUsers}</p>
+
+      <div className="quick-stats-content">
+        <div className="stat-item">
+          <span className="stat-lable">Tổng số trạm</span>
+          <span className="stat-number">{stats.totalStations} Trạm</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-lable">Số trạm full</span>
+          <span className="stat-number">{stats.totalStations - fullSlotStaions} Trạm</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-lable">Số pin hoạt động</span>
+          <span className="stat-number">{stats.availableBatteries} Pin</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-lable">Số lượt đổi</span>
+          <span className="stat-number">{stats.activeSwaps} Lượt</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-lable">Thời gian sạc trung bình</span>
+          <span className="stat-number">{stats.averageChargingTime} Phút</span>
+        </div>
+
+        <div className="stat-item">
+          <span className="stat-lable">Tổng số người dùng</span>
+          <span className="stat-number">{stats.totalUsers} Người dùng</span>
+        </div>
       </div>
     </div>
   );

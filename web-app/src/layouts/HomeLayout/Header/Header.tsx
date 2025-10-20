@@ -41,7 +41,7 @@ const Header = ({ onAuthClick }: HeaderProps) => {
         >
           Giới thiệu
         </button>
-        <Link to="/stations">Chi tiết trạm</Link>
+        <Link to="/StationDetail">Chi tiết trạm</Link>
       </nav>
 
       <div className="header-auth">
