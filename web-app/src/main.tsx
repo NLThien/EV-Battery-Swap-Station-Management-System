@@ -14,7 +14,9 @@ import { requireAuth } from "./utils/auth.ts";
 
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const HomePage = React.lazy(() => import("./pages/Home"));
-const StationPage = React.lazy(() => import("./pages/Stations"));
+const StationPage = React.lazy(
+  () => import("./pages/Stations/StationDetail.tsx")
+);
 const DashboardPage = React.lazy(() => import("./pages/Dashboard"));
 const StationAdminPage = React.lazy(() => import("./pages/StationAdmin"));
 const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
@@ -66,7 +68,7 @@ const router = createBrowserRouter([
         element: withSuspense(<HomePage />),
       },
       {
-        path: "stations",
+        path: "stationDetail",
         element: withSuspense(<StationPage />),
       },
     ],
