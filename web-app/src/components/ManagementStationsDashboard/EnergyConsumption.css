@@ -1,0 +1,245 @@
+.energy-consumption {
+  background: var(--surface);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  margin-bottom: var(--spacing-xl);
+}
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+}
+.chart-header h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+.chart-stats {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat .label {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+.stat .value {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+.chart-legend {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+.legend-color.consumption {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--primary-gradient);
+}
+
+.chart-container {
+  display: flex;
+  gap: var(--spacing-lg);
+  height: 300px;
+  padding: var(--spacing-md) 0;
+  position: relative;
+  align-items: flex-end;
+}
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-medium);
+  padding-bottom: 24px;
+}
+.chart-bars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  flex: 1;
+  height: 100%;
+  position: relative;
+}
+/* Đường ngưỡng 3000 kWh */
+.chart-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 75%; /* 3000/4000 = 75% từ dưới lên */
+  height: 1px;
+  background: var(--error-color);
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Grid lines */
+.chart-bars::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(to top, transparent 0%, transparent 24%, var(--border-light) 25%, transparent 26%, transparent 49%, var(--border-light) 50%, transparent 51%, transparent 74%, var(--border-light) 75%, transparent 76%, transparent 100%);
+  pointer-events: none;
+}
+.bar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  justify-content: flex-end;
+}
+.consumption-bar {
+  background: var(--primary-gradient);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  width: 40px;
+  min-height: 4px;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  margin-bottom: var(--spacing-md);
+  position: relative;
+}
+.consumption-bar.peak {
+  background: var(--warning-gradient);
+}
+.consumption-bar:hover {
+  opacity: 0.9;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.bar-value {
+  position: absolute;
+  top: -55px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: transparent;
+  color: var(--text-primary);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: 15;
+}
+.consumption-bar:hover .bar-value {
+  opacity: 1;
+}
+.bar-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* Icon đồng hồ - VỊ TRÍ LINH HOẠT THEO CHIỀU CAO CỘT */
+.peak-indicator {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-sm);
+  z-index: 5;
+  background: var(--warning-color);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  /* bottom sẽ được set bằng inline style trong component */
+}
+.chart-footer {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-light);
+}
+.time-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  font-weight: var(--font-weight-medium);
+}
+.peak-legend {
+  text-align: center;
+  margin-top: var(--spacing-md);
+}
+.peak-marker {
+  font-size: var(--font-size-sm);
+  color: var(--warning-color);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  .chart-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .chart-container {
+    height: 250px;
+    gap: var(--spacing-md);
+  }
+  .consumption-bar {
+    width: 30px;
+  }
+  .y-axis {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-bars {
+    gap: var(--spacing-xs);
+  }
+  .consumption-bar {
+    width: 20px;
+  }
+  .bar-label {
+    font-size: var(--font-size-xs);
+    transform: translateX(-50%) rotate(-45deg);
+    bottom: -35px;
+  }
+  .peak-indicator {
+    width: 20px;
+    height: 20px;
+    font-size: var(--font-size-xs);
+  }
+}

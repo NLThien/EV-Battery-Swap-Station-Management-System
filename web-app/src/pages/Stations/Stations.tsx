@@ -10,23 +10,26 @@ export const Stations = () => {
     totalStations: 0,
     availableBatteries: 0,
     activeSwaps: 0,
-    totalUsers: 0
+    totalUsers: 0,
+    averageChargingTime: 0
   });
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Giả lập fetch dashboard stats từ API
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setStats({
         totalStations: 25,
         availableBatteries: 156,
         activeSwaps: 8,
-        totalUsers: 1247
+        totalUsers: 1247,
+        averageChargingTime: 36
       });
       setLoading(false);
     }, 1200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (loading) {

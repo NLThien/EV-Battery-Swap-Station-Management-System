@@ -1,4 +1,5 @@
 import React from 'react';
+import './StationCard.css';
 
 // Định nghĩa interface Station
 interface Station {

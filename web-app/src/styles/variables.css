@@ -95,4 +95,16 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1280px;
+
+    /* Additional colors for dashboard */
+  --info-color: #3b82f6;
+  --success-light: #10b981;
+  --warning-light: #f59e0b;
+  --error-light: #ef4444;
+  
+  /* Gradients */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --warning-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --error-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
 }
