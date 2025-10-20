@@ -25,10 +25,14 @@
     "noUncheckedSideEffectImports": true,
 
     /* Path alias */
-    "baseUrl": ".",
+    // "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "src/layouts/HomeLayout/Footer",
+    "src/layouts/HomeLayout/Header"
+  ]
 }
