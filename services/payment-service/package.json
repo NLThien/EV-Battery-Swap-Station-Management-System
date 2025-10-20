@@ -2,7 +2,7 @@
     "name": "payment-service",
     "version": "1.0.0",
     "description": "Microservice to handle payment processing, gateway integrations, and transaction callbacks.",
-    "main": "index.js",
+    "main": "src/index.js",
     "scripts": {
       "start": "node index.js",
       "dev": "nodemon index.js",

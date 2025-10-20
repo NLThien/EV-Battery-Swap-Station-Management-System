@@ -29,6 +29,18 @@ spring:
           predicates:
             - Path=/stations/**
             
+        - id: payment-services
+          uri: lb://payment-services
+          predicates:
+            - Path=/payment/**
+          filters:
+            -AuthenticationFilter
+          
+        - id: package-service
+        - uri: lb://package-service
+          predicates:
+            -Path=/packages/**
+
       globalcors:
         cors-configurations:
           '[/**]':
@@ -60,3 +72,14 @@ logging:
     com.example: DEBUG
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
+
+#momo
+momo: 
+  partner-code: MOMO
+  return-url: http://localhost:3000/
+  end-point: https://test-payment.momo.vn/v2/gateway/api
+  ipn-url: http://localhost:8080/api/momo/ipn-handler
+  access-key:
+  secret-key:
+
+  request-type: captureWallet
