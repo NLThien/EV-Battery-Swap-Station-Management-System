@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 import "./Header.css";
 
 interface HeaderProps {
-  onAuthClick: (isLogin: boolean) => void;
+  onAuthClickLogin: (isLogin: boolean) => void;
+  onAuthClickRegister: (isLogin: boolean) => void;
 }
 
-const Header = ({ onAuthClick }: HeaderProps) => {
+const Header = ({ onAuthClickLogin, onAuthClickRegister }: HeaderProps) => {
   const handleNavClick = (sectionId: string) => {
     // Kiểm tra nếu đang ở trang chủ
     if (window.location.pathname === "/") {
@@ -47,13 +48,13 @@ const Header = ({ onAuthClick }: HeaderProps) => {
       <div className="header-auth">
         <button
           className="auth-btn login-btn"
-          onClick={() => onAuthClick(true)}
+          onClick={() => onAuthClickLogin(true)}
         >
           Đăng nhập
         </button>
         <button
           className="auth-btn register-btn"
-          onClick={() => onAuthClick(false)}
+          onClick={() => onAuthClickRegister(true)}
         >
           Đăng ký
         </button>
