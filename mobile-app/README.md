@@ -8,6 +8,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
    ```bash
    npm install
+
+   Cài đặt NativeWind
+   npm install nativewind
+   npm install --save-dev tailwindcss@3.3.2
    ```
 
 2. Start the app
