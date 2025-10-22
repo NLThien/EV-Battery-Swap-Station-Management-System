@@ -30,6 +30,7 @@ const TransactionManagement = React.lazy(
   () => import("./pages/TransactionManagement")
 );
 const StationStaff = React.lazy(() => import("./pages/StationStaff"));
+const ReportStaff = React.lazy(() => import("./pages/ReportStaff"));
 
 const withSuspense = (el: ReactNode) => (
   <Suspense fallback={<div className="p-6">Loading…</div>}>{el}</Suspense>
@@ -74,7 +75,7 @@ const router = createBrowserRouter([
       // các trang con năm trong layout Dashboard
       {
         index: true,
-        element: withSuspense(<DashboardPage />),
+        element: withSuspense(<DashboardPage />),   // đợt sau sửa lại trang dashboard riêng cho staff
       },
       {
         path: "stations", //quản lí trạm xem tồn kho pin
@@ -87,7 +88,7 @@ const router = createBrowserRouter([
       },
       {
         path: "reports", //báo cáo này là báo cáo nhà hàng thôi
-        element: withSuspense(<ReportAdmin />),
+        element: withSuspense(<ReportStaff />),
       },
     ],
   },
