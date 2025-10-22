@@ -7,7 +7,6 @@ function StationStaff() {
       <BatteryInventory />
     </div>
   );
-
 }
 
 export default StationStaff;
