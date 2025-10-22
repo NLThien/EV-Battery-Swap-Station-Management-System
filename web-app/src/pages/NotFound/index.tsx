@@ -5,7 +5,7 @@ function NotFound() {
     <div style={{ textAlign: "center", marginTop: "50px" }}>
       <h1>404</h1>
       <p>Page Not Found</p>
-      <Link to="/" style={{ color: "blue", textDecoration: "underline" }}>
+      <Link to="/admin" style={{ color: "blue", textDecoration: "underline" }}>
         Go back to Home
       </Link>
     </div>
