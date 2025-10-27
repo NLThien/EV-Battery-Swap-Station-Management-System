@@ -224,7 +224,7 @@ const AdminPackage: React.FC = () => {
                 <td className="border p-2 text-center">
                   <button
                     onClick={() => handleDeletePackage(pkg.id)}
-                    className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600 transition"
+                    className="!bg-green-500 !text-white px-3 py-1 rounded-lg shadow-sm hover:!bg-green-600 active:!bg-green-700 transition"
                   >
                     Xóa
                   </button>
