@@ -6,7 +6,7 @@ import Stations from './pages/Stations/Stations';
 import About from './pages/About/About';
 import Login from './pages/Account/Login';
 
-import StaffDashboard from './pages/Staff/DashboardStaff/DashboardStaff';
+import StationAdmin from './pages/StationAdmin/index';
 
 function App() {
   return (
@@ -16,6 +16,7 @@ function App() {
           <Routes>
             {/* <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} /> */}
+            <Route path="/dashboard" element={<StationAdmin />} />
             <Route path="/about" element={<About />} />
             <Route path="/stations" element={<Stations />} />   // trang cho thằng bss staff
             <Route path="/login" element={<Login />} />

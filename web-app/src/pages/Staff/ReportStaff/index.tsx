@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import ReportFilters from '../../components/StaffReports/ReportFilters';
-import BatteryAnalytics from '../../components/StaffReports/BatteryAnalytics';
-import UsageAnalytics from '../../components/StaffReports/UsageAnalytics';
-import FinancialReport from '../../components/StaffReports/FinancialReport';
-import ExportPanel from '../../components/StaffReports/ExportPanel';
+import ReportFilters from '../../../components/StaffReports/ReportFilters';
+import BatteryAnalytics from '../../../components/StaffReports/BatteryAnalytics';
+import UsageAnalytics from '../../../components/StaffReports/UsageAnalytics';
+import FinancialReport from '../../../components/StaffReports/FinancialReport';
+import ExportPanel from '../../../components/StaffReports/ExportPanel';
 import './ReportStaff.css';
 
 // Định nghĩa interface chung cho Filters

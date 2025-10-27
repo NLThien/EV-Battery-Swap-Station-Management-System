@@ -17,6 +17,7 @@ const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
   () => import("./layouts/DashboardStaffLayout")
 );
+const DashboardLayout = React.lazy(() => import("./layouts/DashboardLayout"));
 
 const HomePage = React.lazy(() => import("./pages/Home"));
 const StationPage = React.lazy(
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     loader: requireAuth,
-    element: withSuspense(<App />),
+    element: withSuspense(<DashboardLayout />),
     errorElement: withSuspense(<NotFound />),
     children: [
       // các trang con năm trong layout Dashboard
