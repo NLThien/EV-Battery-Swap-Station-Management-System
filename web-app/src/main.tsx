@@ -25,7 +25,7 @@ const DashboardPage = React.lazy(() => import("./pages/Dashboard"));  // nên t�
 const StationAdminPage = React.lazy(() => import("./pages/StationAdmin"));  
 const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
 const Support = React.lazy(() => import("./pages/Support/index.tsx"));  // chưa rõ thông tin lắm, cần chia role rõ ràng hơn
-const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin/index.tsx"));    // báo cáo dành cho admin
+const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin"));    // báo cáo dành cho admin
 const ManagePackage = React.lazy(() => import("./pages/PackageAdmin"));            // quản lí gói dịch vụ
 const TransactionManagement = React.lazy(
   () => import("./pages/TransactionManagement")
