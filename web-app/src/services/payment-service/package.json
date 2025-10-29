@@ -12,7 +12,6 @@
       "payment",
       "gateway",
       "vnpay",
-      "momo",
       "transaction",
       "callback"
     ],
