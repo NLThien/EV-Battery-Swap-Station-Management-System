@@ -1,28 +1,11 @@
 import { Stack } from "expo-router";
 
-function FeedbackLayout() {
+export default function FeedbackLayout() {
   return (
-    <Stack>
-      <Stack.Screen
-        name="index"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="[id]"
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="createFeedback"
-        options={{
-          headerShown: false,
-        }}
-      />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="[id]" />
+      <Stack.Screen name="createFeedback" />
     </Stack>
   );
 }
-
-export default FeedbackLayout;

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle, Clock, MessageSquare } from "lucide-react";
-import { Headphones } from "lucide-react";
-
+import { CheckCircle, Clock, MessageSquare, Headphones } from "lucide-react";
 
 interface Feedback {
   id: number;
   name: string;
   date: string;
+  time: string; // 🕒 thêm trường giờ
   content: string;
   responded: boolean;
   adminReply?: string;
@@ -27,6 +26,7 @@ const FeedbackAdmin: React.FC = () => {
         id: 1,
         name: "Nguyễn Văn A",
         date: "2025-10-25",
+        time: "09:42",
         content: "Trạm hoạt động tốt, nhân viên hỗ trợ nhiệt tình.",
         responded: true,
         adminReply: "Cảm ơn bạn A, rất vui vì bạn hài lòng với dịch vụ!",
@@ -35,6 +35,7 @@ const FeedbackAdmin: React.FC = () => {
         id: 2,
         name: "Trần Thị B",
         date: "2025-10-26",
+        time: "16:10",
         content: "Cần cải thiện tốc độ đổi pin, hơi chậm vào giờ cao điểm.",
         responded: false,
       },
@@ -42,6 +43,7 @@ const FeedbackAdmin: React.FC = () => {
         id: 3,
         name: "Lê Văn C",
         date: "2025-10-27",
+        time: "20:25",
         content: "Ứng dụng rất tiện lợi, dễ sử dụng.",
         responded: true,
         adminReply: "Cảm ơn bạn C đã góp ý, chúc bạn lái xe an toàn!",
@@ -154,9 +156,12 @@ const FeedbackAdmin: React.FC = () => {
                   <MessageSquare className="w-5 h-5 text-emerald-500" />
                   {item.name}
                 </h3>
-                <p className="text-sm text-gray-500 mb-2">
+                <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
+                  <Clock size={14} className="text-blue-500" />
                   Ngày đánh giá:{" "}
-                  <span className="text-gray-700 font-medium">{item.date}</span>
+                  <span className="text-gray-700 font-medium">
+                    {item.date} • {item.time}
+                  </span>
                 </p>
                 <p className="text-gray-700">{item.content}</p>
 

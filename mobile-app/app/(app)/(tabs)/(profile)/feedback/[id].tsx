@@ -2,79 +2,64 @@ import { FeedbackItem } from "@/api/mockApi";
 import CardItem from "@/components/cardItem";
 import Header from "@/components/header";
 import { MAX_WIDTH, VAR } from "@/constants/varriable";
-
-import { useLocalSearchParams, useRouter, useSegments } from "expo-router";
-import { View } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-function DetailFeedback() {
-  const segments = useSegments();
-  const params = useLocalSearchParams();
+export default function DetailFeedback() {
+  const { detailFeedback } = useLocalSearchParams();
   const router = useRouter();
 
-  // 1) Lấy params dạng string
-  const raw = Array.isArray(params.detailFeedback)
-    ? params.detailFeedback[0]
-    : params.detailFeedback;
-
-  // 2) Parse an toàn
   let feedbackDetail: FeedbackItem | null = null;
-
-  if (typeof raw === "string") {
-    try {
-      const parsed = JSON.parse(raw);
-
-      // 3) Kiểm tra structure tạm (validate nhẹ)
-      if (
-        typeof parsed.id === "number" &&
-        typeof parsed.description === "string" &&
-        typeof parsed.createdAt === "string"
-      ) {
-        feedbackDetail = parsed as FeedbackItem;
-      } else {
-        console.warn("Sai cấu trúc FeedbackItem");
-      }
-    } catch (error) {
-      console.warn("JSON không hợp lệ", error);
-    }
-  }
-
-  console.log(feedbackDetail);
-  console.log(segments);
-
-  const onPressBack = () => {
-    router.back();
-  };
+  try {
+    feedbackDetail = detailFeedback
+      ? JSON.parse(detailFeedback as string)
+      : null;
+  } catch {}
 
   return (
-    <SafeAreaView className="flex-1">
-      <View className="flex-1 ">
+    <SafeAreaView className="flex-1 bg-[#f3f6fb]">
+      <View className="flex-1">
         <Header
           iconLeft="chevron-left"
-          title="Nội dung"
-          onPressIconLeft={onPressBack}
+          title="Chi tiết phản hồi"
+          onPressIconLeft={() => router.back()}
         />
-        <View className="  flex-1  px-3 justify-start ">
-          {/* nội dung mình gửi */}
+
+        <View className="flex-1 px-3 justify-start mt-3">
+          <Text className="text-gray-500 text-sm mb-2">
+            Ngày gửi:{" "}
+            <Text className="text-gray-700 font-medium">
+              {new Date(feedbackDetail?.createdAt || "").toLocaleString("vi-VN")}
+            </Text>
+          </Text>
+
           <CardItem
-            title={feedbackDetail?.description ?? "Lỗi"}
+            title={feedbackDetail?.description ?? "Không có nội dung"}
             style={{
-              maxWidth: MAX_WIDTH * 0.75,
-              marginLeft: MAX_WIDTH - MAX_WIDTH * 0.75,
+              maxWidth: MAX_WIDTH * 0.8,
+              marginLeft: MAX_WIDTH - MAX_WIDTH * 0.8,
               marginBottom: 20,
-              marginTop: 20,
               backgroundColor: VAR.PRIMARY_COLOR,
             }}
           />
-          {/* chỗ người ta trả lời */}
-          <CardItem
-            title=" đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin 123"
-            style={{ maxWidth: MAX_WIDTH * 0.75 }}
-          />
+
+          {(feedbackDetail as any)?.adminReply ? (
+            <CardItem
+              title={(feedbackDetail as any).adminReply}
+              style={{
+                maxWidth: MAX_WIDTH * 0.8,
+                backgroundColor: "#e6f3ff",
+                borderColor: "#b6d8ff",
+              }}
+            />
+          ) : (
+            <Text className="text-gray-500 italic text-center mt-4">
+              Quản trị viên chưa phản hồi.
+            </Text>
+          )}
         </View>
       </View>
     </SafeAreaView>
   );
 }
-
-export default DetailFeedback;
