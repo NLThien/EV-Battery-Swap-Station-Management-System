@@ -17,6 +17,7 @@ const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
   () => import("./layouts/DashboardStaffLayout")
 );
+const DashboardLayout = React.lazy(() => import("./layouts/DashboardLayout"));
 
 const HomePage = React.lazy(() => import("./pages/Home"));
 const StationPage = React.lazy(
@@ -27,6 +28,7 @@ const StationAdminPage = React.lazy(() => import("./pages/StationAdmin"));
 const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
 const Support = React.lazy(() => import("./pages/Support/index.tsx"));  // chưa rõ thông tin lắm, cần chia role rõ ràng hơn
 const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin"));    // báo cáo dành cho admin
+const ManagePackage = React.lazy(() => import("./pages/PackageAdmin"));            // quản lí gói dịch vụ
 const TransactionManagement = React.lazy(
   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")
 );
@@ -42,7 +44,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     loader: requireAuth,
-    element: withSuspense(<App />),
+    element: withSuspense(<DashboardLayout />),
     errorElement: withSuspense(<NotFound />),
     children: [
       // các trang con năm trong layout Dashboard
@@ -57,6 +59,10 @@ const router = createBrowserRouter([
       {
         path: "accounts",
         element: withSuspense(<UserAdmin />),
+      },
+      {
+        path: "packages",
+        element: withSuspense(<ManagePackage />),
       },
       {
         path: "supports",
