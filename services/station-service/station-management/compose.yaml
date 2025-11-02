@@ -1,1 +1,42 @@
 services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: battery-station-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: battery_station_db 
+      MYSQL_USER: station_user
+      MYSQL_PASSWORD: station_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - station-network
+
+  station-service:
+    build: ./station-management
+    image: ev-battery-swap-management-station-system/station-service
+    container_name: station-service
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/battery_station_db
+      - SPRING_DATASOURCE_USERNAME=station_user
+      - SPRING_DATASOURCE_PASSWORD=station_password
+    depends_on:
+      - mysql-db
+    networks:
+      - station-network
+
+    battery:
+       url: localhost:8083
+
+volumes:
+  mysql_data:
+
+networks:
+  station-network:
+    driver: bridge
