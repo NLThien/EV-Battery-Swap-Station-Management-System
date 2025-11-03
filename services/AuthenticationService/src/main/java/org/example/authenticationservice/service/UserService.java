@@ -35,7 +35,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
 
-
+//đây là tạo tài khoản
     public User createUser(UserCreationRequest request) {
 
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
@@ -61,6 +61,21 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    // thêm role
+    @PreAuthorize("hasRole('ADMIN')")
+    public void updateRole(String userId, Role role){
+        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        String upperRole = role.name().toUpperCase();
+        HashSet<String> roles = new HashSet<>();
+        roles.add(role.name());
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
+    }
+    // xóa role
+
+
     public UserResponse updateUser(UserUpdateRequest updateUser,String userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -72,7 +87,7 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-//    @PostAuthorize("returnObject.phoneNumber == authentication.name") dòng nay là để lấy chỉ đc token trùn với params id mình đăng nhập mới đc vô
+//    @PostAuthorize("returnObject.phoneNumber == authentication.name") dòng nay là để lấy chỉ đc token trùng với params id mình đăng nhập mới đc vô
     @PreAuthorize("hasRole('ADMIN')")//chi admin mới đc vo xem thông tin ca nhân khách hành
     public UserResponse getUserById(String id) {
         return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED)));
