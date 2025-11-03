@@ -19,62 +19,54 @@ const SwapTransactions = () => {
   const [showForm, setShowForm] = useState(false);
 
   // Dữ liệu demo hiển thị UI
-  const [transactions] = useState<SwapTransaction[]>([
-    {
-      swap_id: "SWAP001",
-      driver_id: "DRV1001",
-      station_id: "STA001",
-      old_battery_id: "BAT001",
-      new_battery_id: "BAT002",
-      fee: 50000,
-      swap_time: "2025-10-14T09:00:00",
-      status: "completed",
-    },
-    {
-      swap_id: "SWAP002",
-      driver_id: "DRV1002",
-      station_id: "STA002",
-      old_battery_id: "BAT010",
-      new_battery_id: "BAT020",
-      fee: 60000,
-      swap_time: "2025-10-14T11:30:00",
-      status: "in-progress",
-    },
-        {
-      swap_id: "SWAP001",
-      driver_id: "DRV1001",
-      station_id: "STA001",
-      old_battery_id: "BAT001",
-      new_battery_id: "BAT002",
-      fee: 50000,
-      swap_time: "2025-10-14T09:00:00",
-      status: "completed",
-    },
-        {
-      swap_id: "SWAP001",
-      driver_id: "DRV1001",
-      station_id: "STA001",
-      old_battery_id: "BAT001",
-      new_battery_id: "BAT002",
-      fee: 50000,
-      swap_time: "2025-10-14T09:00:00",
-      status: "completed",
-    },
-        {
-      swap_id: "SWAP001",
-      driver_id: "DRV1001",
-      station_id: "STA001",
-      old_battery_id: "BAT001",
-      new_battery_id: "BAT002",
-      fee: 50000,
-      swap_time: "2025-10-14T09:00:00",
-      status: "completed",
-    },
-  ]);
+  const [transactions, setTransactions] = useState<SwapTransaction[]>([
+  {
+    swap_id: "SWAP001",
+    driver_id: "DRV1001",
+    station_id: "STA001",
+    old_battery_id: "BAT001",
+    new_battery_id: "BAT002",
+    fee: 50000,
+    swap_time: "2025-10-14T09:00:00",
+    status: "completed",
+  },
+  {
+    swap_id: "SWAP002",
+    driver_id: "DRV1002",
+    station_id: "STA002",
+    old_battery_id: "BAT010",
+    new_battery_id: "BAT020",
+    fee: 60000,
+    swap_time: "2025-10-14T11:30:00",
+    status: "in-progress",
+  },
+  {
+    swap_id: "SWAP003",
+    driver_id: "DRV1003",
+    station_id: "STA003",
+    old_battery_id: "BAT011",
+    new_battery_id: "BAT021",
+    fee: 55000,
+    swap_time: "2025-10-14T12:00:00",
+    status: "completed",
+  },
+  // ...more unique entries
+]);
   
 
   const formatCurrency = (amount: number) =>
     amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+  // Thêm giao dịch mới vào state (demo)
+  const handleAddTransaction = (data: Omit<SwapTransaction, 'swap_id' | 'swap_time'>) => {
+    const newTx: SwapTransaction = {
+      swap_id: `SWAP${Date.now()}`,
+      swap_time: new Date().toISOString(),
+      ...data,
+    };
+    setTransactions((prev) => [newTx, ...prev]);
+    setShowForm(false);
+  };
 
   return (
     <div className="transactions-page">
@@ -93,7 +85,7 @@ const SwapTransactions = () => {
         <div className="modal-overlay" onClick={() => setShowForm(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Thêm giao dịch mới</h3>
-            <TransactionForm />
+            <TransactionForm onAdd={handleAddTransaction} />
             <div className="modal-actions">
               <button onClick={() => setShowForm(false)} className="cancel-btn">
                 Hủy

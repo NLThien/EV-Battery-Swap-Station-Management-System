@@ -7,6 +7,28 @@
   min-height: 100vh;
 }
 
+.add-button {
+  background-color: #3b82f6;
+  color: #ffffff;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #374151;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+} 
+
 .transactions-page h1 {
   font-size: 2rem;
   font-weight: 700;
