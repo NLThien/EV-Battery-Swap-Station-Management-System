@@ -1,11 +1,11 @@
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:17-jre
 
 # Install curl for health check
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-COPY target/station-service*.jar app.jar
+COPY target/station-management-*.jar app.jar
 
 EXPOSE 8080
 
