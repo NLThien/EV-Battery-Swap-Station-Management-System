@@ -33,3 +33,10 @@ INSTANCES REGISTERED:
 - AUTH-SERVICE (1 instance) 
 - BATTERY-SERVICE (1 instance)
 - STATION-SERVICE (1 instance)
+
+cập nhật JDK build docker
+# Pull image
+docker pull eclipse-temurin:11-jre
+
+# Kiểm tra
+docker images | findstr temurin
