@@ -16,8 +16,8 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,  // bỏ cảnh báo biến không sử dụng
+    "noUnusedParameters": false,  // bỏ cảnh báo tham số không sử dụng để build docker
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true

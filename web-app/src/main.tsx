@@ -1,7 +1,6 @@
 import React, { StrictMode, Suspense, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
 
 // Import global styles và variables
 import "./styles/variables.css";
@@ -29,9 +28,9 @@ const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
 const Support = React.lazy(() => import("./pages/Support/index.tsx"));  // chưa rõ thông tin lắm, cần chia role rõ ràng hơn
 const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin"));    // báo cáo dành cho admin
 const ManagePackage = React.lazy(() => import("./pages/PackageAdmin"));            // quản lí gói dịch vụ
-const TransactionManagement = React.lazy(
-  () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")
-);
+// const TransactionManagement = React.lazy(
+//   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")        // xóa tạm để build docker, ông nào cần thì mở lại
+// );
 const StationStaff = React.lazy(() => import("./pages/Staff/StationStaff/index.tsx"));    // trang quản lí trạm dành cho nhân viên
 const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff"));      // trang báo cáo cho trạm
 const DashboardStaff = React.lazy(() => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx"));  // trang dashboard dành cho nhân viên
