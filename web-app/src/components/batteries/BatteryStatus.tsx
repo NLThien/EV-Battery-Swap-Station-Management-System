@@ -1,3 +1,11 @@
+import React from 'react';
+
+export interface Battery {
+  id: string | number;
+  chargeLevel: number;
+  status: string;
+}
+
 export const BatteryStatus: React.FC<{ battery: Battery }> = ({ battery }) => {
   const getBatteryColor = (level: number) => {
     if (level > 70) return '#4CAF50';

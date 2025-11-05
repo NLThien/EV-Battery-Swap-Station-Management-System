@@ -5,6 +5,7 @@ import {
   Home,
   Inbox,
   LogOut,
+  Package,
   Search,
   Settings,
   User,
@@ -46,6 +47,12 @@ const items = [
     icon: Calendar,
     activeIcon: Check,
   },
+  {
+    title: "Quản lí gói dịch vụ",
+    url: "/admin/packages",
+    icon: Package,
+    activeIcon: Check,
+  },  
   {
     title: "Hỗ trợ & phản hồi",
     url: "/admin/supports",
