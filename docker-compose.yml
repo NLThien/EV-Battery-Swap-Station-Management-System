@@ -1,0 +1,142 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # --- INFRASTRUCTURE SERVICES ---
+  eureka-server:
+    image: ev-battery-swap-management-station-system/eureka-server
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  api-gateway:
+    image: ev-battery-swap-management-station-system/api-gateway
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+  # --- DATABASE SERVICES ---
+  mysql-station-db:
+    image: mysql:8.0
+    container_name: mysql-station-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: station_db
+      MYSQL_USER: station_user
+      MYSQL_PASSWORD: station_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - station_data:/var/lib/mysql
+      - ./shared/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  mysql-user-db:
+    image: mysql:8.0
+    container_name: mysql-user-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: user_user
+      MYSQL_PASSWORD: user_password
+    ports:
+      - "3308:3306"
+    volumes:
+      - user_data:/var/lib/mysql
+    networks:
+      - ev-network
+
+  # --- BUSINESS SERVICES ---
+    # --- quản lý trạm ---
+  station-service:
+    image: ev-battery-swap-management-station-system/station-service
+    build: ./services/station-service/station-management
+    container_name: station-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-station-db:3306/station_db
+      - SPRING_DATASOURCE_USERNAME=station_user
+      - SPRING_DATASOURCE_PASSWORD=station_password
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-station-db:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+    # --- quản lý người dùng ---
+  # user-service:
+  #   images: ev-battery-swap-management-station-system/user-service
+  #   build: ./user-service
+  #   container_name: user-service
+  #   environment:
+  #     - SPRING_PROFILES_ACTIVE=docker
+  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+  #     - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-user-db:3306/user_db
+  #     - SPRING_DATASOURCE_USERNAME=user_user
+  #     - SPRING_DATASOURCE_PASSWORD=user_password
+  #   depends_on:
+  #     eureka-server:
+  #       condition: service_healthy
+  #     mysql-user-db:
+  #       condition: service_healthy
+  #   networks:
+  #     - ev-network
+      # --- quản lý pin  ---
+
+  # --- WEB APPLICATION ---
+  web-app:
+    image: ev-battery-swap-management-station-system/web-app
+    build: ./web-app
+    container_name: web-app
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - ev-network
+
+  # mobile-app-dev:
+  #   image: ev-battery-swap-management-station-system/mobile-app
+  #   build: ./mobile-app
+  #   ports: ["8081:8081"]
+  #   volumes:
+  #     - ./mobile-app:/app
+  #     - /app/node_modules
+  #   networks: ["ev-network"]
+
+volumes:
+  station_data:
+  user_data:
+
+networks:
+  ev-network:
+    driver: bridge

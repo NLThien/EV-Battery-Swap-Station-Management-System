@@ -1,0 +1,95 @@
+.alerts-panel {
+  background: var(--surface);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+}
+.alerts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-light);
+}
+.alerts-header h3 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+.alerts-count {
+  background: var(--error-color);
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-lg);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border-left: 4px solid transparent;
+  transition: all var(--transition-fast);
+}
+.alert-item.warning {
+  background: rgba(245, 158, 11, 0.05);
+  border-left-color: var(--warning-color);
+}
+.alert-item.error {
+  background: rgba(239, 68, 68, 0.05);
+  border-left-color: var(--error-color);
+}
+.alert-item.info {
+  background: rgba(59, 130, 246, 0.05);
+  border-left-color: var(--info-color);
+}
+.alert-item:hover {
+  transform: translateX(4px);
+}
+.alert-icon {
+  font-size: var(--font-size-lg);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.alert-content {
+  flex: 1;
+}
+.alert-message {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1.4;
+}
+.alert-meta {
+  display: flex;
+  gap: var(--spacing-md);
+  font-size: var(--font-size-xs);
+}
+.alert-station {
+  color: var(--text-secondary);
+  font-family: 'Monaco', 'Consolas', monospace;
+  background: var(--background);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.alert-time {
+  color: var(--text-tertiary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .alert-meta {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+}
