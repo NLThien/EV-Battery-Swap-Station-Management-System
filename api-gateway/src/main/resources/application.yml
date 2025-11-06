@@ -32,11 +32,18 @@ spring:
         - id: payment-service
           uri: lb://payment-service
           predicates:
-            - Path=/payment/**
+            - Path=/payment/transactions
           filters:
             -RewritePath=/payment/(?<segment>.*), /${segment}
             -AuthenticationFilter
-            
+        
+      - id: payment-service-webhook
+          uri: lb://payment-services
+          predicates:
+            - Path=/payment/sepay_webhook
+          filters:
+            - RewritePath=/payment/(?<segment>.*), /${segment}
+
         - id: order-service
           uri: lb://order-service
           predicates:

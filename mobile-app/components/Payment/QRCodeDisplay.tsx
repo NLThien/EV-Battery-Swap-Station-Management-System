@@ -9,7 +9,7 @@ const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uri }) => {
   return (
     <View style={styles.container}>
       {uri ? (
-        <Image source={{ uri:"https://qr.sepay.vn/img?acc=68209022004&bank=TPBank&amount=100000&des=TKPDHD DH102969" }} style={styles.qrCode} />
+        <Image source={{ uri:"https://qr.sepay.vn/img?acc=68209022004&bank=TPBank&amount=100000&des=TKPDHD&DH102969" }} style={styles.qrCode} />
       ) : (
         <ActivityIndicator size="large" color="#0000ff" />
       )}

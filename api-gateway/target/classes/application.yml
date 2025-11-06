@@ -29,17 +29,29 @@ spring:
           predicates:
             - Path=/stations/**
             
-        - id: payment-services
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/payment/transactions
+          filters:
+            -RewritePath=/payment/(?<segment>.*), /${segment}
+            -AuthenticationFilter
+        
+      - id: payment-service-webhook
           uri: lb://payment-services
           predicates:
-            - Path=/payment/**
+            - Path=/payment/sepay_webhook
           filters:
-            -AuthenticationFilter
-          
-        - id: package-service
-        - uri: lb://package-service
+            - RewritePath=/payment/(?<segment>.*), /${segment}
+
+        - id: order-service
+          uri: lb://order-service
           predicates:
-            -Path=/packages/**
+            - Path=/orders/**
+          filters:
+            - RewritePath=/orders/(?<segment>.*), /${segment}
+            - AuthenticationFilter
+      
 
       globalcors:
         cors-configurations:
@@ -78,14 +90,3 @@ logging:
     com.example: DEBUG
     org.springframework.cloud.gateway: DEBUG
     org.springframework.web.cors: DEBUG
-
-#momo
-momo: 
-  partner-code: MOMO
-  return-url: http://localhost:3000/
-  end-point: https://test-payment.momo.vn/v2/gateway/api
-  ipn-url: http://localhost:8080/api/momo/ipn-handler
-  access-key:
-  secret-key:
-
-  request-type: captureWallet
