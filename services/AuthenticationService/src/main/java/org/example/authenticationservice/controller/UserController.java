@@ -3,10 +3,7 @@ package org.example.authenticationservice.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.example.authenticationservice.dto.request.ApiResponse;
-import org.example.authenticationservice.dto.request.UpdateRoleRequest;
-import org.example.authenticationservice.dto.request.UserCreationRequest;
-import org.example.authenticationservice.dto.request.UserUpdateRequest;
+import org.example.authenticationservice.dto.request.*;
 import org.example.authenticationservice.dto.response.UserResponse;
 import org.example.authenticationservice.entity.User;
 import org.example.authenticationservice.enums.Role;
@@ -80,7 +77,17 @@ public class UserController {
         }
 
     }
+
+    @PutMapping("/myInfo/changePassword")
+    public ApiResponse updatePassword(@RequestBody @Valid PasswordChangeRequest request){
+        userService.updatePassword(request);
+        return ApiResponse.<String>builder()
+                .result("Password changed successfully!")
+                .build();
+
+    }
 //    này là xóa tài khoản
+
     @DeleteMapping("/{userId}")
     String deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);

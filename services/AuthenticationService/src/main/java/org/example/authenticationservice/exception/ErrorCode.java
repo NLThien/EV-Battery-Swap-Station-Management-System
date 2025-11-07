@@ -18,6 +18,8 @@ public enum ErrorCode {
     UNAUTHENTICATED("Unauthenticated",1006,HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED("You do not permission",1007,HttpStatus.FORBIDDEN),
     INVALID_JWS("Invalid JWS ",1008,HttpStatus.BAD_REQUEST),
+    PASSWORD_CONFIRM_NOT_MATCHED("Password confirm not matched",1009,HttpStatus.BAD_REQUEST),
+    OLD_PASSWORD_INVALID("Old password invalid",1010,HttpStatus.BAD_REQUEST),
     ;
 
 

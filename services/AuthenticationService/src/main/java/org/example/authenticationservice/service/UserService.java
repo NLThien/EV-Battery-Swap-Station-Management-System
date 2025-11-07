@@ -1,5 +1,6 @@
 package org.example.authenticationservice.service;
 
+import org.example.authenticationservice.dto.request.PasswordChangeRequest;
 import org.example.authenticationservice.dto.request.UserCreationRequest;
 import org.example.authenticationservice.dto.request.UserUpdateRequest;
 import org.example.authenticationservice.dto.response.UserResponse;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -56,7 +58,7 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByPhoneNumber(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
@@ -68,19 +70,55 @@ public class UserService {
         String upperRole = role.name().toUpperCase();
         HashSet<String> roles = new HashSet<>();
         roles.add(role.name());
-
         user.setRoles(roles);
         userRepository.save(user);
 
     }
-    // xóa role
+    // đổi mật khẩu
+    public UserResponse updatePassword( PasswordChangeRequest request){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findById(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        // 2. KIỂM TRA MẬT KHẨU MỚI KHỚP NHAU (Validation Logic)
+        if (!Objects.equals(request.getNewPassword(), request.getConfirmNewPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_CONFIRM_NOT_MATCHED);
+            // 💡 Cần định nghĩa ErrorCode.PASSWORD_CONFIRM_NOT_MATCHED
+        }
 
+        // 3. XÁC THỰC MẬT KHẨU CŨ (Bảo mật bắt buộc)
+        // So sánh mật khẩu cũ (thô) với mật khẩu đã hash trong DB
+        boolean isCurrentPasswordValid = passwordEncoder.matches(
+                request.getCurrentPassword(),
+                user.getPassword()
+        );
+        if (!isCurrentPasswordValid) {
+            // Ném lỗi nếu mật khẩu cũ không đúng
+            throw new AppException(ErrorCode.OLD_PASSWORD_INVALID);
+            // 💡 Cần định nghĩa ErrorCode.OLD_PASSWORD_INVALID
+        }
+        String newHashedPassword = passwordEncoder.encode(request.getNewPassword());
 
+        user.setPassword(newHashedPassword);
+
+        userRepository.save(user);
+
+        return getMyInfo();
+
+    }
+
+//cai này đáng phải là chỉ dùng đc cho admin
     public UserResponse updateUser(UserUpdateRequest updateUser,String userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
 
-                userMapper.updateUser(user,updateUser);
-                return userMapper.toUserResponse(user);
+        if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
+        if (userRepository.existsByEmail(updateUser.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
+
+        userMapper.updateUser(user,updateUser);
+
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toUserResponse(updatedUser);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -93,6 +131,7 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED)));
 
     }
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String id) {
         userRepository.deleteById(id);
     }
