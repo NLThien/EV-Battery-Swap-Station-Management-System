@@ -1,47 +1,60 @@
-// tham khảo trước để viết service
-import axios from 'axios';
+import { type Station } from '../../types/station';
 
-// Định nghĩa interface cho Station
-interface Station {
-  id: string;
-  name: string;
-  address: string;
-  status: string;
-  availableBatteries: number;
-  totalBatteries: number;
-}
+const API_BASE_URL = 'http://localhost:8082/api';
 
 export const stationService = {
-  // Lấy danh sách trạm
-  getStations: async (): Promise<Station[]> => {
-    try {
-      const response = await axios.get('/api/stations');
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching stations:', error);
-      return [];
-    }
+  // Lấy tất cả trạm
+  async getAllStations(): Promise<Station[]> {
+    const response = await fetch(`${API_BASE_URL}/stations`);
+    if (!response.ok) throw new Error('Failed to fetch stations');
+    return response.json();
   },
 
-  // Lấy thông tin 1 trạm
-  getStation: async (id: string): Promise<Station | null> => {
-    try {
-      const response = await axios.get(`/api/stations/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching station:', error);
-      return null;
-    }
+  // Lấy trạm theo ID
+  async getStationById(id: string): Promise<Station> {
+    const response = await fetch(`${API_BASE_URL}/stations/${id}`);
+    if (!response.ok) throw new Error('Failed to fetch station');
+    return response.json();
   },
 
-  // Cập nhật trạm
-  updateStation: async (id: string, data: Partial<Station>): Promise<Station | null> => {
-    try {
-      const response = await axios.put(`/api/stations/${id}`, data);
-      return response.data;
-    } catch (error) {
-      console.error('Error updating station:', error);
-      return null;
-    }
+  // Tạo trạm mới (admin)
+  async createStation(stationData: any): Promise<Station> {
+    const response = await fetch(`${API_BASE_URL}/stations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(stationData),
+    });
+    if (!response.ok) throw new Error('Failed to create station');
+    return response.json();
+  },
+
+  // Cập nhật trạm (admin/staff)
+  async updateStation(id: string, stationData: any): Promise<Station> {
+    const response = await fetch(`${API_BASE_URL}/stations/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(stationData),
+    });
+    if (!response.ok) throw new Error('Failed to update station');
+    return response.json();
+  },
+
+  // Xóa trạm (admin)
+  async deleteStation(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/stations/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) throw new Error('Failed to delete station');
+  },
+
+  // Tìm kiếm trạm
+  async searchStations(name?: string, status?: string): Promise<Station[]> {
+    const params = new URLSearchParams();
+    if (name) params.append('name', name);
+    if (status) params.append('status', status);
+    
+    const response = await fetch(`${API_BASE_URL}/stations/search?${params}`);
+    if (!response.ok) throw new Error('Failed to search stations');
+    return response.json();
   }
 };
