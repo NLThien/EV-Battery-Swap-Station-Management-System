@@ -4,6 +4,7 @@ package org.example.authenticationservice.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.example.authenticationservice.dto.request.*;
+import org.example.authenticationservice.dto.response.UpdatePasswordResponse;
 import org.example.authenticationservice.dto.response.UserResponse;
 import org.example.authenticationservice.entity.User;
 import org.example.authenticationservice.enums.Role;
@@ -45,11 +46,16 @@ public class UserController {
     }
 
 //này laf xem thông tin cá nhân của 1 user cũng chỉ admin mới xem đc
-
     @GetMapping("/{userId}")
     UserResponse getUserById(@PathVariable("userId") String userId) {
         return userService.getUserById(userId);
     }
+    //cái này là sửa đổi thông tin của chính mình
+    @PutMapping("/myInfo")
+    UserResponse updateUser(@RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+        return userService.updateMyInfo(userUpdateRequest);
+    }
+
 //này là xem thông tin cá nhân của chính tài khản của mình ai cũng dùng đc
     @GetMapping("/myInfo")
     UserResponse getMyInfo() {
@@ -76,6 +82,10 @@ public class UserController {
             return ApiResponse.builder().result(ResponseEntity.status(400).body("Lỗi")).build();
         }
 
+    }
+    @PutMapping("/{userId}/changePassword")
+    public ApiResponse<UpdatePasswordResponse> updatePasswordByAdmin(@PathVariable String userId, @RequestBody UpdatePasswordByAdminRequest request) {
+        return ApiResponse.<UpdatePasswordResponse>builder().result(userService.updatePasswordByAdmin(userId,request)).build();
     }
 
     @PutMapping("/myInfo/changePassword")

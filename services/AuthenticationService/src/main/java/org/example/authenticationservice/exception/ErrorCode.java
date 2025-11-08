@@ -20,6 +20,7 @@ public enum ErrorCode {
     INVALID_JWS("Invalid JWS ",1008,HttpStatus.BAD_REQUEST),
     PASSWORD_CONFIRM_NOT_MATCHED("Password confirm not matched",1009,HttpStatus.BAD_REQUEST),
     OLD_PASSWORD_INVALID("Old password invalid",1010,HttpStatus.BAD_REQUEST),
+    CHANGE_PASSWORD_NOT_SUSSED("Change password not susssed",1011,HttpStatus.BAD_REQUEST),
     ;
 
 

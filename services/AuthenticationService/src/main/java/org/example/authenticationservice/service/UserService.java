@@ -1,8 +1,10 @@
 package org.example.authenticationservice.service;
 
 import org.example.authenticationservice.dto.request.PasswordChangeRequest;
+import org.example.authenticationservice.dto.request.UpdatePasswordByAdminRequest;
 import org.example.authenticationservice.dto.request.UserCreationRequest;
 import org.example.authenticationservice.dto.request.UserUpdateRequest;
+import org.example.authenticationservice.dto.response.UpdatePasswordResponse;
 import org.example.authenticationservice.dto.response.UserResponse;
 import org.example.authenticationservice.entity.User;
 import org.example.authenticationservice.enums.Role;
@@ -63,18 +65,25 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    // thêm role
-    @PreAuthorize("hasRole('ADMIN')")
-    public void updateRole(String userId, Role role){
-        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-        String upperRole = role.name().toUpperCase();
-        HashSet<String> roles = new HashSet<>();
-        roles.add(role.name());
-        user.setRoles(roles);
-        userRepository.save(user);
+    //đổi thông tin ở phias người dùng
+    public UserResponse updateMyInfo(UserUpdateRequest request) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findById(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+//        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
+//        if (userRepository.existsByEmail(request.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
+
+        userMapper.updateUser(user,request);
+
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.toUserResponse(updatedUser);
 
     }
-    // đổi mật khẩu
+
+    // đổi mật khẩu ở phía my info
     public UserResponse updatePassword( PasswordChangeRequest request){
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -107,18 +116,49 @@ public class UserService {
 
     }
 
+
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public void updateRole(String userId, Role role){
+        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        String upperRole = role.name().toUpperCase();
+        HashSet<String> roles = new HashSet<>();
+        roles.add(role.name());
+        user.setRoles(roles);
+        userRepository.save(user);
+
+    }
 //cai này đáng phải là chỉ dùng đc cho admin
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(UserUpdateRequest updateUser,String userId) {
         User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
 
-        if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
-        if (userRepository.existsByEmail(updateUser.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
+//        if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
+//        if (userRepository.existsByEmail(updateUser.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
 
         userMapper.updateUser(user,updateUser);
 
         User updatedUser = userRepository.save(user);
 
         return userMapper.toUserResponse(updatedUser);
+
+
+    }
+    //đổi mật khẩu cho user
+    @PreAuthorize("hasRole('ADMIN')")
+    public UpdatePasswordResponse updatePasswordByAdmin(String userId, UpdatePasswordByAdminRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        try {
+            String newPassword = passwordEncoder.encode(request.getPassword());
+
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return UpdatePasswordResponse.builder().success(true).build();
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.CHANGE_PASSWORD_NOT_SUSSED);
+        }
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")
