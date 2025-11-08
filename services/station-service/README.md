@@ -1,37 +1,105 @@
-# Electric Vehicle Battery Swap Station Management System
+## Quick Start
+1. Clone repository
+2. Chạy: `docker-compose up -d`
+3. Truy cập: http://localhost:8080
 
-## Station Service
+## Development
+1. Copy `application-template.properties` thành `application.properties`
+2. Chỉnh sửa thông tin database trong `application.properties`
+3. Chạy MySQL: `docker-compose up mysql-db -d`
+4. Chạy Spring Boot:
 
-The Station Service is a microservice responsible for managing battery swap stations and their operations. This service handles the following functionalities:
+    # bước đầu tiên
+    cd services  
+    cd station-service
+    cd station-management
 
-- **Station Management**: Create, update, and delete battery swap stations.
-- **Station Availability**: Check the availability of stations for battery swaps.
-- **User Interaction**: Provide endpoints for the web and mobile applications to interact with the station data.
+    # chạy lần đầu
+    mvn clean spring-boot:run
 
-### API Endpoints
+    # chạy service
+    mvn spring-boot:run
 
-- `GET /stations`: Retrieve a list of all battery swap stations.
-- `POST /stations`: Create a new battery swap station.
-- `PUT /stations/:id`: Update an existing battery swap station.
-- `DELETE /stations/:id`: Remove a battery swap station.
 
-### Technologies Used
+##### TRIỂN KHAI TRÊN DOCKER
 
-- Node.js
-- Express.js
-- MongoDB (or any other database of choice)
+# Build tất cả services
+docker-compose build
 
-### Setup Instructions
+# Chạy toàn bộ stack
+docker-compose up -d
 
-1. Clone the repository.
-2. Navigate to the `station-service` directory.
-3. Install the dependencies using `npm install`.
-4. Start the service using `npm start`.
+# Chạy chỉ một số service
+docker-compose up -d eureka-server mysql-station-db mysql-user-db
+docker-compose up -d station-service user-service api-gateway
+docker-compose up -d web-app
 
-### Contributing
+# Xem logs
+docker-compose logs -f station-service
+docker-compose logs -f eureka-server
 
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
+# Scale service
+docker-compose up -d --scale station-service=2
 
-### License
+###### KIỂM TRA TRẠNG THÁI
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+# Kiểm tra containers
+docker-compose ps
+
+# Kiểm tra Eureka services
+curl http://localhost:8761/eureka/apps
+
+# Kiểm tra API Gateway
+curl http://localhost:8080/actuator/health
+
+###### DỪNG SERVICE
+
+# Dừng services
+docker-compose down
+
+# Dừng và xóa volumes
+docker-compose down -v
+
+# Rebuild và chạy lại
+docker-compose up -d --build
+
+# Chạy với file compose khác
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
+
+docker run -d `
+  --name battery-station-mysql `
+  -e MYSQL_ROOT_PASSWORD=root_password `
+  -e MYSQL_DATABASE=battery_station_db `
+  -e MYSQL_USER=station_user `
+  -e MYSQL_PASSWORD=station_password `
+  -p 3307:3306 `
+  -v mysql_data:/var/lib/mysql `
+  mysql:8.0
+
+## kiểm tra biến môi trường đã trống chưa khi chạy dev local(khi chạy docker thì mới dùng)
+  echo $env:SPRING_PROFILES_ACTIVE 
+
+## hoặc cấu hình cho có thể dùng cho cả 2 môi trường:
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Station Service (DEV)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/services/station-service/station-management",
+            "mainClass": "com.example.station_management.StationManagementApplication",
+            "projectName": "station-management",
+            "args": "--spring.profiles.active=dev"
+        },
+        {
+            "type": "java",
+            "name": "Station Service (DOCKER)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/services/station-service/station-management",
+            "mainClass": "com.example.station_management.StationManagementApplication", 
+            "projectName": "station-management",
+            "args": "--spring.profiles.active=docker",
+            "envFile": "${workspaceFolder}/.env"  // dùng biến môi trường cho docker
+        }
+    ]
+}

@@ -62,3 +62,12 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for more details.
+
+🚨 Nếu bị lỗi build docker
+
+cập nhật JDK build docker
+# Pull image
+docker pull eclipse-temurin:11-jre
+
+# Kiểm tra
+docker images | findstr temurin
