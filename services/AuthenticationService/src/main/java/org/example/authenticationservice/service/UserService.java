@@ -71,8 +71,8 @@ public class UserService {
         String name = context.getAuthentication().getName();
 
         User user = userRepository.findById(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-//        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
+//cái này phải fixx là đổi số điện thoại để đăng nhập để riêng
+        if (userRepository.existsByPhoneNumberAndIdIsNot(request.getPhoneNumber(),name)) throw  new AppException(ErrorCode.PHONE_EXISTED);
 //        if (userRepository.existsByEmail(request.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
 
         userMapper.updateUser(user,request);
@@ -135,6 +135,7 @@ public class UserService {
 
 //        if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
 //        if (userRepository.existsByEmail(updateUser.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
+        if (userRepository.existsByPhoneNumberAndIdIsNot(updateUser.getPhoneNumber(),userId)) throw  new AppException(ErrorCode.PHONE_EXISTED);
 
         userMapper.updateUser(user,updateUser);
 
