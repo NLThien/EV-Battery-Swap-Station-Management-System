@@ -83,14 +83,14 @@ html, body {
 .mission-section,
 .vision-section {
   padding: var(--spacing-lg);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--primary-dark);
   backdrop-filter: blur(10px);
   border-radius: var(--border-radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 .mission-section h3,
 .vision-section h3 {
-  color: var(--primary-supper-dark);
+  color: var(--primary-bg);
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-super-bold);
   margin-bottom: var(--spacing-sm);
@@ -112,7 +112,7 @@ html, body {
 }
 .mission-section p,
 .vision-section p {
-  color: var(--primary-supper-dark);
+  color: var(--macthing-color-dark);
   line-height: 1.6;
   font-size: var(--font-size-md);
   margin: 0;
@@ -392,7 +392,7 @@ html, body {
   font-weight: var(--font-weight-bold);
 }
 .member-role {
-  color: var(--primary-color);
+  color: var(--primary-dark);
   font-weight: var(--font-weight-semibold);
   margin-bottom: var(--spacing-md);
   font-size: var(--font-size-sm);
