@@ -63,12 +63,12 @@ public class UserController {
     }
 //sử thông tin user của User và Admin đều dùng đc
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable @Valid String userId, @RequestBody UserUpdateRequest request) {
+    UserResponse updateUser(@PathVariable @Valid String userId, @Valid @RequestBody UserUpdateRequest request) {
 
         return userService.updateUser(request, userId);
     }
     @PutMapping("/{userId}/role")
-    public ApiResponse updateRole(   @PathVariable String userId, @RequestBody UpdateRoleRequest role){
+    public ApiResponse updateRole(  @PathVariable String userId,  @Valid @RequestBody UpdateRoleRequest role){
         try {
             // Convert String -> Enum Role
             Role enumRole = role.getRole();
@@ -84,7 +84,7 @@ public class UserController {
 
     }
     @PutMapping("/{userId}/changePassword")
-    public ApiResponse<UpdatePasswordResponse> updatePasswordByAdmin(@PathVariable String userId, @RequestBody UpdatePasswordByAdminRequest request) {
+    public ApiResponse<UpdatePasswordResponse> updatePasswordByAdmin(@PathVariable String userId, @Valid @RequestBody UpdatePasswordByAdminRequest request) {
         return ApiResponse.<UpdatePasswordResponse>builder().result(userService.updatePasswordByAdmin(userId,request)).build();
     }
 

@@ -146,19 +146,17 @@ public class UserService {
     }
     //đổi mật khẩu cho user
     @PreAuthorize("hasRole('ADMIN')")
-    public UpdatePasswordResponse updatePasswordByAdmin(String userId, UpdatePasswordByAdminRequest request) {
+    public UpdatePasswordResponse updatePasswordByAdmin(String userId,  UpdatePasswordByAdminRequest request) {
         User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
 
         try {
             String newPassword = passwordEncoder.encode(request.getPassword());
-
             user.setPassword(newPassword);
             userRepository.save(user);
             return UpdatePasswordResponse.builder().success(true).build();
         } catch (Exception e) {
             throw new AppException(ErrorCode.CHANGE_PASSWORD_NOT_SUSSED);
         }
-
     }
 
     @PreAuthorize("hasRole('ADMIN')")
