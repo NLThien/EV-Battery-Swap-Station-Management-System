@@ -151,7 +151,7 @@ const FeedbackAdmin: React.FC = () => {
           >
             <option value="all">Tất cả</option>
             <option value="responded">Đã phản hồi</option>
-            <option value="pending">Chưa phản hồi</option>
+            <option value="pending">Chưa phản hồi: {pending}</option>
           </select>
         </div>
       </div>

@@ -1,18 +1,8 @@
 import React from 'react';
 import './StationCard.css';
+import { type Station } from '@/types/station';
 
-// Định nghĩa interface Station
-interface Station {
-  id: string;
-  name: string;
-  address: string;
-  phone?: string; // Thêm ? vì có thể không bắt buộc
-  operatingHours: string;
-  status: 'active' | 'maintenance' | 'closed';
-  availableBatteries: number;
-  totalBatteries: number;
-}
-
+// nhận dạng props cho StationCard
 interface StationCardProps {
   station: Station;
   onSelect: (station: Station) => void;
@@ -20,8 +10,8 @@ interface StationCardProps {
 
 export const StationCard: React.FC<StationCardProps> = ({ station, onSelect }) => {
   // Tính phần trăm pin có sẵn
-  const availablePercentage = station.totalBatteries > 0 
-    ? (station.availableBatteries / station.totalBatteries) * 100 
+  const availablePercentage = station.totalSlots > 0 
+    ? (station.availableSlots / station.totalSlots) * 100 
     : 0;
 
   return (
@@ -35,14 +25,14 @@ export const StationCard: React.FC<StationCardProps> = ({ station, onSelect }) =
       
       <div className="station-info">
         <p>📍 {station.address}</p>
-        <p>📞 {station.phone || 'N/A'}</p>
-        <p>⏰ {station.operatingHours}</p>
+        {/* <p>📞 {station.phone || 'N/A'}</p>
+        <p>⏰ {station.operatingHours}</p> */}
       </div>
       
       <div className="battery-info">
         <div className="battery-stats">
-          <span>Available: {station.availableBatteries}</span>
-          <span>Total: {station.totalBatteries}</span>
+          <span>Available: {station.availableSlots}</span>
+          <span>Total: {station.totalSlots}</span>
         </div>
         <div className="battery-level">
           <div 

@@ -1,0 +1,45 @@
+{
+  "batteries": [
+    {
+      "id": "BAT001",
+      "model": "Panasonic XZ-500",
+      "capacity": "48V - 60Ah",
+      "status": "Full",
+      "health": 95
+    },
+    {
+      "id": "BAT002",
+      "model": "LG Energy 45A",
+      "capacity": "48V - 40Ah",
+      "status": "Charging",
+      "health": 88
+    },
+    {
+      "id": "BAT003",
+      "model": "BYD PowerMax",
+      "capacity": "72V - 65Ah",
+      "status": "Maintenance",
+      "health": 72
+    }
+  ],
+  "transactions": [
+    {
+      "id": "TRX001",
+      "batteryId": "BAT001",
+      "stationId": "ST01",
+      "swapDate": "2025-10-10T10:30:00Z",
+      "staffId": "EMP001",
+      "vehicleId": "VIN-123456789",
+      "status": "Completed"
+    },
+    {
+      "id": "TRX002",
+      "batteryId": "BAT002",
+      "stationId": "ST01",
+      "swapDate": "2025-10-11T14:20:00Z",
+      "staffId": "EMP002",
+      "vehicleId": "VIN-987654321",
+      "status": "Pending"
+    }
+  ]
+}

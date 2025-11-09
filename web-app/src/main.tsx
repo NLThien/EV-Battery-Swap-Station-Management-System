@@ -1,7 +1,6 @@
 import React, { StrictMode, Suspense, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.tsx";
 
 // Import global styles và variables
 import "./styles/variables.css";
@@ -11,11 +10,13 @@ import NotFound from "./pages/NotFound/index.tsx";
 
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { requireAuth } from "./utils/auth.ts";
+import SwapTransactions from "./pages/Staff/TransactionManagement/SwapTransaction.tsx";
 
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
   () => import("./layouts/DashboardStaffLayout")
 );
+const DashboardLayout = React.lazy(() => import("./layouts/DashboardLayout"));
 
 const HomePage = React.lazy(() => import("./pages/Home"));
 const StationPage = React.lazy(
@@ -27,12 +28,12 @@ const UserAdmin = React.lazy(() => import("./pages/ManageUser"));
 const Support = React.lazy(() => import("./pages/Support/index.tsx"));  // chưa rõ thông tin lắm, cần chia role rõ ràng hơn
 const ReportAdmin = React.lazy(() => import("./pages/ReportAdmin"));    // báo cáo dành cho admin
 const ManagePackage = React.lazy(() => import("./pages/PackageAdmin"));            // quản lí gói dịch vụ
-const TransactionManagement = React.lazy(
-  () => import("./pages/TransactionManagement")
-);
-const StationStaff = React.lazy(() => import("./pages/StationStaff"));    // trang quản lí trạm dành cho nhân viên
-const ReportStaff = React.lazy(() => import("./pages/ReportStaff"));      // trang báo cáo cho trạm
-const DashboardStaff = React.lazy(() => import("./pages/DashboardStaff"));  // trang dashboard dành cho nhân viên
+// const TransactionManagement = React.lazy(
+//   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")        // xóa tạm để build docker, ông nào cần thì mở lại
+// );
+const StationStaff = React.lazy(() => import("./pages/Staff/StationStaff/index.tsx"));    // trang quản lí trạm dành cho nhân viên
+const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff"));      // trang báo cáo cho trạm
+const DashboardStaff = React.lazy(() => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx"));  // trang dashboard dành cho nhân viên
 
 const withSuspense = (el: ReactNode) => (
   <Suspense fallback={<div className="p-6">Loading…</div>}>{el}</Suspense>
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     loader: requireAuth,
-    element: withSuspense(<App />),
+    element: withSuspense(<DashboardLayout />),
     errorElement: withSuspense(<NotFound />),
     children: [
       // các trang con năm trong layout Dashboard
@@ -90,7 +91,7 @@ const router = createBrowserRouter([
 
       {
         path: "transaction-management",
-        element: withSuspense(<TransactionManagement />),
+        element: withSuspense(<SwapTransactions />),
       },
       {
         path: "reports", //báo cáo của nhận(có thể xuất báo cáo)
