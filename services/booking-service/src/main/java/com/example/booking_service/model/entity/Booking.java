@@ -18,9 +18,8 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     
-    @ManyToOne
-    @JoinColumn(name = "station_id")
-    private Station station;
+    @Column(name = "station_id")
+    private String stationId;
     
     @Column(name = "customer_name")
     private String customerName;
@@ -47,6 +46,13 @@ public class Booking {
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "battery_package_id")
+    private BatteryPackage batteryPackage;
+    
+    @Column(name = "battery_type")
+    private String batteryType; // Loại pin cần đổi
     
     // Constructors
     public Booking() {}
@@ -54,8 +60,8 @@ public class Booking {
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     
-    public Station getStation() { return station; }
-    public void setStation(Station station) { this.station = station; }
+    public String getStationId() { return stationId; }
+    public void setStationId(String stationId) { this.stationId = stationId; }
     
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
@@ -83,4 +89,10 @@ public class Booking {
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public BatteryPackage getBatteryPackage() { return batteryPackage; }
+    public void setBatteryPackage(BatteryPackage batteryPackage) { this.batteryPackage = batteryPackage; }
+
+    public String getBatteryType() { return batteryType; }
+    public void setBatteryType(String batteryType) { this.batteryType = batteryType;}
 }
