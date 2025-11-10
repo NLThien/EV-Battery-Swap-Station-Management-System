@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: battery-station-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: package_service_db
+      MYSQL_USER: package_user
+      MYSQL_PASSWORD: package_password
+    ports:
+      - "3304:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - station-network
+
+  package-service:
+    build: ./package-service
+    container_name: package-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/package_service_db
+      - SPRING_DATASOURCE_USERNAME=package_user
+      - SPRING_DATASOURCE_PASSWORD=package_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      - mysql-db
+      - eureka-server
+    networks:
+      - station-network
+
+volumes:
+  mysql_data:
+
+
+networks:
+  station-network:
+    driver: bridge
