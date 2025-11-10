@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-// Định nghĩa kiểu dữ liệu cho gói thuê
 interface EVPackage {
   id: number;
   type: string;
@@ -9,7 +9,6 @@ interface EVPackage {
   price: number;
 }
 
-// Định nghĩa kiểu dữ liệu cho form
 interface PackageForm {
   type: string;
   quantity: number | "";
@@ -17,28 +16,37 @@ interface PackageForm {
   price: number | "";
 }
 
-const AdminPackage: React.FC = () => {
-  const [packages, setPackages] = useState<EVPackage[]>([
-    { id: 1, type: "Ngày", quantity: 2, description: "Gói thuê ngắn hạn", price: 50000 },
-    { id: 2, type: "Tuần", quantity: 3, description: "Gói thuê trung hạn", price: 300000 },
-    { id: 3, type: "Tháng", quantity: 4, description: "Gói thuê dài hạn", price: 1200000 },
-  ]);
+const API_GATEWAY = "http://localhost:8081/api/packages";
 
+const AdminPackage: React.FC = () => {
+  const [packages, setPackages] = useState<EVPackage[]>([]);
   const [formData, setFormData] = useState<PackageForm>({
     type: "Ngày",
     quantity: "",
     description: "",
     price: "",
   });
-
   const [filterType, setFilterType] = useState<string>("Tất cả");
 
-  // ✅ fix: khai báo kiểu cho e
+  // ✅ Lấy danh sách gói từ API Gateway
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+  try {
+    const res = await axios.get(API_GATEWAY);
+    console.log("Dữ liệu từ API Gateway:", res.data);
+    setPackages(res.data);
+  } catch (err) {
+    console.error("❌ Lỗi khi lấy dữ liệu gói:", err);
+  }
+};
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -50,8 +58,7 @@ const AdminPackage: React.FC = () => {
     }));
   };
 
-  // ✅ fix: khai báo kiểu cho e
-  const handleAddPackage = (e: React.FormEvent) => {
+  const handleAddPackage = async (e: React.FormEvent) => {
     e.preventDefault();
     const { type, quantity, description, price } = formData;
 
@@ -62,18 +69,28 @@ const AdminPackage: React.FC = () => {
     if (q <= 0 || q > 10) return alert("Số lượng pin phải từ 1 đến 10!");
     if (p <= 0) return alert("Giá tiền phải lớn hơn 0!");
 
-    setPackages((prev) => [
-      ...prev,
-      { id: Date.now(), type, quantity: q, description, price: p },
-    ]);
-
-    setFormData({ type: "Ngày", quantity: "", description: "", price: "" });
+    try {
+      const res = await axios.post(API_GATEWAY, {
+        type,
+        quantity: q,
+        description,
+        price: p,
+      });
+      setPackages((prev) => [...prev, res.data]);
+      setFormData({ type: "Ngày", quantity: "", description: "", price: "" });
+    } catch (err) {
+      console.error("❌ Lỗi khi thêm gói:", err);
+    }
   };
 
-  // ✅ fix: khai báo kiểu cho id
-  const handleDeletePackage = (id: number) => {
-    if (window.confirm("Bạn có chắc muốn xóa gói thuê này không?")) {
+  const handleDeletePackage = async (id: number) => {
+    if (!window.confirm("Bạn có chắc muốn xóa gói thuê này không?")) return;
+
+    try {
+      await axios.delete(`${API_GATEWAY}/${id}`);
       setPackages((prev) => prev.filter((pkg) => pkg.id !== id));
+    } catch (err) {
+      console.error("❌ Lỗi khi xóa gói:", err);
     }
   };
 
