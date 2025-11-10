@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ps_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: payment_service
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ps_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  payment-service:
+    build: .
+    container_name: payment-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/payment_service
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USERNAME=guest
+      - RABBIT_PASSWORD=guest
+      - SEPAY_MERCHANT_ID=demo
+      - SEPAY_SECRET_KEY=demo
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+      - rabbitmq
+
+volumes:
+  mysql_data:
