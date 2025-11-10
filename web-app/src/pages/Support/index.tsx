@@ -105,6 +105,7 @@ const FeedbackAdmin: React.FC = () => {
   // 📊 Thống kê
   const total = feedbacks.length;
   const responded = feedbacks.filter((f) => f.adminReply && f.adminReply.trim() !== "").length;
+  const pending = total - responded;
   const percent = total > 0 ? Math.round((responded / total) * 100) : 0;
 
   return (
