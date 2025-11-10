@@ -1,6 +1,7 @@
 package org.example.authenticationservice.configuration;
 
 import org.example.authenticationservice.enums.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,37 +28,39 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${jwt.signerKey}")
-    protected String KEY_SIGN;
 
+    @Autowired
+    private CustomJwtDecoder jwtDecoder;
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/login",
             "/introspect",
-            "/users"
-
+            "/users",
+           "/logout",
+            "/refresh"
     };
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
-
                         .anyRequest().authenticated()
                 );
 
         //cau xac thuc JWT
         httpSecurity.oauth2ResourceServer(oauth2->
-                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
 
                 )
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 );
 
-
+        httpSecurity.logout(AbstractHttpConfigurer::disable);
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
+
 
         return httpSecurity.build();
     }
@@ -68,13 +71,14 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY_SIGN.getBytes(),"HS512");
-
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512).build();
-    }
+//    @Bean
+//    JwtDecoder jwtDecoder() {
+//        SecretKeySpec secretKeySpec = new SecretKeySpec(KEY_SIGN.getBytes(),"HS512");
+//
+//        return NimbusJwtDecoder
+//                .withSecretKey(secretKeySpec)
+//                .macAlgorithm(MacAlgorithm.HS512).build();
+//    }
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder(10);

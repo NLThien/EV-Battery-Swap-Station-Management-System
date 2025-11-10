@@ -39,13 +39,14 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
 
-//đây là tạo tài khoản
+    //đây là tạo tài khoản
     public User createUser(UserCreationRequest request) {
 
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
-        if (userRepository.existsByEmail(request.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber()))
+            throw new AppException(ErrorCode.PHONE_EXISTED);
+        if (userRepository.existsByEmail(request.getEmail())) throw new AppException(ErrorCode.EMAIL_EXISTED);
 
-        User user=userMapper.toUser(request);
+        User user = userMapper.toUser(request);
 
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
@@ -55,12 +56,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
     //User lấy thông tin cá nhân của chính họ
-    public UserResponse getMyInfo(){
+    public UserResponse getMyInfo() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findById(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+        User user = userRepository.findById(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
@@ -70,12 +72,13 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findById(name).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
-//cái này phải fixx là đổi số điện thoại để đăng nhập để riêng
-        if (userRepository.existsByPhoneNumberAndIdIsNot(request.getPhoneNumber(),name)) throw  new AppException(ErrorCode.PHONE_EXISTED);
+        User user = userRepository.findById(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        //cái này phải fixx là đổi số điện thoại để đăng nhập để riêng
+        if (userRepository.existsByPhoneNumberAndIdIsNot(request.getPhoneNumber(), name))
+            throw new AppException(ErrorCode.PHONE_EXISTED);
 //        if (userRepository.existsByEmail(request.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
 
-        userMapper.updateUser(user,request);
+        userMapper.updateUser(user, request);
 
         User updatedUser = userRepository.save(user);
 
@@ -84,7 +87,7 @@ public class UserService {
     }
 
     // đổi mật khẩu ở phía my info
-    public UserResponse updatePassword( PasswordChangeRequest request){
+    public UserResponse updatePassword(PasswordChangeRequest request) {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
         User user = userRepository.findById(name)
@@ -117,10 +120,9 @@ public class UserService {
     }
 
 
-
     @PreAuthorize("hasRole('ADMIN')")
-    public void updateRole(String userId, Role role){
-        User user = userRepository.findById(userId).orElseThrow(()-> new AppException(ErrorCode.USER_NOT_EXISTED));
+    public void updateRole(String userId, Role role) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         String upperRole = role.name().toUpperCase();
         HashSet<String> roles = new HashSet<>();
         roles.add(role.name());
@@ -128,16 +130,18 @@ public class UserService {
         userRepository.save(user);
 
     }
-//cai này đáng phải là chỉ dùng đc cho admin
+
+    //cai này đáng phải là chỉ dùng đc cho admin
     @PreAuthorize("hasRole('ADMIN')")
-    public UserResponse updateUser(UserUpdateRequest updateUser,String userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UserResponse updateUser(UserUpdateRequest updateUser, String userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
 //        if (userRepository.existsByPhoneNumber(updateUser.getPhoneNumber())) throw  new AppException(ErrorCode.PHONE_EXISTED);
 //        if (userRepository.existsByEmail(updateUser.getEmail())) throw  new AppException(ErrorCode.EMAIL_EXISTED);
-        if (userRepository.existsByPhoneNumberAndIdIsNot(updateUser.getPhoneNumber(),userId)) throw  new AppException(ErrorCode.PHONE_EXISTED);
+        if (userRepository.existsByPhoneNumberAndIdIsNot(updateUser.getPhoneNumber(), userId))
+            throw new AppException(ErrorCode.PHONE_EXISTED);
 
-        userMapper.updateUser(user,updateUser);
+        userMapper.updateUser(user, updateUser);
 
         User updatedUser = userRepository.save(user);
 
@@ -145,10 +149,11 @@ public class UserService {
 
 
     }
+
     //đổi mật khẩu cho user
     @PreAuthorize("hasRole('ADMIN')")
-    public UpdatePasswordResponse updatePasswordByAdmin(String userId,  UpdatePasswordByAdminRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED));
+    public UpdatePasswordResponse updatePasswordByAdmin(String userId, UpdatePasswordByAdminRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         try {
             String newPassword = passwordEncoder.encode(request.getPassword());
@@ -164,12 +169,14 @@ public class UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-//    @PostAuthorize("returnObject.phoneNumber == authentication.name") dòng nay là để lấy chỉ đc token trùng với params id mình đăng nhập mới đc vô
+
+    //    @PostAuthorize("returnObject.phoneNumber == authentication.name") dòng nay là để lấy chỉ đc token trùng với params id mình đăng nhập mới đc vô
     @PreAuthorize("hasRole('ADMIN')")//chi admin mới đc vo xem thông tin ca nhân khách hành
     public UserResponse getUserById(String id) {
-        return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(()->new AppException(ErrorCode.USER_NOT_EXISTED)));
+        return userMapper.toUserResponse(userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
 
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String id) {
         userRepository.deleteById(id);

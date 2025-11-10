@@ -20,3 +20,9 @@ CREATE TABLE user_roles
 
 ALTER TABLE user_roles
     ADD CONSTRAINT fk_user_roles_on_user FOREIGN KEY (user_id) REFERENCES user (id);
+CREATE TABLE invalidate_token
+(
+    id          VARCHAR(255) NOT NULL,
+    expiry_time datetime     NULL,
+    CONSTRAINT pk_invalidatetoken PRIMARY KEY (id)
+);
