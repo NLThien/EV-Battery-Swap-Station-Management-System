@@ -6,5 +6,4 @@ import com.example.Inventory_service.model.Inventory;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
-    Inventory findBySkuCode(String skuCode);
 }
