@@ -18,7 +18,14 @@ spring:
             - Path=/auth/**, /users/**
           filters:
             - RewritePath=/auth/(?<segment>.*), /users/${segment}
-            
+
+        - id: package-service
+          uri: lb://package-service   
+          predicates:
+            - Path=/api/packages/**   
+          filters:
+            - RewritePath=/api/packages/(?<segment>.*), /packages/${segment}
+
         - id: battery-service
           uri: lb://battery-service
           predicates:
@@ -37,7 +44,7 @@ spring:
             -RewritePath=/payment/(?<segment>.*), /${segment}
             -AuthenticationFilter
         
-      - id: payment-service-webhook
+        - id: payment-service-webhook
           uri: lb://payment-services
           predicates:
             - Path=/payment/sepay_webhook
