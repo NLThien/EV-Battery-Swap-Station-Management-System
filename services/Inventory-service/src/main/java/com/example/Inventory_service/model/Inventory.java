@@ -27,7 +27,7 @@ public class Inventory {
 
     private Integer health;
 
-    private String station_id;
+    private String stationId;
 
     // GETTER & SETTER
     public Long getId() {
@@ -79,10 +79,10 @@ public class Inventory {
     }
 
     public String getStationId() {
-        return station_id;
+        return stationId;
     }
 
     public void setStationId(String stationId) {
-        this.station_id = stationId;
+        this.stationId = stationId;
     }
 }

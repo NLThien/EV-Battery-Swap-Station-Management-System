@@ -10,7 +10,7 @@ interface Battery{
   chargeLevel: number;
   status: "Full" | "Charging" | "Maintenance";
   health: number;
-  station_id: string;
+  stationId: string;
 };
 
 const API_URL = "http://localhost:8082/api/inventory";
@@ -104,7 +104,7 @@ const BatteryInventory = () => {
                     <span className={`status-badge ${b.status.toLowerCase()}`}>{b.status}
                     </span>
                   </td>
-                  <td>{b.station_id}</td>
+                  <td>{b.stationId}</td>
                   <td>
                     <button
                       className="delete-btn"

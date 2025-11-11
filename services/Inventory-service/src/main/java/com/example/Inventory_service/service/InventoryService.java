@@ -2,25 +2,15 @@ package com.example.Inventory_service.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
 import com.example.Inventory_service.model.Inventory;
-import com.example.Inventory_service.repository.InventoryRepository;
 
-@Service
-public class InventoryService {
+public interface InventoryService {
 
-    private final InventoryRepository inventoryRepository;
+    Inventory createBattery(Inventory inventory);
 
-    public InventoryService(InventoryRepository inventoryRepository) {
-        this.inventoryRepository = inventoryRepository;
-    }
+    List<Inventory> handleGetBatteries();
 
-    public Inventory saveBattery(Inventory inventory) {
-        return inventoryRepository.save(inventory);
-    }
+    Inventory handleUpdateInventory(Long id, Inventory updataBattery);
 
-    public List<Inventory> getAllBatteries() {
-        return inventoryRepository.findAll();
-    }
+    void handleDeleteInventory(Long id);
 }

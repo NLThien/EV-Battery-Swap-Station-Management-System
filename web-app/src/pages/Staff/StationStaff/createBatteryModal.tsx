@@ -34,7 +34,7 @@ const CreateBatteryModal = ({ isOpen, setIsOpen, onAdded }: ICModalProps) => {
       chargeLevel,
       status,
       health,
-      station_id: stationId
+      stationId,
     }).then(() => {
       setIsOpen(false);
       setModel(''); setCapacity(''); setChargeLevel(0);
