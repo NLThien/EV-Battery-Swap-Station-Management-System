@@ -2,12 +2,16 @@ package com.example.station_management.model.dto;
 
 import java.util.Objects;
 
+import com.example.station_management.model.enums.StationStatus;
+
 public class StationRequest {
     private String name;
     private String address;
     private Double latitude;
     private Double longitude;
     private Integer totalSlots;
+    private Integer availableSlots;
+    private StationStatus status;
     private String managerId;
 
     // Constructor mặc định
@@ -55,6 +59,22 @@ public class StationRequest {
         this.totalSlots = totalSlots;
     }
 
+    public Integer getAvailableSlots() {
+        return availableSlots;
+    }
+
+    public void setAvailableSlots(Integer availableSlots) {
+        this.availableSlots = availableSlots;
+    }
+
+    public StationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(StationStatus status) {
+        this.status = status;
+    }
+
     public String getManagerId() {
         return managerId;
     }
@@ -74,13 +94,15 @@ public class StationRequest {
                Objects.equals(latitude, that.latitude) &&
                Objects.equals(longitude, that.longitude) &&
                Objects.equals(totalSlots, that.totalSlots) &&
+                Objects.equals(availableSlots, that.availableSlots) &&
+               status == that.status &&
                Objects.equals(managerId, that.managerId);
     }
 
     // hashCode() method
     @Override
     public int hashCode() {
-        return Objects.hash(name, address, latitude, longitude, totalSlots, managerId);
+        return Objects.hash(name, address, latitude, longitude, totalSlots,availableSlots, status, managerId);
     }
 
     // toString() method
@@ -92,6 +114,8 @@ public class StationRequest {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", totalSlots=" + totalSlots +
+                ", availableSlots=" + availableSlots +
+                ", status=" + status +
                 ", managerId='" + managerId + '\'' +
                 '}';
     }
