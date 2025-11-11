@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 import com.example.booking_service.model.entity.Booking;
 
 @Repository
@@ -17,11 +18,19 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
                                                      LocalDateTime end);
     
     List<Booking> findByCustomerPhoneAndStatus(String customerPhone, String status);
+
+    List<Booking> findByCustomerPhone(String customerPhone);
     
     List<Booking> findByBookingTimeBetween(LocalDateTime start, LocalDateTime end);
     
-    @Query("SELECT COUNT(b) FROM Booking b WHERE b.station.id = :stationId AND b.status = 'CONFIRMED' AND b.bookingTime BETWEEN :startTime AND :endTime")
+    @Query("SELECT COUNT(b) FROM Booking b WHERE b.stationId = :stationId AND b.status = 'CONFIRMED' AND b.bookingTime BETWEEN :startTime AND :endTime")
     Long countConfirmedBookingsForStation(@Param("stationId") String stationId, 
                                         @Param("startTime") LocalDateTime startTime, 
                                         @Param("endTime") LocalDateTime endTime);
+
+    List<Booking> findByStatus(String status);
+    
+    List<Booking> findByStationId(String stationId);
+    
+    Long countByStationIdAndStatus(String stationId, String status);                                    
 }

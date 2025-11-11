@@ -1,80 +1,84 @@
-import { FeedbackItem } from "@/api/mockApi";
-import CardItem from "@/components/cardItem";
-import Header from "@/components/header";
-import { MAX_WIDTH, VAR } from "@/constants/varriable";
+import React from "react";
+import { View, Text, ScrollView } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-import { useLocalSearchParams, useRouter, useSegments } from "expo-router";
-import { View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+export default function FeedbackDetail() {
+  const { id } = useLocalSearchParams();
 
-function DetailFeedback() {
-  const segments = useSegments();
-  const params = useLocalSearchParams();
-  const router = useRouter();
-
-  // 1) Lấy params dạng string
-  const raw = Array.isArray(params.detailFeedback)
-    ? params.detailFeedback[0]
-    : params.detailFeedback;
-
-  // 2) Parse an toàn
-  let feedbackDetail: FeedbackItem | null = null;
-
-  if (typeof raw === "string") {
-    try {
-      const parsed = JSON.parse(raw);
-
-      // 3) Kiểm tra structure tạm (validate nhẹ)
-      if (
-        typeof parsed.id === "number" &&
-        typeof parsed.description === "string" &&
-        typeof parsed.createdAt === "string"
-      ) {
-        feedbackDetail = parsed as FeedbackItem;
-      } else {
-        console.warn("Sai cấu trúc FeedbackItem");
-      }
-    } catch (error) {
-      console.warn("JSON không hợp lệ", error);
-    }
-  }
-
-  console.log(feedbackDetail);
-  console.log(segments);
-
-  const onPressBack = () => {
-    router.back();
+  // ✅ Dữ liệu có thêm user và userId (chỉ dùng nội bộ, không hiển thị)
+  const feedback = {
+    id,
+    userId: "U001",
+    userName: "Nguyễn Văn A",
+    date: "2025-10-27",
+    facility: 4,
+    speed: 5,
+    battery: 4,
+    price: 3,
+    staff: 5,
+    satisfaction: 5,
+    comment: "Dịch vụ tuyệt vời, tốc độ nhanh.",
+    adminReply:
+      "Cảm ơn bạn đã tin tưởng sử dụng dịch vụ. Chúng tôi sẽ cố gắng hơn nữa!",
   };
 
-  return (
-    <SafeAreaView className="flex-1">
-      <View className="flex-1 ">
-        <Header
-          iconLeft="chevron-left"
-          title="Nội dung"
-          onPressIconLeft={onPressBack}
+  const renderStars = (rating: number) => (
+    <View className="flex-row">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Ionicons
+          key={i}
+          name={i < rating ? "star" : "star-outline"}
+          size={24}
+          color={i < rating ? "#FFD700" : "#ccc"}
         />
-        <View className="  flex-1  px-3 justify-start ">
-          {/* nội dung mình gửi */}
-          <CardItem
-            title={feedbackDetail?.description ?? "Lỗi"}
-            style={{
-              maxWidth: MAX_WIDTH * 0.75,
-              marginLeft: MAX_WIDTH - MAX_WIDTH * 0.75,
-              marginBottom: 20,
-              marginTop: 20,
-              backgroundColor: VAR.PRIMARY_COLOR,
-            }}
-          />
-          {/* chỗ người ta trả lời */}
-          <CardItem
-            title=" đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin đây là phần trả lời của admin 123"
-            style={{ maxWidth: MAX_WIDTH * 0.75 }}
-          />
-        </View>
+      ))}
+    </View>
+  );
+
+  return (
+    <ScrollView className="flex-1 bg-white p-4">
+      <Text className="text-2xl font-bold text-center mb-4">
+        Chi tiết phản hồi
+      </Text>
+
+      {/* Thông tin ngày */}
+      <View className="flex-row justify-between mb-2">
+        <Text className="text-gray-600">Ngày gửi:</Text>
+        <Text className="text-gray-800 font-semibold">{feedback.date}</Text>
       </View>
-    </SafeAreaView>
+
+      {/* Các tiêu chí đánh giá */}
+      {[
+        ["Cơ sở vật chất", feedback.facility],
+        ["Tốc độ đổi pin", feedback.speed],
+        ["Tình trạng pin sau đổi", feedback.battery],
+        ["Giá cả dịch vụ", feedback.price],
+        ["Thái độ nhân viên", feedback.staff],
+        ["Mức độ hài lòng", feedback.satisfaction],
+      ].map(([label, rating]) => (
+        <View
+          key={label}
+          className="flex-row justify-between items-center mb-3"
+        >
+          <Text className="text-lg text-gray-700">{label}</Text>
+          {renderStars(Number(rating))}
+        </View>
+      ))}
+
+      {/* Nội dung phản hồi */}
+      <Text className="mt-4 text-lg font-semibold">Phản hồi của bạn:</Text>
+      <Text className="text-gray-700 mt-2">{feedback.comment}</Text>
+
+      {/* Phản hồi từ admin */}
+      {feedback.adminReply && (
+        <View className="mt-6 bg-blue-50 border border-blue-200 p-4 rounded-xl">
+          <Text className="text-lg font-semibold text-blue-800 mb-1">
+            Phản hồi từ quản trị viên:
+          </Text>
+          <Text className="text-blue-900">{feedback.adminReply}</Text>
+        </View>
+      )}
+    </ScrollView>
   );
 }
-
-export default DetailFeedback;

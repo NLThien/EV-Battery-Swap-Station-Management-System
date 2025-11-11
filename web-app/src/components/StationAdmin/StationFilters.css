@@ -1,0 +1,198 @@
+:root {
+  --primary-supper-dark: #009999;
+  --primary-dark: #00b3b3;
+  --primary-main: #00cccc;
+  --primary-light: #00e6e6;
+  --primary-super-light: #e6ffff;
+}
+
+.filters {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+}
+
+.filters h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.filterForm {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  min-height: 70px; /* GIỮ LAYOUT ỔN ĐỊNH */
+}
+
+.filterInput {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 2;
+  min-width: 250px;
+}
+
+.filterSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 0.5;
+  min-width: 150px;
+}
+
+.filterInputField, .filterSelectField {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background: white;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.filterInputField:focus, .filterSelectField:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(0, 153, 153, 0.1);
+}
+
+.filterInputField::placeholder {
+  color: #9ca3af;
+}
+
+.filterSelectField.status-active {
+  border-color: #16a34a;
+  background-color: #f0fdf4;
+  color: #166534;
+  font-weight: 500;
+}
+
+.filterSelectField.status-inactive {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+  color: #991b1b;
+  font-weight: 500;
+}
+
+.filterSelectField.status-maintenance {
+  border-color: #d97706;
+  background-color: #fffbeb;
+  color: #92400e;
+  font-weight: 500;
+}
+
+.filterActions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* SỬA LẠI MÀU NÚT SEARCH */
+.searchButton {
+  background-color: var(--primary-supper-dark); /* DÙNG VARIABLE */
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.searchButton:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 153, 153, 0.3);
+}
+
+.searchButton:active {
+  transform: translateY(0);
+}
+
+.clearButton {
+  background-color: white;
+  color: #6b7280;
+  border: 1px solid #d1d5db;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 100px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clearButton:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+  color: #374151;
+  transform: translateY(-1px);
+}
+
+.clearButton:active {
+  transform: translateY(0);
+}
+
+.dismissButton {
+  background: none;
+  border: none;
+  color: #dc2626;
+  margin-left: 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.dismissButton:hover {
+  background-color: #fef2f2;
+  text-decoration: underline;
+}
+
+.filterSelectField {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem 1rem;
+  padding-right: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .filterForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filterInput, .filterSelect {
+    min-width: auto;
+    flex: 1;
+  }
+  
+  .filterActions {
+    justify-content: stretch;
+  }
+  
+  .searchButton, .clearButton {
+    flex: 1;
+  }
+}

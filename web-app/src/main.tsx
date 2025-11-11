@@ -33,13 +33,10 @@ const ManagePackage = React.lazy(() => import("./pages/PackageAdmin")); // quả
 // const TransactionManagement = React.lazy(
 //   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")        // xóa tạm để build docker, ông nào cần thì mở lại
 // );
-const StationStaff = React.lazy(
-  () => import("./pages/Staff/StationStaff/index.tsx")
-); // trang quản lí trạm dành cho nhân viên
-const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff")); // trang báo cáo cho trạm
-const DashboardStaff = React.lazy(
-  () => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx")
-); // trang dashboard dành cho nhân viên
+const StationStaff = React.lazy(() => import("./pages/Staff/StationStaff/index.tsx"));    // trang quản lí trạm dành cho nhân viên
+const InventoryStaff = React.lazy(() => import("./pages/InventoryManagement/index.tsx"));   // LÀM TRAN NÀY NHA PHÚC
+const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff"));      // trang báo cáo cho trạm
+const DashboardStaff = React.lazy(() => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx"));  // trang dashboard dành cho nhân viên
 
 const withSuspense = (el: ReactNode) => (
   <Suspense
@@ -103,9 +100,13 @@ const router = createBrowserRouter([
         path: "stations", //quản lí trạm xem tồn kho pin
         element: withSuspense(<StationStaff />),
       },
+      {
+        path: "inventory-management", //quản lí trạm xem tồn kho pin
+        element: withSuspense(<InventoryStaff />),
+      },
 
       {
-        path: "transaction-management",
+        path: "transaction-management", // 
         element: withSuspense(<SwapTransactions />),
       },
       {
