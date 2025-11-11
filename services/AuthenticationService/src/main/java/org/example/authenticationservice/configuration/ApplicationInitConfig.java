@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+
 import java.util.HashSet;
 
 @Configuration
@@ -36,7 +37,22 @@ public class ApplicationInitConfig {
                log.warn("admin user has been created");
            }
         };
-
     }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer() {
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("http://localhost:3000")
+//                        .allowedHeaders("*")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+//                        .allowCredentials(true); // nếu có dùng cookie hoặc Authorization header
+//
+//
+//            }
+//        };
+//    }
+
 
 }

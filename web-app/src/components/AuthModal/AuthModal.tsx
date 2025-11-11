@@ -1,12 +1,17 @@
 import { X } from "lucide-react";
 import "./AuthModal.css";
 
+import type { LoginRequest } from "@/api/authentication/login";
+
 interface AuthModalProps {
   isOpen: boolean;
   isLogin: boolean;
+  formLogin: LoginRequest;
   onClose: () => void;
   onToggleMode: () => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmitLogin: (e: React.FormEvent) => void;
+  onSubmitRegister: (e: React.FormEvent) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const AuthModal = ({
@@ -14,7 +19,10 @@ export const AuthModal = ({
   isLogin,
   onClose,
   onToggleMode,
-  onSubmit,
+  onSubmitLogin,
+  onSubmitRegister,
+  onChange,
+  formLogin,
 }: AuthModalProps) => {
   if (!isOpen) return null;
 
@@ -34,22 +42,37 @@ export const AuthModal = ({
 
         <h2>{isLogin ? "Đăng nhập" : "Đăng ký"}</h2>
 
-        <form className="auth-form" onSubmit={onSubmit}>
+        <form
+          className="auth-form"
+          onSubmit={isLogin ? onSubmitLogin : onSubmitRegister}
+        >
           {!isLogin && (
             <div className="form-group">
               <label>Họ và tên</label>
               <input type="text" placeholder="Nhập họ và tên" />
             </div>
           )}
-
+          {/* chỗ này là form đăng nhập */}
           <div className="form-group">
-            <label>Email</label>
-            <input type="email" placeholder="Nhập email" />
+            <label>Số điện thoại</label>
+            <input
+              type="text"
+              placeholder="Nhập số điện thoại"
+              value={formLogin.phoneNumber}
+              onChange={onChange}
+              name="phoneNumber"
+            />
           </div>
 
           <div className="form-group">
             <label>Mật khẩu</label>
-            <input type="password" placeholder="Nhập mật khẩu" />
+            <input
+              type="password"
+              placeholder="Nhập mật khẩu"
+              value={formLogin.password}
+              onChange={onChange}
+              name="password"
+            />
           </div>
 
           {!isLogin && (
