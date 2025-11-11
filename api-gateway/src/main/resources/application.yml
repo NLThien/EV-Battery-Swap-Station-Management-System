@@ -34,10 +34,10 @@ spring:
           predicates:
             - Path=/payment/transactions
           filters:
-            -RewritePath=/payment/(?<segment>.*), /${segment}
-            -AuthenticationFilter
+            - RewritePath=/payment/(?<segment>.*), /${segment}
+            - AuthenticationFilter
         
-      - id: payment-service-webhook
+        - id: payment-service-webhook
           uri: lb://payment-services
           predicates:
             - Path=/payment/sepay_webhook
@@ -51,7 +51,14 @@ spring:
           filters:
             - RewritePath=/orders/(?<segment>.*), /${segment}
             - AuthenticationFilter
-      
+
+        - id: booking-service
+          uri: lb://booking-service
+          predicates:
+            - Path=/api/booking/**
+          filters:
+            - RewritePath=/api/booking/(?<segment>.*), /$\{segment}
+            - AuthenticationFilter
 
       globalcors:
         cors-configurations:

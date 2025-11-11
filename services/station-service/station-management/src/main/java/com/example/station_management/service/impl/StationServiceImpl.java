@@ -78,6 +78,8 @@ public class StationServiceImpl implements StationService {
         station.setAddress(request.getAddress());
         station.setLatitude(request.getLatitude());
         station.setLongitude(request.getLongitude());
+        station.setAvailableSlots(request.getAvailableSlots());
+        station.setStatus(request.getStatus());
         
         // Update available slots if total slots changed
         if (!station.getTotalSlots().equals(request.getTotalSlots())) {
