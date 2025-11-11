@@ -16,20 +16,5 @@ import com.example.Inventory_service.service.InventoryService;
 @RequestMapping("/api/inventory")
 @CrossOrigin(origins = "http://localhost:3000")
 public class InventoryController {
-
-    private final InventoryService inventoryService;
-
-    public InventoryController(InventoryService inventoryService) {
-        this.inventoryService = inventoryService;
-    }
-
-    @GetMapping
-    public List<Inventory> getAllBatteries() {
-        return inventoryService.getAllBatteries();
-    }
-
-    @PostMapping
-    public Inventory createBattery(@RequestBody Inventory inventory) {
-        return inventoryService.saveBattery(inventory);
-    }
+        
 }
