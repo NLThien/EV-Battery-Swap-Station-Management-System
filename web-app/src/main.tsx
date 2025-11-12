@@ -32,6 +32,7 @@ const ManagePackage = React.lazy(() => import("./pages/PackageAdmin"));         
 //   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")        // xóa tạm để build docker, ông nào cần thì mở lại
 // );
 const StationStaff = React.lazy(() => import("./pages/Staff/StationStaff/index.tsx"));    // trang quản lí trạm dành cho nhân viên
+const InventoryStaff = React.lazy(() => import("./pages/Staff/ManageBattery/index.tsx"));  // trang quản lí kho pin dành cho nhân viên
 const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff"));      // trang báo cáo cho trạm
 const DashboardStaff = React.lazy(() => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx"));  // trang dashboard dành cho nhân viên
 
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
         element: withSuspense(<DashboardStaff />),   // đợt sau sửa lại trang dashboard riêng cho staff || đã sửa
       },
       {
-        path: "stations", //quản lí trạm xem tồn kho pin
+        path: "stations",
         element: withSuspense(<StationStaff />),
       },
 
@@ -93,6 +94,12 @@ const router = createBrowserRouter([
         path: "transaction-management",
         element: withSuspense(<SwapTransactions />),
       },
+  
+      {
+        path: "battery-inventory",
+        element: withSuspense(<InventoryStaff/>),
+      },
+
       {
         path: "reports", //báo cáo của nhận(có thể xuất báo cáo)
         element: withSuspense(<ReportStaff />),
