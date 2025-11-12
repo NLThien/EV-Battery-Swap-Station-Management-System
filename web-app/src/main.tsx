@@ -89,11 +89,7 @@ const router = createBrowserRouter([
         path: "stations",
         element: withSuspense(<StationStaff />),
       },
-      {
-        path: "inventory-management", //quản lí trạm xem tồn kho pin
-        element: withSuspense(<InventoryStaff />),
-      },
-
+      
       {
         path: "transaction-management", // 
         element: withSuspense(<SwapTransactions />),

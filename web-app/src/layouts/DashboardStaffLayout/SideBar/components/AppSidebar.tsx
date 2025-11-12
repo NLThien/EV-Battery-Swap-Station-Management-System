@@ -38,13 +38,6 @@ const items = [
     icon: Inbox,
     activeIcon: Check,
   },
-  
-  {
-    title: "Quản lí giao dịch",
-    url: "/staff/inventory-management",
-    icon: Inbox,
-    activeIcon: Check,
-  },
 
   {
     title: "Quản lí kho",
