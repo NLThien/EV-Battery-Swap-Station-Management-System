@@ -1,81 +1,63 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./SwapTransactions.css";
 import { TransactionForm } from "./TransactionForm";
 
-
-// Định nghĩa kiểu dữ liệu
 export type SwapTransaction = {
-  swap_id: string;
-  driver_id: string;
-  station_id: string;
-  old_battery_id: string;
-  new_battery_id: string;
+  id?: number;
+  driverId: string;
+  stationId: string;
+  oldBatteryId: string;
+  newBatteryId: string;
   fee: number;
-  swap_time: string;
-  status: "completed" | "in-progress" | "failed";
+  timestamp: string;
+  status: "completed" | "inProgress" | "failed";
 };
 
+const API_URL = "http://localhost:8082/api/transactions"; 
+
 const SwapTransactions = () => {
+  const [transactions, setTransactions] = useState<SwapTransaction[]>([]);
   const [showForm, setShowForm] = useState(false);
 
-  // Dữ liệu demo hiển thị UI
-  const [transactions, setTransactions] = useState<SwapTransaction[]>([
-  {
-    swap_id: "SWAP001",
-    driver_id: "DRV1001",
-    station_id: "STA001",
-    old_battery_id: "BAT001",
-    new_battery_id: "BAT002",
-    fee: 50000,
-    swap_time: "2025-10-14T09:00:00",
-    status: "completed",
-  },
-  {
-    swap_id: "SWAP002",
-    driver_id: "DRV1002",
-    station_id: "STA002",
-    old_battery_id: "BAT010",
-    new_battery_id: "BAT020",
-    fee: 60000,
-    swap_time: "2025-10-14T11:30:00",
-    status: "in-progress",
-  },
-  {
-    swap_id: "SWAP003",
-    driver_id: "DRV1003",
-    station_id: "STA003",
-    old_battery_id: "BAT011",
-    new_battery_id: "BAT021",
-    fee: 55000,
-    swap_time: "2025-10-14T12:00:00",
-    status: "completed",
-  },
-  // ...more unique entries
-]);
-  
+  //Lấy danh sách giao dịch từ MySQL khi load trang
+  useEffect(() => {
+    axios
+      .get<SwapTransaction[]>(API_URL)
+      .then((res) => setTransactions(res.data))
+  }, []);
+
+  //Hàm thêm giao dịch mới (POST -> MySQL)
+  const handleAddTransaction = async (data: Omit<SwapTransaction, "id" | "timestamp">) => {
+    
+      const newTx: SwapTransaction = {
+        ...data,
+        timestamp: new Date().toISOString(),
+      };
+
+      const res = await axios.post<SwapTransaction>(API_URL, newTx);
+      setTransactions((prev) => [res.data, ...prev]); // cập nhật state ngay
+      setShowForm(false);
+    
+  };
+
+  const handleDelete = async (id?: number) => {
+    if (!id) return;
+    await axios.delete(`${API_URL}/${id}`);
+    setTransactions((prev) => prev.filter((tx) => tx.id !== id));
+  };
 
   const formatCurrency = (amount: number) =>
     amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
-  // Thêm giao dịch mới vào state (demo)
-  const handleAddTransaction = (data: Omit<SwapTransaction, 'swap_id' | 'swap_time'>) => {
-    const newTx: SwapTransaction = {
-      swap_id: `SWAP${Date.now()}`,
-      swap_time: new Date().toISOString(),
-      ...data,
-    };
-    setTransactions((prev) => [newTx, ...prev]);
-    setShowForm(false);
-  };
-
   return (
     <div className="transactions-page">
       <h1>⚡ Swap Transactions Management</h1>
-      <p>Trang quản lý giao dịch đổi pin - demo UI.</p>
+      <p>Trang quản lý giao dịch đổi pin (kết nối MySQL).</p>
 
-        <button className="add-button" onClick={() => setShowForm(true)}>
-          + Thêm giao dịch
-        </button>
+      <button className="add-button" onClick={() => setShowForm(true)}>
+        + Thêm giao dịch
+      </button>
 
       <div className="transaction-summary">
         <p>Tổng giao dịch: {transactions.length}</p>
@@ -98,32 +80,33 @@ const SwapTransactions = () => {
       <table className="transactions-table">
         <thead>
           <tr>
-            <th>Swap ID</th>
-            <th>Driver ID</th>
-            <th>Station ID</th>
+            <th>ID</th>
+            <th>Driver</th>
+            <th>Station</th>
             <th>Old Battery</th>
             <th>New Battery</th>
             <th>Fee (VND)</th>
             <th>Time</th>
             <th>Status</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((tx) => (
-            <tr key={tx.swap_id}>
-              <td>{tx.swap_id}</td>
-              <td>{tx.driver_id}</td>
-              <td>{tx.station_id}</td>
-              <td>{tx.old_battery_id}</td>
-              <td>{tx.new_battery_id}</td>
+            <tr key={tx.id}>
+              <td>{tx.id}</td>
+              <td>{tx.driverId}</td>
+              <td>{tx.stationId}</td>
+              <td>{tx.oldBatteryId}</td>
+              <td>{tx.newBatteryId}</td>
               <td>{formatCurrency(tx.fee)}</td>
-              <td>{new Date(tx.swap_time).toLocaleString()}</td>
+              <td>{new Date(tx.timestamp).toLocaleString()}</td>
               <td>
                 <span
                   className={`status-tag ${
                     tx.status === "completed"
                       ? "success"
-                      : tx.status === "in-progress"
+                      : tx.status === "inProgress"
                       ? "pending"
                       : "failed"
                   }`}
@@ -131,9 +114,15 @@ const SwapTransactions = () => {
                   {tx.status}
                 </span>
               </td>
+              <td>
+                <button className="delete-btn" onClick={() => handleDelete(tx.id)}>
+                  Xóa
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
+
       </table>
     </div>
   );

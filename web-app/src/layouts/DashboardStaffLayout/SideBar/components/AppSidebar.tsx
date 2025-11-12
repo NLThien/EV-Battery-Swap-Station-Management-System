@@ -38,10 +38,10 @@ const items = [
     icon: Inbox,
     activeIcon: Check,
   },
-  
+
   {
-    title: "Quản lí giao dịch",
-    url: "/staff/inventory-management",
+    title: "Quản lí kho",
+    url: "/staff/battery-inventory",
     icon: Inbox,
     activeIcon: Check,
   },

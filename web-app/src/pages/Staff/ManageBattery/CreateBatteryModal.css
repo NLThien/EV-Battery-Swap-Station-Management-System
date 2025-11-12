@@ -1,0 +1,34 @@
+/* ===== CreateBatteryModal.css ===== */
+.create-battery-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-item label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #2f3640;
+}
+
+.form-item .ant-input,
+.form-item .ant-input-number,
+.form-item .ant-select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #dcdde1;
+  transition: 0.2s;
+}
+
+.form-item .ant-input:focus,
+.form-item .ant-input-number:focus,
+.form-item .ant-select:focus {
+  border-color: #40739e;
+  box-shadow: 0 0 0 2px rgba(64, 115, 158, 0.2);
+}
