@@ -13,7 +13,7 @@ interface Battery{
   stationId: string;
 };
 
-const API_URL = "http://localhost:8082/api/inventory";
+const API_URL = "http://localhost:8083/api/inventory";
 
 const BatteryInventory = () => {
   const [batteries, setBatteries] = useState<Battery[]>([]);

@@ -10,7 +10,7 @@ interface ICModalProps {
 }
 
 const { Option } = Select;
-const API_URL = "http://localhost:8082/api/inventory";
+const API_URL = "http://localhost:8083/api/inventory";
 
 const CreateBatteryModal = ({ isOpen, setIsOpen, onAdded }: ICModalProps) => {
   const [model, setModel] = useState('');
