@@ -104,9 +104,9 @@ const FeedbackAdmin: React.FC = () => {
 
   // 📊 Thống kê
   const total = feedbacks.length;
-const responded = feedbacks.filter((f) => f.adminReply && f.adminReply.trim() !== "").length;
-const pending = total - responded; // ✅ Thêm dòng này
-const percent = total > 0 ? Math.round((responded / total) * 100) : 0;
+  const responded = feedbacks.filter((f) => f.adminReply && f.adminReply.trim() !== "").length;
+  const pending = total - responded;
+  const percent = total > 0 ? Math.round((responded / total) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">

@@ -17,6 +17,12 @@ export const stationService = {
     return response.json();
   },
 
+  // tạo id trạm mới theo format
+   generateStationId(): string {
+    const timestamp = Date.now().toString().slice(-6);
+    return `station_${timestamp}`;
+   },
+
   // Tạo trạm mới (admin)
   async createStation(stationData: any): Promise<Station> {
     const response = await fetch(`${API_BASE_URL}/stations`, {
@@ -39,6 +45,15 @@ export const stationService = {
     return response.json();
   },
 
+  // Cập nhật trạm theo status
+  async updateStationStatus(id: string, status: string): Promise<Station> {
+    const response = await fetch(`${API_BASE_URL}/stations/${id}/status?status=${status}`, {
+      method: 'PATCH',
+    });
+    if (!response.ok) throw new Error('Failed to update station status');
+    return response.json();
+  },
+
   // Xóa trạm (admin)
   async deleteStation(id: string): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/stations/${id}`, {
@@ -55,6 +70,13 @@ export const stationService = {
     
     const response = await fetch(`${API_BASE_URL}/stations/search?${params}`);
     if (!response.ok) throw new Error('Failed to search stations');
+    return response.json();
+  },
+
+  // Lấy trạm theo manager (nếu cần)
+  async getStationsByManager(managerId: string): Promise<Station[]> {
+    const response = await fetch(`${API_BASE_URL}/stations/manager/${managerId}`);
+    if (!response.ok) throw new Error('Failed to fetch manager stations');
     return response.json();
   }
 };
