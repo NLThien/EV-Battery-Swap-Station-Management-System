@@ -19,7 +19,7 @@ export async function Login(data: LoginRequest) {
     );
     if (response.data.code === 0 && response.data.result.authenticated) {
       const token = response.data.result.token;
-      // ⭐ LƯU TOKEN VÀO localStorage
+      // LƯU TOKEN VÀO localStorage
       localStorage.setItem("access_token", token);
 
       return response.data.result;

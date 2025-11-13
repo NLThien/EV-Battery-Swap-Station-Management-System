@@ -29,7 +29,7 @@ public class ApplicationInitConfig {
                User user = User
                        .builder()
                        .firstName("Admin")
-                       .phoneNumber("0123456789")
+                       .phoneNumber("+84123456789")
                        .password(passwordEncoder.encode("admin"))
                        .roles(roles)
                        .build();

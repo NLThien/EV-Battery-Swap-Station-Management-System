@@ -11,12 +11,15 @@ export function getToken() {
 }
 
 // Loader bảo vệ route
+// đoạn này sẽ custom tùy theo role
 export async function requireAuth({ request }: { request: Request }) {
   const token = getToken();
+
   if (!token) {
     const url = new URL(request.url);
     // chuyển hướng sang /login và nhớ đường dẫn gốc để quay lại
-    throw redirect(`/?from=${encodeURIComponent(url.pathname + url.search)}`);
+    throw redirect(`/?redirectTo=${encodeURIComponent(url.pathname)}`);
+  } else {
+    return null;
   }
-  return null; // OK → cho phép vào
 }

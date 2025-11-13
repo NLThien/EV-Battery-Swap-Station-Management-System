@@ -12,7 +12,7 @@ import NotFound from "./pages/NotFound/index.tsx";
 import { AuthProvider } from "./contexts/AuthContext.tsx";
 import { requireAuth } from "./utils/auth.ts";
 import SwapTransactions from "./pages/Staff/TransactionManagement/SwapTransaction.tsx";
-import { Progress } from "./components/ui/ProgressRadix.tsx";
+import { ProgressDemo } from "./components/ui/ProgressRadix.tsx";
 
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
@@ -33,16 +33,22 @@ const ManagePackage = React.lazy(() => import("./pages/PackageAdmin")); // quả
 // const TransactionManagement = React.lazy(
 //   () => import("./pages/Staff/TransactionManagement/SwapTransaction.tsx")        // xóa tạm để build docker, ông nào cần thì mở lại
 // );
-const StationStaff = React.lazy(() => import("./pages/Staff/StationStaff/index.tsx"));    // trang quản lí trạm dành cho nhân viên
-const InventoryStaff = React.lazy(() => import("./pages/InventoryManagement/index.tsx"));   // LÀM TRAN NÀY NHA PHÚC
-const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff"));      // trang báo cáo cho trạm
-const DashboardStaff = React.lazy(() => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx"));  // trang dashboard dành cho nhân viên
+const StationStaff = React.lazy(
+  () => import("./pages/Staff/StationStaff/index.tsx")
+); // trang quản lí trạm dành cho nhân viên
+const InventoryStaff = React.lazy(
+  () => import("./pages/InventoryManagement/index.tsx")
+); // LÀM TRAN NÀY NHA PHÚC
+const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff")); // trang báo cáo cho trạm
+const DashboardStaff = React.lazy(
+  () => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx")
+); // trang dashboard dành cho nhân viên
 
 const withSuspense = (el: ReactNode) => (
   <Suspense
     fallback={
-      <div className="p-6 w-100">
-        <Progress value={25} />
+      <div className="justify-center items-center p-6 w-100">
+        <ProgressDemo />
         <div>Đang tải...</div>
       </div>
     }
@@ -106,7 +112,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "transaction-management", // 
+        path: "transaction-management", //
         element: withSuspense(<SwapTransactions />),
       },
       {
