@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.station_management.model.dto.StationDetaiResponse;
+import com.example.station_management.model.dto.StationDetailResponse;
 import com.example.station_management.model.dto.StationDetailRequest;
 import com.example.station_management.model.entity.Station;
 import com.example.station_management.model.entity.StationDetail;
@@ -38,49 +38,49 @@ public class StationDetailController {
     private StationService stationService;
         
     @GetMapping
-    public ResponseEntity<List<StationDetaiResponse>> getAllStationDetails() {
-        List<StationDetaiResponse> details = stationDetailService.findAll()
+    public ResponseEntity<List<StationDetailResponse>> getAllStationDetails() {
+        List<StationDetailResponse> details = stationDetailService.findAll()
                 .stream()
-                .map(StationDetaiResponse::new)
+                .map(StationDetailResponse::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(details);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<StationDetaiResponse> getStationDetailById(@PathVariable String id) {
+    public ResponseEntity<StationDetailResponse> getStationDetailById(@PathVariable String id) {
         return stationDetailService.findById(id)
-                .map(detail -> ResponseEntity.ok(new StationDetaiResponse(detail)))
+                .map(detail -> ResponseEntity.ok(new StationDetailResponse(detail)))
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/station/{stationId}")
-    public ResponseEntity<StationDetaiResponse> getStationDetailByStationId(@PathVariable String stationId) {
+    public ResponseEntity<StationDetailResponse> getStationDetailByStationId(@PathVariable String stationId) {
         return stationDetailService.findByStationId(stationId)
-                .map(detail -> ResponseEntity.ok(new StationDetaiResponse(detail)))
+                .map(detail -> ResponseEntity.ok(new StationDetailResponse(detail)))
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/manager/{managerId}")
-    public ResponseEntity<List<StationDetaiResponse>> getStationDetailsByManager(@PathVariable String managerId) {
-        List<StationDetaiResponse> details = stationDetailService.findByManagerId(managerId)
+    public ResponseEntity<List<StationDetailResponse>> getStationDetailsByManager(@PathVariable String managerId) {
+        List<StationDetailResponse> details = stationDetailService.findByManagerId(managerId)
                 .stream()
-                .map(StationDetaiResponse::new)
+                .map(StationDetailResponse::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(details);
     }
     
     @GetMapping("/available-slots")
-    public ResponseEntity<List<StationDetaiResponse>> getStationsWithAvailableSlots(
+    public ResponseEntity<List<StationDetailResponse>> getStationsWithAvailableSlots(
             @RequestParam(defaultValue = "1") Integer minSlots) {
-        List<StationDetaiResponse> details = stationDetailService.findStationsWithAvailableSlots(minSlots)
+        List<StationDetailResponse> details = stationDetailService.findStationsWithAvailableSlots(minSlots)
                 .stream()
-                .map(StationDetaiResponse::new)
+                .map(StationDetailResponse::new)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(details);
     }
     
     @PostMapping
-    public ResponseEntity<StationDetaiResponse> createStationDetail(@Valid @RequestBody StationDetailRequest request) {
+    public ResponseEntity<StationDetailResponse> createStationDetail(@Valid @RequestBody StationDetailRequest request) {
         // Kiểm tra xem station đã có detail chưa
         if (stationDetailService.existsByStationId(request.getStationId())) {
             return ResponseEntity.badRequest().build();
@@ -88,11 +88,11 @@ public class StationDetailController {
         
         StationDetail stationDetail = convertToEntity(request);
         StationDetail savedDetail = stationDetailService.save(stationDetail);
-        return ResponseEntity.ok(new StationDetaiResponse(savedDetail));
+        return ResponseEntity.ok(new StationDetailResponse(savedDetail));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<StationDetaiResponse> updateStationDetail(
+    public ResponseEntity<StationDetailResponse> updateStationDetail(
             @PathVariable String id, 
             @Valid @RequestBody StationDetailRequest request) {
         
@@ -100,32 +100,32 @@ public class StationDetailController {
                 .map(existingDetail -> {
                     StationDetail updatedDetail = updateEntity(existingDetail, request);
                     StationDetail savedDetail = stationDetailService.save(updatedDetail);
-                    return ResponseEntity.ok(new StationDetaiResponse(savedDetail));
+                    return ResponseEntity.ok(new StationDetailResponse(savedDetail));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @PatchMapping("/{id}/available-slots")
-    public ResponseEntity<StationDetaiResponse> updateAvailableSlots(
+    public ResponseEntity<StationDetailResponse> updateAvailableSlots(
             @PathVariable String id, 
             @RequestParam Integer availableSlots) {
         
         try {
             StationDetail updatedDetail = stationDetailService.updateAvailableSlots(id, availableSlots);
-            return ResponseEntity.ok(new StationDetaiResponse(updatedDetail));
+            return ResponseEntity.ok(new StationDetailResponse(updatedDetail));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
     
     @PatchMapping("/{id}/power-usage")
-    public ResponseEntity<StationDetaiResponse> updatePowerUsage(
+    public ResponseEntity<StationDetailResponse> updatePowerUsage(
             @PathVariable String id, 
             @RequestParam Integer currentPowerUsage) {
         
         try {
             StationDetail updatedDetail = stationDetailService.updatePowerUsage(id, currentPowerUsage);
-            return ResponseEntity.ok(new StationDetaiResponse(updatedDetail));
+            return ResponseEntity.ok(new StationDetailResponse(updatedDetail));
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }

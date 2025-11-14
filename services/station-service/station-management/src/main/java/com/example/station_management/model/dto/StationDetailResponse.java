@@ -1,8 +1,12 @@
 package com.example.station_management.model.dto;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class StationDetailRequest {
+import com.example.station_management.model.entity.StationDetail;
+
+public class StationDetailResponse {
+    private String id;
     private String stationId;
     private String managerId;
     private Integer totalSlots;
@@ -14,11 +18,32 @@ public class StationDetailRequest {
     private String contactPhone;
     private String contactEmail;
     private String supportHours;
-    
-    // Constructors, Getters, Setters...
-    public StationDetailRequest() {}
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    public StationDetailResponse() {}
+
+    public StationDetailResponse(StationDetail stationDetail) {
+        this.id = stationDetail.getId();
+        this.stationId = stationDetail.getStation() != null ? stationDetail.getStation().getId() : null;
+        this.managerId = stationDetail.getManagerId();
+        this.totalSlots = stationDetail.getTotalSlots();
+        this.availableSlots = stationDetail.getAvailableSlots();
+        this.totalBattery = stationDetail.getTotalBattery();
+        this.totalPowerCapacity = stationDetail.getTotalPowerCapacity();
+        this.currentPowerUsage = stationDetail.getCurrentPowerUsage();
+        this.operationalHours = stationDetail.getOperationalHours();
+        this.contactPhone = stationDetail.getContactPhone();
+        this.contactEmail = stationDetail.getContactEmail();
+        this.supportHours = stationDetail.getSupportHours();
+        this.createdAt = stationDetail.getCreatedAt();
+        this.updatedAt = stationDetail.getUpdatedAt();
+    }
     
     // Getters and Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    
     public String getStationId() { return stationId; }
     public void setStationId(String stationId) { this.stationId = stationId; }
     
@@ -51,14 +76,21 @@ public class StationDetailRequest {
     
     public String getSupportHours() { return supportHours; }
     public void setSupportHours(String supportHours) { this.supportHours = supportHours; }
+    
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    // equals() method
+        // equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        StationDetailRequest that = (StationDetailRequest) o;
-        return Objects.equals(stationId, that.stationId) &&
+        StationDetailResponse that = (StationDetailResponse) o;
+        return Objects.equals(id, that.id) &&
+               Objects.equals(stationId, that.stationId) &&
                Objects.equals(managerId, that.managerId) &&
                Objects.equals(totalSlots, that.totalSlots) &&
                Objects.equals(availableSlots, that.availableSlots) &&
@@ -68,22 +100,26 @@ public class StationDetailRequest {
                Objects.equals(operationalHours, that.operationalHours) &&
                Objects.equals(contactPhone, that.contactPhone) &&
                Objects.equals(contactEmail, that.contactEmail) &&
-               Objects.equals(supportHours, that.supportHours);
+               Objects.equals(supportHours, that.supportHours) &&
+               Objects.equals(createdAt, that.createdAt) &&
+               Objects.equals(updatedAt, that.updatedAt);
     }
 
     // hashCode() method
     @Override
     public int hashCode() {
-        return Objects.hash(stationId, managerId, totalSlots, availableSlots, totalBattery,
-                           totalPowerCapacity, currentPowerUsage, operationalHours,
-                           contactPhone, contactEmail, supportHours);
+        return Objects.hash(id, stationId, managerId, totalSlots, availableSlots, 
+                           totalBattery, totalPowerCapacity, currentPowerUsage,
+                           operationalHours, contactPhone, contactEmail, supportHours,
+                           createdAt, updatedAt);
     }
 
     // toString() method
     @Override
     public String toString() {
-        return "StationDetailRequest{" +
-                "stationId='" + stationId + '\'' +
+        return "StationDetailResponse{" +
+                "id='" + id + '\'' +
+                ", stationId='" + stationId + '\'' +
                 ", managerId='" + managerId + '\'' +
                 ", totalSlots=" + totalSlots +
                 ", availableSlots=" + availableSlots +
@@ -94,6 +130,8 @@ public class StationDetailRequest {
                 ", contactPhone='" + contactPhone + '\'' +
                 ", contactEmail='" + contactEmail + '\'' +
                 ", supportHours='" + supportHours + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
