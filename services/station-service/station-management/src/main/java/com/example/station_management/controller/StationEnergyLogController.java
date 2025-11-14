@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.station_management.model.dto.StationEnergyLogRequest;
 import com.example.station_management.model.dto.StationEnergyLogResponse;
+import com.example.station_management.model.entity.Station;
 import com.example.station_management.model.entity.StationEnergyLog;
 import com.example.station_management.service.StationEnergyLogService;
+import com.example.station_management.service.StationService;
 
 @RestController
 @RequestMapping("/api/energy-logs")
@@ -29,7 +31,10 @@ public class StationEnergyLogController {
     
     @Autowired
     private StationEnergyLogService energyLogService;
-    
+
+    @Autowired
+    private StationService stationService;
+
     @GetMapping
     public ResponseEntity<List<StationEnergyLogResponse>> getAllLogs() {
         List<StationEnergyLogResponse> logs = energyLogService.findAll()
@@ -48,11 +53,13 @@ public class StationEnergyLogController {
     
     @PostMapping
     public ResponseEntity<StationEnergyLogResponse> createLog(@RequestBody StationEnergyLogRequest request) {
-        // Cần thêm logic để chuyển từ Request -> Entity
-        // Giả sử có service để xử lý conversion
-        StationEnergyLog log = convertToEntity(request);
-        StationEnergyLog savedLog = energyLogService.save(log);
-        return ResponseEntity.ok(new StationEnergyLogResponse(savedLog));
+        try {
+            StationEnergyLog log = convertToEntity(request);
+            StationEnergyLog savedLog = energyLogService.save(log);
+            return ResponseEntity.ok(new StationEnergyLogResponse(savedLog));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
     
     @GetMapping("/station/{stationId}")
@@ -89,16 +96,19 @@ public class StationEnergyLogController {
     }
     
     private StationEnergyLog convertToEntity(StationEnergyLogRequest request) {
-        // Cần inject StationService để lấy Station entity
-        // Đây là logic mẫu
+        // Tìm station theo ID, nếu không tìm thấy thì throw exception
+        Station station = stationService.findById(request.getStationId())
+                .orElseThrow(() -> new IllegalArgumentException("Station not found with id: " + request.getStationId()));
+        
         StationEnergyLog log = new StationEnergyLog();
-        // log.setStation(stationService.findById(request.getStationId()));
+        log.setStation(station);
         log.setEnergyConsumed(request.getEnergyConsumed());
         log.setPowerDemand(request.getPowerDemand());
         log.setVoltage(request.getVoltage());
         log.setCurrent(request.getCurrent());
-        log.setLoggedAt(request.getLoggedAt());
+        log.setLoggedAt(request.getLoggedAt() != null ? request.getLoggedAt() : LocalDateTime.now());
         log.setTimeSlot(request.getTimeSlot());
+        
         return log;
     }
 }

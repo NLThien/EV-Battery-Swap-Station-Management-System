@@ -40,7 +40,7 @@ public class StationEnergyLogResponse {
     public void setId(String id) {this.id = id;}
 
     public String getStationId() {return stationId;}
-    public void getStation(String StationId) {this.stationId = StationId;}
+    public void setStationId(String StationId) {this.stationId = StationId;}
 
     public Double getEnergyConsumed() {return energyConsumed;}
     public void setEnergyConsumed(Double energyConsumed) {this.energyConsumed = energyConsumed;}
@@ -69,11 +69,11 @@ public class StationEnergyLogResponse {
     public LocalDateTime getCreatedAt() {return createdAt;}
     public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
 
-    //hashcode
+    // hashCode() method
     @Override
     public int hashCode() {
         return Objects.hash(id, stationId, energyConsumed, powerDemand, voltage,
-         current, co2Saved, equivalentTrees, loggedAt, timeSlot);
+                           current, co2Saved, equivalentTrees, loggedAt, timeSlot, createdAt);
     }
 
     //equals method
@@ -100,15 +100,15 @@ public class StationEnergyLogResponse {
     public String toString() {
         return  "StationEnergyLogResponse{" +
                 "id='" + id + '\'' +
-                ", name='" + stationId + '\'' +
-                ", address='" + energyConsumed + '\'' +
-                ", latitude=" + powerDemand +
-                ", longitude=" + voltage +
-                ", totalSlots=" + current +
-                ", availableSlots=" + co2Saved +
-                ", status=" + equivalentTrees +
+                ", stationId='" + stationId + '\'' +
+                ", energyConsumed='" + energyConsumed + '\'' +
+                ", powerDemand=" + powerDemand +
+                ", voltage=" + voltage +
+                ", current=" + current +
+                ", co2Saved=" + co2Saved +
+                ", equivalentTrees=" + equivalentTrees +
                 ", managerId='" + loggedAt + '\'' +
-                ", updatedAt=" + timeSlot +
+                ", timeSlot=" + timeSlot +
                 ", createdAt=" + createdAt +
                 '}';
     }
