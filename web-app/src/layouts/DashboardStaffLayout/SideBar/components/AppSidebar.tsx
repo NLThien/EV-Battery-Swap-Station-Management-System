@@ -1,9 +1,12 @@
 import {
+  ArrowLeftRight,
   Check,
   ChevronUp,
+  ClipboardMinus,
   Home,
-  Inbox,
   LogOut,
+  LucideBatteryCharging,
+  LucideEvCharger,
   Settings,
   User,
   User2,
@@ -36,27 +39,27 @@ const items = [
   {
     title: "Quản lí trạm",
     url: "/staff/stations",
-    icon: Inbox,
+    icon: LucideEvCharger,
     activeIcon: Check,
   },
 
   {
-    title: "Quản lí giao dịch",
+    title: "Quản lí tồn kho pin",
     url: "/staff/inventory-management",
-    icon: Inbox,
+    icon: LucideBatteryCharging,
     activeIcon: Check,
   },
 
   {
     title: "Quản lí giao dịch",
     url: "/staff/transaction-management",
-    icon: Inbox,
+    icon: ArrowLeftRight,
     activeIcon: Check,
   },
   {
     title: "Báo cáo",
     url: "/staff/reports",
-    icon: Settings,
+    icon: ClipboardMinus,
     activeIcon: Check,
   },
 ];

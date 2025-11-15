@@ -6,7 +6,7 @@ export interface LoginRequest {
   password: string;
 }
 
-interface LoginResponse {
+export interface LoginResponse {
   token: string;
   authenticated: boolean;
 }
@@ -21,7 +21,6 @@ export async function Login(data: LoginRequest) {
       const token = response.data.result.token;
       // LƯU TOKEN VÀO localStorage
       localStorage.setItem("access_token", token);
-
       return response.data.result;
     }
   } catch (error) {

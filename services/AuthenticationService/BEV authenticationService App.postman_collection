@@ -13,31 +13,40 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
-						]
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZmU2NjI4ZjctN2E2MS00NGZkLWI3N2QtNDJhMDNlNThmYzMzIiwiZXhwIjoxNzYyNjc5OTQ5LCJpYXQiOjE3NjI2NzYzNDksImp0aSI6IjliNDQ2M2U2LTBiNDUtNGRjYS1iNjMxLTgwNWQ1MmY4N2FlMCIsInNjb3BlIjoiQURNSU4ifQ.At_GqsMuds4XhbM_UQCfx_Rbxn0QCE01_jU1GS_1V84bt1-aLw7Zw_Y0CcFg8tNUibB4IkH5ghaoYZZ8BuUBcw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "http://localhost:8080/authentication/users/e9549641-7a77-40d1-822b-2c7745d4aaca",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"authentication",
+						"users",
+						"e9549641-7a77-40d1-822b-2c7745d4aaca"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -50,31 +59,39 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});"
-						]
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZmU2NjI4ZjctN2E2MS00NGZkLWI3N2QtNDJhMDNlNThmYzMzIiwiZXhwIjoxNzYyNjc5OTQ5LCJpYXQiOjE3NjI2NzYzNDksImp0aSI6IjliNDQ2M2U2LTBiNDUtNGRjYS1iNjMxLTgwNWQ1MmY4N2FlMCIsInNjb3BlIjoiQURNSU4ifQ.At_GqsMuds4XhbM_UQCfx_Rbxn0QCE01_jU1GS_1V84bt1-aLw7Zw_Y0CcFg8tNUibB4IkH5ghaoYZZ8BuUBcw",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "http://localhost:8080/authentication/users",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"authentication",
+						"users"
 					]
 				},
 				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
@@ -87,22 +104,26 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Successful POST request\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
 							"});",
 							""
-						]
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "noauth"
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+					"raw": "{\n\"firstName\":\"Nguyen\",\n\"lastName\":\"Hoang\",\n\"birthday\":\"2004-02-22\",\n\"phoneNumber\":\"+84336066701\",\n\"email\":\"sonhoangdz73@gmail.com\",\n\"password\":\"07032004\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -110,12 +131,15 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info",
+					"raw": "http://localhost:8080/authentication/users",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
+						"authentication",
+						"users"
 					]
 				},
 				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
@@ -222,17 +246,28 @@
 				{
 					"listen": "test",
 					"script": {
-						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Successful DELETE request\", function () {",
 							"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
 							"});",
 							""
-						]
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiMDEyMzQ1Njc4OSIsImV4cCI6MTc2MTU4NDk5OCwiaWF0IjoxNzYxNTgxMzk4LCJzY29wZSI6IkFETUlOIn0.6Robk57knmlGVwnqBq495ptcJ3-99oTiCA2Y8De1yKxquVRTDDWYd8bGeQwbnyr_F8ZMsiDGNiVQihqEqMMHwQ",
+							"type": "string"
+						}
+					]
+				},
 				"method": "DELETE",
 				"header": [],
 				"body": {
@@ -245,18 +280,16 @@
 					}
 				},
 				"url": {
-					"raw": "{{base_url}}/info?id=1",
+					"raw": "http://localhost:8080/authentication/users/e13fa467-0d3b-4356-b478-7f7723dc2062",
+					"protocol": "http",
 					"host": [
-						"{{base_url}}"
+						"localhost"
 					],
+					"port": "8080",
 					"path": [
-						"info"
-					],
-					"query": [
-						{
-							"key": "id",
-							"value": "1"
-						}
+						"authentication",
+						"users",
+						"e13fa467-0d3b-4356-b478-7f7723dc2062"
 					]
 				},
 				"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -266,8 +299,39 @@
 		{
 			"name": "login",
 			"request": {
-				"method": "GET",
-				"header": []
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phoneNumber\":\"h123456789\",\r\n    \"password\":\"07032004\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"login"
+					]
+				}
 			},
 			"response": []
 		},
@@ -306,48 +370,224 @@
 		{
 			"name": "Get Myinfor",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZmU2NjI4ZjctN2E2MS00NGZkLWI3N2QtNDJhMDNlNThmYzMzIiwiZXhwIjoxNzYyODM0NDExLCJpYXQiOjE3NjI4MzA4MTEsImp0aSI6IjM3NmI5YjVhLTM4MGUtNDI0ZS1hYzJlLTFkOGY5ODhjZDFiMCIsInNjb3BlIjoiQURNSU4ifQ.nyhtllhwRvAWgWP-Eaq9v9jklZjcjp4R82JwIVLsuP3sk6bBFk1R7SXu0Ey8lnJpPwxf8A_tMpf4KOcsrABLIA",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/authentication/users/myInfo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"users",
+						"myInfo"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "edit myinfo",
 			"request": {
-				"method": "GET",
-				"header": []
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZTk1NDk2NDEtN2E3Ny00MGQxLTgyMmItMmM3NzQ1ZDRhYWNhIiwiZXhwIjoxNzYyNjIxNzgzLCJpYXQiOjE3NjI2MTgxODMsInNjb3BlIjoiVVNFUiJ9.J17ob6Laekr5thTkzzbMP4Rfv7QyKwQxFP-ogEPFnSdnJMtKdIuJfYp6RotTSNmCSt08mT3onOc84ofjwHJxmg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \t\"firstName\":\"Hoang test put infor\",\r\n    \"lastName\":\"Nguyen Son\",\r\n    \"email\":\"sonhoangdz73@gmail.com\",\r\n    \"phoneNumber\":\"0336066705\",\r\n    \"birthday\":\"2004-07-03\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/users/myInfo",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"users",
+						"myInfo"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "setRole",
 			"request": {
-				"method": "GET",
-				"header": []
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiMDEyMzQ1Njc4OSIsImV4cCI6MTc2MjE4ODk2NiwiaWF0IjoxNzYyMTg1MzY2LCJzY29wZSI6IkFETUlOIn0.lb3l_Ej0msKlFVbiaKvS4j_RkGrByrXtLBzFl182sFFMMTtir8B3b5MdJ3wK30Phkj0QfXGSYSCS-_ReucK6OQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"role\":\"staff\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/users/5a3f864a-349d-4644-9b4c-f3663f183914/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"users",
+						"5a3f864a-349d-4644-9b4c-f3663f183914",
+						"role"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "update password Myinfo",
 			"request": {
-				"method": "GET",
-				"header": []
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiNjQyNGExNWUtMWIxNC00ODI1LThlNzItMDlkNzE5MmY3NmNjIiwiZXhwIjoxNzYyNTE0MjkwLCJpYXQiOjE3NjI1MTA2OTAsInNjb3BlIjoiVVNFUiJ9.REBWFFRv7NNgAzjbdB2-68vZ9YLjG3u-pmoa2irlQ7B6K0lUoxQOVlZxjruVVGP6p2HAeKyu2LMbGznRiLC9BA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"currentPassword\":\"12345677\",\r\n    \"newPassword\":\"07032004\",\r\n    \"confirmNewPassword\":\"07032004\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/users/myInfo/changePassword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"users",
+						"myInfo",
+						"changePassword"
+					],
+					"query": [
+						{
+							"key": "phoneNumber",
+							"value": "+84 778036414",
+							"disabled": true
+						}
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "logout",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
-				"method": "GET",
-				"header": []
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\": \"eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZmU2NjI4ZjctN2E2MS00NGZkLWI3N2QtNDJhMDNlNThmYzMzIiwiZXhwIjoxNzYyNzA5ODUyLCJpYXQiOjE3NjI3MDYyNTIsImp0aSI6Ijc3OTUyOWM2LTFjYjktNDRlZS1iNTY1LTI2YTJjZDBhODQ0YyIsInNjb3BlIjoiQURNSU4ifQ.vr_T3EJyrNUHFMHFSSBMbUUiZSN4xCvQxMReAVDoP1oPzb-NRy2Celw7lvWTU4Khzi8AFNQI6kuqAzBD27Q3Bg\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"logout"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "refreshToken",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"token\":\"eyJhbGciOiJIUzUxMiJ9.eyJpc3MiOiJOZ3V5ZW4gU29uIGhvYW5nIiwic3ViIjoiZmU2NjI4ZjctN2E2MS00NGZkLWI3N2QtNDJhMDNlNThmYzMzIiwiZXhwIjoxNzYyNzY1NjU5LCJpYXQiOjE3NjI3NjU2MzksImp0aSI6ImJiOWJiMGFkLWU0MGEtNDE4NC05NmVhLTJkM2VhYmYwMmI5MCIsInNjb3BlIjoiQURNSU4ifQ.9B1_v5HJpO2ScmO2x4qjTNufKBD1n6Qy1O8OynLLq4q6qu6Ag1JIM1e4NAvKDY6lVYpuCAjx5fsGTkJROkd-SA\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/authentication/refresh",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"authentication",
+						"refresh"
+					]
+				}
 			},
 			"response": []
 		}

@@ -10,9 +10,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "./pages/NotFound/index.tsx";
 
 import { AuthProvider } from "./contexts/AuthContext.tsx";
-import { requireAuth } from "./utils/auth.ts";
+// import { requireAuth, requireRole } from "./utils/auth.ts";
 import SwapTransactions from "./pages/Staff/TransactionManagement/SwapTransaction.tsx";
 import { ProgressDemo } from "./components/ui/ProgressRadix.tsx";
+import { requireRole, testAuth } from "./utils/auth.ts";
 
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
@@ -60,9 +61,9 @@ const withSuspense = (el: ReactNode) => (
 const router = createBrowserRouter([
   {
     path: "/admin",
-    loader: requireAuth,
+    loader: requireRole(["ADMIN"]),
     element: withSuspense(<DashboardLayout />),
-    errorElement: withSuspense(<NotFound />),
+    errorElement: withSuspense(<NotFound role="ADMIN" />),
     children: [
       // các trang con năm trong layout Dashboard
       {
@@ -93,9 +94,9 @@ const router = createBrowserRouter([
   },
   {
     path: "/staff",
-    loader: requireAuth,
+    loader: requireRole(["STAFF"]),
     element: withSuspense(<DashboardStaffLayout />),
-    errorElement: withSuspense(<NotFound />),
+    errorElement: withSuspense(<NotFound role="STAFF" />),
     children: [
       // các trang con năm trong layout Dashboard
       {
@@ -123,8 +124,10 @@ const router = createBrowserRouter([
   },
   {
     path: "/",
+    loader: testAuth,
     element: withSuspense(<HomeLayout />),
     errorElement: withSuspense(<NotFound />),
+    // loader: requireAuth,
     children: [
       //các màn hình con trong trang home
       {

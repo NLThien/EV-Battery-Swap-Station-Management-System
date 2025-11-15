@@ -67,7 +67,7 @@ function HomeLayout() {
       if (res) {
         //cái này tùy có thể chuyển hướng để admin hoặc staff tùy vai trò role
         console.log("Đăng nhập thành công");
-
+        navigate("/admin");
         setIsLoading(false);
         return res;
       }

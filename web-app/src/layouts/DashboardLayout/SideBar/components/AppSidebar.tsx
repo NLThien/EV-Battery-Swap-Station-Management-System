@@ -2,6 +2,7 @@ import {
   Calendar,
   Check,
   ChevronUp,
+  ClipboardMinus,
   Home,
   Inbox,
   LogOut,
@@ -63,7 +64,7 @@ const items = [
   {
     title: "Báo cáo",
     url: "/admin/reports",
-    icon: Settings,
+    icon: ClipboardMinus,
     activeIcon: Check,
   },
 ];

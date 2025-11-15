@@ -17,7 +17,7 @@ export interface UserResponse {
   birthDate: string;
   phoneNumber: string;
   email: string;
-  role: string;
+  roles: string[];
   createdAt: string;
   updatedAt: string;
 }
