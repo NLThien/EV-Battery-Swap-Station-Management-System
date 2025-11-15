@@ -43,6 +43,13 @@ spring:
             - Path=/payment/sepay_webhook
           filters:
             - RewritePath=/payment/(?<segment>.*), /${segment}
+      
+      - id: payment-service-simulate
+          uri: lb://payment-services
+          predicates:
+            - Path=/payment/simulate-success
+          filters:
+            - RewritePath=/payment/(?<segment>.*), /${segment}
 
         - id: order-service
           uri: lb://order-service

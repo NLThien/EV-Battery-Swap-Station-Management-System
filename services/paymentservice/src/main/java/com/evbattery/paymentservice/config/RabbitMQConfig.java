@@ -1,15 +1,18 @@
 package com.evbattery.paymentservice.config;
 
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfig {
-    public static final String PAYMENT_COMPLETED_QUEUE = "payment.completed";
+public class RabbitMQConfig {
+
+    @Value("${queue.name}")
+    private String queueName;
 
     @Bean
-    public Queue paymentCompletedQueue() {
-        return new Queue(PAYMENT_COMPLETED_QUEUE, true);
+    public Queue queue() {
+        return new Queue(queueName, true); 
     }
 }

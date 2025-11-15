@@ -1,11 +1,8 @@
 package com.evbattery.paymentservice.dto;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Data
-public class SepayWebhookPayload {
-    private String orderId; // here we expect gatewayTxnRef
-    private String status; // SUCCESS | FAILED
-    private String signature; // sepay signature
-    private double amount;
-}
+public record SepayWebhookPayload(
+    @JsonProperty("order_id") String orderId,
+    @JsonProperty("status") String status
+) {}

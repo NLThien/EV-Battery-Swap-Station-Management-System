@@ -1,10 +1,7 @@
 package com.evbattery.paymentservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import java.io.Serializable;
 
-@Data
-@AllArgsConstructor
-public class PaymentCompletedEvent {
-    private String orderId;
-}
+public record PaymentCompletedEvent(
+    String orderId
+) implements Serializable {}

@@ -1,10 +1,10 @@
 server:
-  port: 8082
+  port: 3002
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/payment_service?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
+    url: jdbc:mysql://localhost:3306/payment_service?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
+    username: root
     password: ${SPRING_DATASOURCE_PASSWORD:rootpassword}
   jpa:
     hibernate:
@@ -12,22 +12,18 @@ spring:
     show-sql: true
 
 # Rabbit (docker-compose sẽ chạy rabbitmq)
-spring:
   rabbitmq:
-    host: ${RABBIT_HOST:rabbitmq}
-    port: ${RABBIT_PORT:5672}
-    username: ${RABBIT_USERNAME:guest}
-    password: ${RABBIT_PASSWORD:guest}
+    host: localhost
+    # port: ${RABBIT_PORT:5672}
+    # username: ${RABBIT_USERNAME:guest}
+    # password: ${RABBIT_PASSWORD:guest}
 
-# Optional: Eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://eureka-server:8761/eureka/}
+queue:
+  name: PAYMENT_COMPLETED_QUEUE
 
-# SEPay config (demo)
 sepay:
-  merchant-id: ${SEPAY_MERCHANT_ID:your_merchant_id}
-  secret-key: ${SEPAY_SECRET_KEY:your_secret}
-  api-url: ${SEPAY_API_URL:https://sandbox.sepay.vn/transaction/create}
-  callback-path: ${SEPAY_CALLBACK_PATH:/api/payment/webhook}
+  webhook-secret: "spsk_test_A3mvDnHRPqw1fZ7S8rzN9J1UWaRT1PDF"
+  
+  bank-account: "68209022004"
+  bank-name: "TPBank"
+  default-description: "TKPDHD"

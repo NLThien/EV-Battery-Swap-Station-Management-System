@@ -1,4 +1,4 @@
-package com.evbattery.paymentservice.dto;
+package com.evbattery.order_service.dto;
 
 public record PaymentRequest(
     String orderId,
