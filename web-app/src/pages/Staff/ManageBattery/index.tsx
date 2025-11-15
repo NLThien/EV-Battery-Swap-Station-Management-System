@@ -1,5 +1,11 @@
+import BatteryInventory from "./BatteryInventory";
+
 function ManageBattery() {
-  return <h1 className="">ManegeBattery</h1>;
+  return (
+    <div>
+      <BatteryInventory />
+    </div>
+  );
 }
 
 export default ManageBattery;

@@ -44,9 +44,9 @@ const items = [
   },
 
   {
-    title: "Quản lí tồn kho pin",
-    url: "/staff/inventory-management",
-    icon: LucideBatteryCharging,
+    title: "Quản lí kho",
+    url: "/staff/battery-inventory",
+    icon: Inbox,
     activeIcon: Check,
   },
 

@@ -1,15 +1,20 @@
 package com.example.station_management.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import com.example.station_management.model.enums.StationStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -71,95 +76,69 @@ public class Station {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    // RELATIONS
+    @OneToOne(mappedBy = "station", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private StationDetail stationDetail;
+    
+    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StationEnergyLog> energyLogs;
+    
+    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChargingSession> chargingSessions;
+    
+    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL, fetch = FetchType.LAZY) 
+    private List<StationAlert> alerts;
+
     // GETTERS và SETTERS
-    public String getId() {
-        return id;
-    }
+    public String getId() {return id;}
+    public void setId(String id) {this.id = id;}
     
-    public void setId(String id) {
-        this.id = id;
-    }
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
     
-    public String getName() {
-        return name;
-    }
+    public String getAddress() {return address;}
+    public void setAddress(String address) {this.address = address;}
     
-    public void setName(String name) {
-        this.name = name;
-    }
+    public Double getLatitude() {return latitude;}
+    public void setLatitude(Double latitude) {this.latitude = latitude;}
     
-    public String getAddress() {
-        return address;
-    }
+    public Double getLongitude() {return longitude;}
+    public void setLongitude(Double longitude) {this.longitude = longitude;}
     
-    public void setAddress(String address) {
-        this.address = address;
-    }
+    public Integer getTotalSlots() {return totalSlots;}
+    public void setTotalSlots(Integer totalSlots) {this.totalSlots = totalSlots;}
     
-    public Double getLatitude() {
-        return latitude;
-    }
+    public Integer getAvailableSlots() {return availableSlots;}
+    public void setAvailableSlots(Integer availableSlots) {this.availableSlots = availableSlots;}
     
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
+    public StationStatus getStatus() {return status;}
+    public void setStatus(StationStatus status) {this.status = status;}
     
-    public Double getLongitude() {
-        return longitude;
-    }
+    public String getManagerId() {return managerId;}
+    public void setManagerId(String managerId) {this.managerId = managerId;}
+
+    public LocalDateTime getCreatedAt() {return createdAt;}
+    public void setCreatedAt(LocalDateTime createdAt) {this.createdAt = createdAt;}
     
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
+    public LocalDateTime getUpdatedAt() {return updatedAt;}
+    public void setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
+
+
+    // Relations getters/setters (uncomment when entities are created)
+    public StationDetail getStationDetail() { return stationDetail; }
+    public void setStationDetail(StationDetail stationDetail) { this.stationDetail = stationDetail; }
     
-    public Integer getTotalSlots() {
-        return totalSlots;
-    }
+    public List<StationEnergyLog> getEnergyLogs() { return energyLogs; }
+    public void setEnergyLogs(List<StationEnergyLog> energyLogs) { this.energyLogs = energyLogs; }
     
-    public void setTotalSlots(Integer totalSlots) {
-        this.totalSlots = totalSlots;
-    }
+    public List<ChargingSession> getChargingSessions() { return chargingSessions; }
+    public void setChargingSessions(List<ChargingSession> chargingSessions) { this.chargingSessions = chargingSessions; }
     
-    public Integer getAvailableSlots() {
-        return availableSlots;
-    }
-    
-    public void setAvailableSlots(Integer availableSlots) {
-        this.availableSlots = availableSlots;
-    }
-    
-    public StationStatus getStatus() {
-        return status;
-    }
-    
-    public void setStatus(StationStatus status) {
-        this.status = status;
-    }
-    
-    public String getManagerId() {
-        return managerId;
-    }
-    
-    public void setManagerId(String managerId) {
-        this.managerId = managerId;
-    }
-    
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-    
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    
+    public List<StationAlert> getAlerts() { return alerts; }
+    public void setAlerts(List<StationAlert> alerts) { this.alerts = alerts; }
+
+
     // equals() và hashCode()
     @Override
     public boolean equals(Object o) {
@@ -167,14 +146,14 @@ public class Station {
         if (o == null || getClass() != o.getClass()) return false;
         Station station = (Station) o;
         return Objects.equals(id, station.id) &&
-               Objects.equals(name, station.name) &&
-               Objects.equals(address, station.address) &&
-               Objects.equals(latitude, station.latitude) &&
-               Objects.equals(longitude, station.longitude) &&
-               Objects.equals(totalSlots, station.totalSlots) &&
-               Objects.equals(availableSlots, station.availableSlots) &&
-               status == station.status &&
-               Objects.equals(managerId, station.managerId);
+                Objects.equals(name, station.name) &&
+                Objects.equals(address, station.address) &&
+                Objects.equals(latitude, station.latitude) &&
+                Objects.equals(longitude, station.longitude) &&
+                Objects.equals(totalSlots, station.totalSlots) &&
+                Objects.equals(availableSlots, station.availableSlots) &&
+                status == station.status &&
+                Objects.equals(managerId, station.managerId);
     }
     
     @Override
@@ -194,7 +173,7 @@ public class Station {
                 ", totalSlots=" + totalSlots +
                 ", availableSlots=" + availableSlots +
                 ", status=" + status +
-                ", managerId='" + managerId + '\'' +
+                ", managerId='" + managerId + '\'' +                                                             
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 '}';

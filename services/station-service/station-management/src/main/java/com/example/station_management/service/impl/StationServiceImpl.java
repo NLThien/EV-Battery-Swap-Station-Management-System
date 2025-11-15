@@ -2,6 +2,7 @@ package com.example.station_management.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -47,6 +48,12 @@ public class StationServiceImpl implements StationService {
         Station station = stationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Station not found with id: " + id));
         return mapToResponseWithBatteryInfo(station);
+    }
+
+    @Override
+    public Optional<Station> findById(String id) {
+        log.debug("Finding station entity by id: {}", id);
+        return stationRepository.findById(id);
     }
     
     @Override
