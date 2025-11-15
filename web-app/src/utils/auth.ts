@@ -124,6 +124,7 @@ export function requireRole(requiredRoles: string[]) {
       }
     } catch (error) {
       console.log("token không hợp lệ:" + error);
+      localStorage.removeItem("access_token");
       throw redirect("/");
     }
 
