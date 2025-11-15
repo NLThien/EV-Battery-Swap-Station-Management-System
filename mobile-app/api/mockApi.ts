@@ -7,7 +7,10 @@ export const User = {
   birthday: "07/03/2004",
 };
 export type FeedbackItem = {
-  id: number;
+  id: string;
+  userId: string;
+  userName: string;
   description: string;
   createdAt: string;
+  adminReply?: string;
 };

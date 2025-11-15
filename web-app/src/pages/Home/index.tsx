@@ -66,7 +66,7 @@ const Home = () => {
               </div>
             </div>
 
-            <Link to="/stations" className="cta-button">
+            <Link to="/stationDetail" className="cta-button">
               Khám phá trạm ngay →
             </Link>
           </div>

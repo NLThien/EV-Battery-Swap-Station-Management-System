@@ -4,17 +4,21 @@ import com.example.station_management.model.dto.StationRequest;
 import com.example.station_management.model.dto.StationResponse;
 import com.example.station_management.service.StationService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/stations")
-@RequiredArgsConstructor
+
 public class StationController {
     
     private final StationService stationService;
+
+    // về lại constructor thủ công thay vì lombok, vì lombok hay lỗi quá
+    public StationController(StationService stationService) {
+        this.stationService = stationService;
+    }
     
     @GetMapping
     public ResponseEntity<List<StationResponse>> getAllStations() {

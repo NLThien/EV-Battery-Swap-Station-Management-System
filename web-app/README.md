@@ -18,3 +18,9 @@ npm run dev -- --port 3001
 
 # Cài đặt các package cần thiết
 npm install axios react-router-dom
+
+## Cài đặt thư viện Leaflet - miễn phí(dùng map)
+    npm install leaflet react-leaflet
+
+    // tải thêm cho typescripts
+    npm install @types/leaflet

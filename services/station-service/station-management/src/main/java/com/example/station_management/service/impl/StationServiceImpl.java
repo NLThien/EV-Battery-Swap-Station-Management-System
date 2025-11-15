@@ -2,29 +2,38 @@ package com.example.station_management.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.example.station_management.model.dto.StationRequest;
 import com.example.station_management.model.dto.StationResponse;
 import com.example.station_management.model.entity.Station;
+import com.example.station_management.model.enums.BatteryStationStatus;
 import com.example.station_management.model.enums.StationStatus;
+import com.example.station_management.repository.StationBatteryRepository;
 import com.example.station_management.repository.StationRepository;
 import com.example.station_management.service.StationService;
 import com.example.station_management.service.client.BatteryServiceClient;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class StationServiceImpl implements StationService {
     
     private final StationRepository stationRepository;
     private final BatteryServiceClient batteryServiceClient;
+    private final StationBatteryRepository stationBatteryRepository;
+    private final Logger log = LoggerFactory.getLogger(StationServiceImpl.class); // Logger thủ công
     
+    // Constructor 
+    public StationServiceImpl(StationRepository stationRepository, BatteryServiceClient batteryServiceClient, StationBatteryRepository stationBatteryRepository) {
+        this.stationRepository = stationRepository;
+        this.batteryServiceClient = batteryServiceClient;
+        this.stationBatteryRepository = stationBatteryRepository;
+    }
+
     @Override
     public List<StationResponse> getAllStations() {
         log.info("Fetching all stations");
@@ -39,6 +48,12 @@ public class StationServiceImpl implements StationService {
         Station station = stationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Station not found with id: " + id));
         return mapToResponseWithBatteryInfo(station);
+    }
+
+    @Override
+    public Optional<Station> findById(String id) {
+        log.debug("Finding station entity by id: {}", id);
+        return stationRepository.findById(id);
     }
     
     @Override
@@ -70,6 +85,8 @@ public class StationServiceImpl implements StationService {
         station.setAddress(request.getAddress());
         station.setLatitude(request.getLatitude());
         station.setLongitude(request.getLongitude());
+        station.setAvailableSlots(request.getAvailableSlots());
+        station.setStatus(request.getStatus());
         
         // Update available slots if total slots changed
         if (!station.getTotalSlots().equals(request.getTotalSlots())) {
@@ -150,19 +167,33 @@ public class StationServiceImpl implements StationService {
         response.setUpdatedAt(station.getUpdatedAt());
         return response;
     }
-    
-    private StationResponse mapToResponseWithBatteryInfo(Station station) {
+
+private StationResponse mapToResponseWithBatteryInfo(Station station) {
         StationResponse response = mapToResponse(station);
         
         try {
-            // Gọi battery service để lấy thông tin pin
-            Map<String, Integer> batteryStats = batteryServiceClient.getBatteryStatsByStation(station.getId());
-            response.setAvailableBatteries(batteryStats.get("available"));
-            response.setInUseBatteries(batteryStats.get("inUse"));
+            // ƯU TIÊN: Dùng StationBattery để lấy thông tin pin
+            Long availableCount = stationBatteryRepository.countByStationIdAndStatus(
+                station.getId(), BatteryStationStatus.AVAILABLE);
+            Long inUseCount = stationBatteryRepository.countByStationIdAndStatus(
+                station.getId(), BatteryStationStatus.IN_USE);
+            
+            response.setAvailableBatteries(availableCount != null ? availableCount.intValue() : 0);
+            response.setInUseBatteries(inUseCount != null ? inUseCount.intValue() : 0);
+            
         } catch (Exception e) {
-            log.warn("Failed to fetch battery info for station {}: {}", station.getId(), e.getMessage());
-            response.setAvailableBatteries(0);
-            response.setInUseBatteries(0);
+            log.warn("Failed to fetch battery info from local DB, trying battery service...");
+            
+            // FALLBACK: Gọi battery service nếu local DB fail
+            try {
+                Map<String, Integer> batteryStats = batteryServiceClient.getBatteryStatsByStation(station.getId());
+                response.setAvailableBatteries(batteryStats.getOrDefault("available", 0));
+                response.setInUseBatteries(batteryStats.getOrDefault("inUse", 0));
+            } catch (Exception ex) {
+                log.warn("Failed to fetch battery info from service for station {}: {}", station.getId(), ex.getMessage());
+                response.setAvailableBatteries(0);
+                response.setInUseBatteries(0);
+            }
         }
         return response;
     }

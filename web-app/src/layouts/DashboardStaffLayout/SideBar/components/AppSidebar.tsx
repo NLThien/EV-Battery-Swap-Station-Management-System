@@ -40,6 +40,13 @@ const items = [
   },
 
   {
+    title: "Quản lí kho",
+    url: "/staff/battery-inventory",
+    icon: Inbox,
+    activeIcon: Check,
+  },
+
+  {
     title: "Quản lí giao dịch",
     url: "/staff/transaction-management",
     icon: Inbox,

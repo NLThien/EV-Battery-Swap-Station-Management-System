@@ -75,3 +75,31 @@ docker run -d `
   -p 3307:3306 `
   -v mysql_data:/var/lib/mysql `
   mysql:8.0
+
+## kiểm tra biến môi trường đã trống chưa khi chạy dev local(khi chạy docker thì mới dùng)
+  echo $env:SPRING_PROFILES_ACTIVE 
+
+## hoặc cấu hình cho có thể dùng cho cả 2 môi trường:
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Station Service (DEV)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/services/station-service/station-management",
+            "mainClass": "com.example.station_management.StationManagementApplication",
+            "projectName": "station-management",
+            "args": "--spring.profiles.active=dev"
+        },
+        {
+            "type": "java",
+            "name": "Station Service (DOCKER)",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/services/station-service/station-management",
+            "mainClass": "com.example.station_management.StationManagementApplication", 
+            "projectName": "station-management",
+            "args": "--spring.profiles.active=docker",
+            "envFile": "${workspaceFolder}/.env"  // dùng biến môi trường cho docker
+        }
+    ]
+}
