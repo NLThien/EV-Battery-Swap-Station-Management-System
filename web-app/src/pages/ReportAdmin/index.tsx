@@ -3,7 +3,7 @@ import React, { useState, useMemo } from "react";
 type Transaction = {
   id: string;
   stationId: string;
-  type: "swap" | "rental";
+  type: "swap" | "rental" ;
   amount: number;
   date: string;
   hour?: number;
@@ -34,13 +34,13 @@ const STATIONS = [
 
 // 🔹 Giả lập dữ liệu giao dịch
 const MOCK_TRANSACTIONS: Transaction[] = [
-  { id: "1", stationId: "s1", type: "swap", amount: 50_000_000, date: new Date().toISOString(), hour: 9, packageName: "Gói tiêu chuẩn" },
-  { id: "2", stationId: "s1", type: "swap", amount: 120_000_000, date: new Date(Date.now() - 86400000).toISOString(), hour: 14, packageName: "Gói cơ bản" },
-  { id: "3", stationId: "s2", type: "rental", amount: 200_000_000, date: new Date(Date.now() - 2 * 86400000).toISOString(), hour: 17, packageName: "Gói VIP" },
+  { id: "1", stationId: "s1", type: 'swap', amount: 50_000_000, date: new Date().toISOString(), hour: 9, packageName: "Gói tiêu chuẩn" },
+  { id: "2", stationId: "s1", type: 'swap', amount: 120_000_000, date: new Date(Date.now() - 86400000).toISOString(), hour: 14, packageName: "Gói cơ bản" },
+  { id: "3", stationId: "s2", type: 'rental', amount: 200_000_000, date: new Date(Date.now() - 2 * 86400000).toISOString(), hour: 17, packageName: "Gói VIP" },
   ...Array.from({ length: 40 }).map((_, i) => ({
     id: `t-${i}`,
     stationId: STATIONS[Math.floor(Math.random() * STATIONS.length)].id,
-    type: Math.random() > 0.5 ? "swap" : "rental",
+    type: Math.random() > 0.5 ? "swap" : "rental" as "swap" | "rental",
     amount: 30_000_000 + Math.random() * 150_000_000,
     date: new Date(Date.now() - Math.floor(Math.random() * 7) * 86400000).toISOString(),
     hour: Math.floor(Math.random() * 24),
@@ -212,10 +212,14 @@ const AdminReportDashboard: React.FC = () => {
           const maxValue = Math.max(...groupedData.map(([_, v]) => v)) || 1;
           const height = (value / (maxValue * 1.1)) * 200;
           return (
-            <div key={i} className="flex flex-col items-center w-10 relative group">
+            <div key={i} className="flex flex-col items-center w-10 relative group hover:z-10 overflow-visible">
               <div
                 className="absolute bottom-full mb-1 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2 whitespace-nowrap"
-                style={{ transform: "translateY(-4px)" }}
+                style={{ 
+                  backgroundColor: 'rgba(62, 41, 41, 0.75)',
+                  color: '#8df0efff',
+                  transform: "translateY(-4px)",
+                 }}
               >
                 {label}: {value.toLocaleString()}₫
               </div>
@@ -242,7 +246,10 @@ const AdminReportDashboard: React.FC = () => {
           <div key={i} className="flex flex-col items-center w-10 relative group">
             <div
               className="absolute bottom-full mb-1 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2"
-              style={{ transform: "translateY(-4px)" }}
+              style={{ 
+                backgroundColor: 'rgba(62, 41, 41, 0.75)',
+                color: '#8df0efff',
+                transform: "translateY(-4px)" }}
             >
               {count} lượt
             </div>
@@ -263,7 +270,7 @@ const AdminReportDashboard: React.FC = () => {
   {/* Giờ cao điểm - chiếm 2/3 */}
   <div className="md:col-span-2 bg-white p-4 rounded shadow">
     <h2 className="font-semibold text-lg mb-2 text-center">Giờ cao điểm (0h - 23h)</h2>
-    <div className="relative w-full h-64 flex items-end gap-[3px] border-l border-b border-gray-300 px-4 overflow-x-auto">
+    <div className="relative w-full h-64 flex items-end gap-[3px] border-l border-b border-gray-300 px-4 overflow-hidden">
       {Array.from({ length: 24 }).map((_, hour) => {
         // Lấy số lượt tương ứng giờ này (nếu không có => 0)
         const found = peakHourData.find(([h]) => h === hour);
@@ -273,12 +280,15 @@ const AdminReportDashboard: React.FC = () => {
         const height = count > 0 ? (count / (maxVal * 1.1)) * 200 : 0;
 
         return (
-          <div key={hour} className="flex flex-col items-center w-6 relative group">
+          <div key={hour} className="flex flex-col items-center w-6 relative group hover:z-10 overflow-visible">
             {/* Tooltip khi hover */}
             {count > 0 && (
               <div
-                className="absolute bottom-full mb-1 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2 whitespace-nowrap"
-                style={{ transform: "translateY(-4px)" }}
+                className="absolute bottom-full mb-1 hidden group-hover:block bg-black text-white text-xs rounded py-1 px-2 whitespace-nowrap z-20"
+                style={
+                  { backgroundColor: 'rgba(62, 41, 41, 0.75)',
+                  color: '#8df0efff',
+                  transform: "translateY(-4px)" }}
               >
                 {hour}h: {count} lượt
               </div>
@@ -301,7 +311,7 @@ const AdminReportDashboard: React.FC = () => {
   </div>
 
   {/* Top 5 gói thuê - chiếm 1/3 */}
-  <div className="bg-white p-4 rounded shadow">
+  <div className="bg-white p-4 rounded shadow flex flex-col h-full">
     <h2 className="font-semibold text-lg mb-2 text-center">Top 5 gói thuê phổ biến nhất</h2>
     <table className="min-w-full border text-sm">
       <thead className="bg-gray-100">
@@ -353,7 +363,8 @@ const AdminReportDashboard: React.FC = () => {
       {visibleRows < filteredData.length && (
         <div className="text-center mt-4">
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition"
+            className="px-4 py-2 text-white rounded shadow hover:opacity-80 transition"
+            style={{backgroundColor: "#8df0efff"}}
             onClick={() => setVisibleRows((prev) => prev + 10)}
           >
             Xem thêm

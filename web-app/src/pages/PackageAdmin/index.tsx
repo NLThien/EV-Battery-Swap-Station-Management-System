@@ -136,7 +136,7 @@ const AdminPackage: React.FC = () => {
       </h1>
 
       {/* Form thêm/sửa gói */}
-      <form onSubmit={handleSubmit} noValidate className="rounded-xl shadow-md p-6 mb-6 border" style={{ backgroundColor: "var(--surface)", borderColor: "var(--matching-color-light)", boxShadow: "var(--shadow-md)" }}>
+      <form onSubmit={handleSubmit} noValidate className="rounded-xl shadow-md p-6 mb-6 border" style={{ backgroundColor: "var(--surface)", boxShadow: "var(--shadow-md)" }}>
         <h2 className="text-xl font-semibold mb-4" style={{ color: "var(--info-color)" }}>
           {editingPackageId ? "Cập nhật gói thuê" : "Thêm gói thuê mới"}
         </h2>
@@ -149,7 +149,7 @@ const AdminPackage: React.FC = () => {
               value={formData.type}
               onChange={handleChange}
               className="w-full border rounded-lg p-2 focus:outline-none"
-              style={{ borderColor: "var(--matching-color-light)", boxShadow: "0 0 0 2px var(--success-light)" }}
+              style={{ boxShadow: "0 0 0 2px var(--success-light)" }}
             >
               <option>Ngày</option>
               <option>Tuần</option>
@@ -168,7 +168,7 @@ const AdminPackage: React.FC = () => {
               placeholder="VD: 2"
               min={1}
               max={10}
-              style={{ borderColor: "var(--matching-color-light)", boxShadow: "0 0 0 2px var(--success-light)" }}
+              style={{ boxShadow: "0 0 0 2px var(--success-light)" }}
             />
           </div>
 
@@ -180,7 +180,7 @@ const AdminPackage: React.FC = () => {
               onChange={handleChange}
               className="w-full border rounded-lg p-2 focus:outline-none"
               placeholder="Nhập mô tả gói thuê..."
-              style={{ borderColor: "var(--matching-color-light)", boxShadow: "0 0 0 2px var(--success-light)" }}
+              style={{  boxShadow: "0 0 0 2px var(--success-light)" }}
             />
           </div>
 
@@ -194,7 +194,7 @@ const AdminPackage: React.FC = () => {
               className="w-full border rounded-lg p-2 focus:outline-none "
               placeholder="VD: 150000"
               min={1}
-              style={{ borderColor: "var(--matching-color-light)", boxShadow: "0 0 0 2px var(--success-light), " }}
+              style={{ boxShadow: "0 0 0 2px var(--success-light) " }}
             />
           </div>
         </div>
