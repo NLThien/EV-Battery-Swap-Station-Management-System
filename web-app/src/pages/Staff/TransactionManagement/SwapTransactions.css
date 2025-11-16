@@ -153,3 +153,27 @@
     color: #475569;
   }
 }
+
+.transactions-table td {
+  vertical-align: middle; /* Canh giữa dọc */
+}
+
+.transactions-table td .delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;      /* Canh giữa dọc trong nút */
+  justify-content: center;  /* Canh giữa ngang */
+  min-width: 60px;
+  height: 36px;
+}
+
+.transactions-table td .delete-btn:hover {
+  background-color: #d9363e;
+}
+

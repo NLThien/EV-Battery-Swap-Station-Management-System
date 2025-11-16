@@ -152,3 +152,42 @@
     transform: rotate(360deg);
   }
 }
+
+.add-battery-button {
+  margin: 20px 0;
+  text-align: right; /* Canh button sang phải */
+}
+
+.add-battery-button button {
+  background-color: #4caf50; /* màu xanh lá */
+  color: white; /* chữ màu trắng */
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px; /* bo tròn */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-battery-button button:hover {
+  background-color: #45a049; /* hover màu đậm hơn */
+  transform: translateY(-2px); /* nhấc lên một chút khi hover */
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* thêm bóng */
+}
+
+.add-battery-button button:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.delete-btn {
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.delete-btn:hover {
+  background-color: #ff7875;
+}

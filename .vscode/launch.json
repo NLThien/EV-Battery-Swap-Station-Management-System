@@ -29,6 +29,16 @@
             "projectName": "package-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-StationManagementApplication<station-management>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.example.station_management.StationManagementApplication",
+            "projectName": "station-management",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
