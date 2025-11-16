@@ -1,9 +1,13 @@
 import {
+  ArrowLeftRight,
   Check,
   ChevronUp,
+  ClipboardMinus,
   Home,
   Inbox,
   LogOut,
+  // LucideBatteryCharging,
+  LucideEvCharger,
   Settings,
   User,
   User2,
@@ -28,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { CSSProperties } from "react";
+import { Logout } from "@/api/authentication/logout";
 
 // Menu items.
 const items = [
@@ -35,7 +40,7 @@ const items = [
   {
     title: "Quản lí trạm",
     url: "/staff/stations",
-    icon: Inbox,
+    icon: LucideEvCharger,
     activeIcon: Check,
   },
 
@@ -49,18 +54,22 @@ const items = [
   {
     title: "Quản lí giao dịch",
     url: "/staff/transaction-management",
-    icon: Inbox,
+    icon: ArrowLeftRight,
     activeIcon: Check,
   },
   {
     title: "Báo cáo",
     url: "/staff/reports",
-    icon: Settings,
+    icon: ClipboardMinus,
     activeIcon: Check,
   },
 ];
 
 export function AppSidebar() {
+  const onClickLogout = async () => {
+    await Logout();
+  };
+
   return (
     <Sidebar
       className="border-r bg-white text-slate-700 dark:bg-zinc-900 dark:text-zinc-100"
@@ -174,7 +183,10 @@ export function AppSidebar() {
                     "hover:bg-red-50 focus:bg-red-50",
                     "dark:hover:bg-red-950/40 dark:focus:bg-red-950/40",
                   ].join(" ")}
-                  // onSelect={(e) => { e.preventDefault(); logout(); }}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    onClickLogout();
+                  }}
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Đăng xuất</span>

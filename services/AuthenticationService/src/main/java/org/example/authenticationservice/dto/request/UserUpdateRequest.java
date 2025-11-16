@@ -25,9 +25,8 @@ public class UserUpdateRequest {
             message = "Phone number format is invalid (e.g., 0xxxxxxxxx or +84xxxxxxxxx)"
     )
     String phoneNumber;
-    @Size(min=8,message = "password must be at least 8 character and max 20 character ")
-    String password;
+
     LocalDate birthday;
-    String role;
+
 
 }
