@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -45,7 +46,21 @@ public class UserController {
         return ApiResponse.<List<User>>builder().result(userService.getAllUsers()).build();
     }
 
-//này laf xem thông tin cá nhân của 1 user cũng chỉ admin mới xem đc
+
+    @GetMapping("/search")
+    public ApiResponse<List<UserResponse>> searchUser(@RequestParam String phoneNumber) {
+
+        List<UserResponse> users = userService.findUserByPhoneNumber(phoneNumber);
+
+        return ApiResponse.<List<UserResponse>>builder()
+                .code(200)
+                .message("Success")
+                .result(users)
+                .build();
+    }
+
+
+    //này laf xem thông tin cá nhân của 1 user cũng chỉ admin mới xem đc
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUserById(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder().result(userService.getUserById(userId)).build();

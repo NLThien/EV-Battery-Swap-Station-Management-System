@@ -1,5 +1,5 @@
-import type { ReactNode } from 'react';
-import { createContext, useContext, useState } from 'react';
+import type { ReactNode } from "react";
+import { createContext, useContext, useState } from "react";
 
 // Định nghĩa kiểu dữ liệu
 interface User {
@@ -26,13 +26,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Mock login - sau này thay bằng API
       const mockUser: User = {
-        id: '1',
-        name: 'Nguyen Van A',
-        email: email
+        id: "1",
+        name: "Nguyen Van A",
+        email: email,
       };
       setUser(mockUser);
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error("Login failed:", error);
     } finally {
       setLoading(false);
     }
@@ -46,20 +46,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     user,
     login,
     logout,
-    loading
+    loading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

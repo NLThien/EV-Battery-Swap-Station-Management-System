@@ -131,6 +131,20 @@ public class UserService {
 
     }
 
+//    tìm kiếm user theo số điện thoại
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> findUserByPhoneNumber(String phoneNumber) {
+        List<User> users = userRepository.findByPhoneNumberContaining(phoneNumber);
+
+        if (users.isEmpty()) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+
+        return users.stream()
+                .map(userMapper::toUserResponse)
+                .toList();
+    }
+
     //cai này đáng phải là chỉ dùng đc cho admin
     @PreAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(UserUpdateRequest updateUser, String userId) {

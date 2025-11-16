@@ -166,8 +166,13 @@ export function AppSidebar() {
                     "dark:hover:bg-zinc-800 dark:focus:bg-zinc-800",
                   ].join(" ")}
                 >
-                  <User className="h-4 w-4" />
-                  <span>Thông tin tài khoản</span>
+                  <NavLink
+                    to={"/admin/my-info"}
+                    className={"flex flex-row gap-2 "}
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="text-slate-700">Thông tin tài khoản</span>
+                  </NavLink>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
