@@ -7,9 +7,9 @@ spring:
   # Cấu hình CSDL (MySQL)
   datasource:
     # 'mysql' là tên service trong docker-compose.yml
-    url: jdbc:mysql://localhost:3306/order_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
+    url: "jdbc:mysql://localhost:3306/order_db"
     username: root
-    password: ${SPRING_DATASOURCE_PASSWORD:rootpassword}
+    password: 0942868460
   jpa:
     hibernate:
       ddl-auto: update # Tự động cập nhật bảng
@@ -22,13 +22,6 @@ spring:
   rabbitmq:
     host: localhost # 'rabbitmq' là tên service trong docker-compose.yml
 
-# Cấu hình Eureka
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_URL:http://localhost:8761/eureka/}
-  instance:
-    prefer-ip-address: true
 
 # Tên hàng đợi
 queue:

@@ -1,13 +1,11 @@
 package com.evbattery.paymentservice.controller;
 
-import com.evbattery.paymentservice.dto.PaymentCompletedEvent;
-import com.evbattery.paymentservice.dto.PaymentRequest;
-import com.evbattery.paymentservice.dto.SepayWebhookPayload;
-import com.evbattery.paymentservice.dto.UserResponse;
-import com.evbattery.paymentservice.entity.PaymentLog;
-import com.evbattery.paymentservice.repository.PaymentLogRepository;
-import com.evbattery.paymentservice.service.HmacService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,27 +15,35 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
+import com.evbattery.paymentservice.dto.PaymentCompletedEvent; // (MỚI) Import
+import com.evbattery.paymentservice.dto.PaymentRequest;
+import com.evbattery.paymentservice.dto.SepayWebhookPayload;
+import com.evbattery.paymentservice.dto.UserResponse;
+import com.evbattery.paymentservice.entity.PaymentLog;
+import com.evbattery.paymentservice.repository.PaymentLogRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/")
 public class PaymentController {
 
     private final PaymentLogRepository paymentLogRepository;
     private final RabbitTemplate rabbitTemplate;
     private final Queue queue;
-    private final HmacService hmacService;
+    // private final HmacService hmacService; // (XÓA)
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     
-    // Cấu hình Sepay
-    private final String sepayWebhookSecret;
+    private final String sepayWebhookApiKey; // (MỚI)
     private final String sepayBankAccount;
     private final String sepayBankName;
     private final String sepayDefaultDescription;
@@ -47,10 +53,10 @@ public class PaymentController {
             PaymentLogRepository paymentLogRepository,
             RabbitTemplate rabbitTemplate,
             Queue queue,
-            HmacService hmacService,
+            // HmacService hmacService, // (XÓA)
             ObjectMapper objectMapper,
-            RestTemplate restTemplate, // Bean từ Application.java
-            @Value("${sepay.webhook-secret}") String sepayWebhookSecret,
+            RestTemplate restTemplate,
+            @Value("${sepay.webhook-api-key}") String sepayWebhookApiKey, // (MỚI)
             @Value("${sepay.bank-account}") String sepayBankAccount,
             @Value("${sepay.bank-name}") String sepayBankName,
             @Value("${sepay.default-description}") String sepayDefaultDescription) {
@@ -58,16 +64,18 @@ public class PaymentController {
         this.paymentLogRepository = paymentLogRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.queue = queue;
-        this.hmacService = hmacService;
+        // this.hmacService = hmacService; // (XÓA)
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
-        this.sepayWebhookSecret = sepayWebhookSecret;
+        this.sepayWebhookApiKey = sepayWebhookApiKey; // (MỚI)
         this.sepayBankAccount = sepayBankAccount;
         this.sepayBankName = sepayBankName;
         this.sepayDefaultDescription = sepayDefaultDescription;
     }
 
-
+    /**
+     * Endpoint nội bộ, được OrderService gọi.
+     */
     @PostMapping("/create-payment-request")
     public ResponseEntity<Object> createPaymentRequest(
             @RequestBody PaymentRequest request,
@@ -82,7 +90,7 @@ public class PaymentController {
         log.setStationId(request.stationId());
         log.setGatewayTxnRef(gatewayTxnRef);
 
-        // 1. (MỚI) Gọi Auth Service để lấy thông tin User
+        // 1. Gọi Auth Service để lấy thông tin User
         if (token != null) {
             try {
                 HttpHeaders headers = new HttpHeaders();
@@ -106,6 +114,8 @@ public class PaymentController {
                 System.err.println("Không lấy được thông tin user: " + e.getMessage());
                 log.setUserInfo("Unknown User");
             }
+        } else {
+             log.setUserInfo("Test User (No Token)");
         }
 
         // 2. Lưu log PENDING
@@ -131,25 +141,27 @@ public class PaymentController {
         }
     }
 
-    /**
-     * Endpoint công khai, được Sepay gọi.
-     */
+    
     @PostMapping("/sepay_webhook")
     public ResponseEntity<String> handleSepayWebhook(
-            @RequestBody String rawPayload,
-            @RequestHeader("X-Sepay-Signature") String signatureFromHeader) {
+            @RequestBody SepayWebhookPayload payload,
+            @RequestHeader("Authorization") String authorizationHeader) { // Nhận header "Authorization"
         try {
-            if (!hmacService.isValidSignature(rawPayload, signatureFromHeader, sepayWebhookSecret)) {
-                return ResponseEntity.status(400).body("Invalid signature");
+            String expectedAuthHeader = "Apikey " + sepayWebhookApiKey;
+
+            if (authorizationHeader == null || !Objects.equals(authorizationHeader, expectedAuthHeader)) {
+            
+                 return ResponseEntity.status(401).body("Invalid or missing API Key");
             }
             
-            SepayWebhookPayload payload = objectMapper.readValue(rawPayload, SepayWebhookPayload.class);
+            // 3. Tìm log
             PaymentLog log = paymentLogRepository.findByGatewayTxnRef(payload.orderId()).orElse(null);
             
             if (log == null || !"PENDING".equals(log.getStatus())) {
                 return ResponseEntity.badRequest().body("Giao dịch không hợp lệ");
             }
 
+            // 4. Cập nhật trạng thái
             if ("SUCCESS".equals(payload.status())) {
                 log.setStatus("PAID");
                 paymentLogRepository.save(log);
@@ -165,13 +177,15 @@ public class PaymentController {
         }
     }
 
-    /**
-     * Endpoint để lấy lịch sử giao dịch (cho App gọi)
-     */
+    
     @GetMapping("/transactions")
     public ResponseEntity<Object> getTransactionHistory(
-            @RequestHeader("X-User-Id") String userId,
-            @RequestHeader("X-User-Role") String userRole) {
+            @RequestHeader(name = "X-User-Id", required = false) String userId,
+            @RequestHeader(name = "X-User-Role", required = false) String userRole) {
+        
+        // mock dữ liệu khi chạy local
+        if (userId == null) userId = "TEST_USER_ID_MOCK";
+        if (userRole == null) userRole = "admin"; 
         
         List<PaymentLog> transactions;
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
@@ -187,14 +201,10 @@ public class PaymentController {
         return ResponseEntity.ok(Map.of("transactions", transactions));
     }
 
-    /**
-     Endpoint Giả lập Test (dùng cho đồ án)
-     * 
-     */
+    //giả lập thanh toán
     @GetMapping("/simulate-success")
     public ResponseEntity<String> simulateSepaySuccess(@RequestParam String orderId) {
         
-        // Dùng Order ID để tìm
         PaymentLog log = paymentLogRepository.findByOrderId(orderId).orElse(null);
         
         if (log == null || !"PENDING".equals(log.getStatus())) {
@@ -205,7 +215,7 @@ public class PaymentController {
         paymentLogRepository.save(log);
         
         rabbitTemplate.convertAndSend(queue.getName(), new PaymentCompletedEvent(log.getOrderId()));
-
+        
         return ResponseEntity.ok("Đã giả lập thanh toán THÀNH CÔNG cho đơn hàng: " + orderId);
     }
 }
