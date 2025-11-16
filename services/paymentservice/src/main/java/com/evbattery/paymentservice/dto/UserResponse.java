@@ -1,6 +1,5 @@
 package com.evbattery.paymentservice.dto;
 
-import java.time.LocalDate;
 import java.util.Set;
 
 public record UserResponse(

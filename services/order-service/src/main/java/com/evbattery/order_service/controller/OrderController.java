@@ -34,14 +34,14 @@ public class OrderController {
 
     @PostMapping("/")
     public ResponseEntity<Object> createOrder(
-            // (SỬA) Thêm (required = false) để cho phép test
+
             @RequestHeader(name = "X-User-Id", required = false) String userId,
             @RequestHeader(name = "X-User-Email", required = false) String userEmail,
             @RequestHeader(name = "Authorization", required = false) String token,
             @RequestBody OrderRequest orderRequest
     ) {
         
-        // (SỬA) Thêm logic giả lập (Mock) nếu header bị thiếu
+        // mock dữ liệu khi chạy local
         if (userId == null) {
             userId = "TEST_USER_ID"; // Dữ liệu giả
         }
@@ -66,7 +66,7 @@ public class OrderController {
         );
         
         HttpHeaders headers = new HttpHeaders();
-        // (SỬA) Chỉ gửi token nếu nó tồn tại
+        // Chỉ gửi token nếu nó tồn tại
         if (token != null) {
             headers.set("Authorization", token);
         }
@@ -103,7 +103,7 @@ public class OrderController {
             @RequestHeader(name = "X-User-Id", required = false) String userId, 
             @RequestHeader(name = "X-User-Role", required = false) String userRole) { 
         
-        // (SỬA) Thêm logic giả lập (Mock)
+        // mock dữ liệu khi chạy local
         if (userId == null) {
             userId = "TEST_USER_ID"; 
         }
