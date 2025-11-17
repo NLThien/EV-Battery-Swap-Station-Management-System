@@ -1,0 +1,20 @@
+server:
+  port: 8080       # trong Docker bạn nên dùng 8080
+  servlet:
+    context-path: /authentication
+
+spring:
+  datasource:
+    url: "jdbc:mysql://mysql:3306/AuthenticationService"
+    username: evuser
+    password: evpass123
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+jwt:
+  signerKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjE0OTAzOTgsImV4cCI6MTc2MTQ5Mzk5OCwianRpIjoiNzY4MTMxMTEtMTI2Zi00NTVlLTkwMmEtOWE2OTZkYmUzNDYzIiwiaXNzIjoiYXBpLmV4YW1wbGUuY29tIiwic3ViIjoidXNlcl8xNjM5IiwiYXVkIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSJ9.B1QrS7RqtTpjL_cA1RkRwU7dCWOmWvOEN6PZUlaRzyY"
+  valid-duration: 3600
+  refreshable-duration: 36000

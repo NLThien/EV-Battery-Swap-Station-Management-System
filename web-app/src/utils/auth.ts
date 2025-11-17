@@ -94,7 +94,8 @@ export function requireRole(requiredRoles: string[]) {
 
             return redirect(`/staff`);
           }
-          return redirect("/not-authorized");
+          localStorage.removeItem("access_token");
+          return redirect("/not-permission");
         }
         return null;
       } else {
@@ -117,7 +118,8 @@ export function requireRole(requiredRoles: string[]) {
               // có thể gọi API lấy thông tin của trạm gắn với staff nếu cần
               return redirect(`/staff`);
             }
-            return redirect("/not-authorized");
+            localStorage.removeItem("access_token");
+            return redirect("/not-permission");
           }
           return null;
         }

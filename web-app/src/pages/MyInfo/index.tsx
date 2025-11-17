@@ -1,29 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import ButtonGroup from "./component/ButtonGroup";
 import MyInfoCard from "./component/MyInfoCard";
-import type { UserResponse } from "@/api/authentication/register";
-import { MyInfo } from "@/api/authentication/myInfo";
+
+// import { useAuth } from "@/hooks/useAuth";
+
+import { useAuth } from "@/hooks/useAuth";
 
 function MyInfoPage() {
-  const [userInfo, setUserInfor] = useState<UserResponse | null>(null);
+  // const [userInfo, setUserInfor] = useState<UserResponse | null>(null);
+  const { user, refreshUser } = useAuth();
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const user = await MyInfo();
-        if (user) {
-          setUserInfor(user);
-        }
-      } catch (error) {
-        console.log("lỗi: " + error);
-        throw error;
-      }
-    };
-    getUser();
+    refreshUser();
   }, []);
 
   return (
-    <div className="p-4">
-      {userInfo && <MyInfoCard user={userInfo} />}
+    <div className=" p-4">
+      {user && <MyInfoCard user={user} />}
       <ButtonGroup />
     </div>
   );

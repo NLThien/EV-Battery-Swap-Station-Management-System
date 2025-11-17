@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { CSSProperties } from "react";
 import { Logout } from "@/api/authentication/logout";
+import { useAuth } from "@/hooks/useAuth";
 
 // Menu items.
 const items = [
@@ -70,8 +71,10 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { resetAuth } = useAuth();
   const onClickLogout = async () => {
     await Logout();
+    resetAuth();
   };
 
   return (

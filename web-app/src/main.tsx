@@ -13,8 +13,9 @@ import NotFound from "./pages/NotFound/index.tsx";
 import SwapTransactions from "./pages/Staff/TransactionManagement/SwapTransaction.tsx";
 import { ProgressDemo } from "./components/ui/ProgressRadix.tsx";
 import { requireRole, testAuth } from "./utils/auth.ts";
-import { AuthProvider } from "./contexts/AuthContext.tsx";
+import { AuthProvider } from "./contexts/AuthProvider.tsx";
 
+const NotPermission = React.lazy(() => import("./pages/NotPermission"));
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
   () => import("./layouts/DashboardStaffLayout")
@@ -150,6 +151,10 @@ const router = createBrowserRouter([
         element: withSuspense(<StationPage />),
       },
     ],
+  },
+  {
+    path: "not-permission",
+    element: withSuspense(<NotPermission />),
   },
   { path: "*", element: withSuspense(<NotFound />) },
 ]);
