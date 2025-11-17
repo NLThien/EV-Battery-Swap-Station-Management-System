@@ -5,7 +5,7 @@ import { AuthModal } from "@/components";
 import { useEffect, useState } from "react";
 
 import { Login, type LoginRequest } from "@/api/authentication/login";
-import { CustomDialog } from "@/components/ui/Dialog";
+import { CustomDialog } from "@/components/ui/DialogCustom";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
 import { Register, type RegisterRequest } from "@/api/authentication/register";
 import { SpinnerButton } from "@/components/ui/SpinerButton";
@@ -17,7 +17,7 @@ function HomeLayout() {
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [openDialogRegister, setOpenDialogRegister] = useState(false);
-  const [sucssesRegister, setSuccessRegister] = useState(false);
+  const [successRegister, setSuccessRegister] = useState(false);
   const [formData, setFormData] = useState<LoginRequest>({
     phoneNumber: "",
     password: "",
@@ -151,7 +151,7 @@ function HomeLayout() {
         />
         {/* khi đăng ký thành công */}
         <CustomDialog
-          isOpen={sucssesRegister}
+          isOpen={successRegister}
           onOpenChange={setSuccessRegister}
           title="Đăng ký thành công"
           description="Chúc mừng bạn đã đăng ký thành công. Vui lòng đăng nhập để tiếp tục."

@@ -1,0 +1,40 @@
+
+services:
+  mysql:
+    image: mysql:8.0.43-debian
+    container_name: evbss-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: AuthenticationService
+      MYSQL_USER: evuser
+      MYSQL_PASSWORD: evpass123
+    ports:
+      - "3306:3306"
+    volumes:
+      - evbss-mysql-data:/var/lib/mysql
+    networks:
+      - evbss-network
+
+  authentication-service:
+    build:
+      context: ./
+    container_name: evbss-auth-service
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/AuthenticationService
+      SPRING_DATASOURCE_USERNAME: evuser
+      SPRING_DATASOURCE_PASSWORD: evpass123
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8080"
+    networks:
+      - evbss-network
+
+networks:
+  evbss-network:
+
+volumes:
+  evbss-mysql-data:

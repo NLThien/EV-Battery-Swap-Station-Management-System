@@ -9,7 +9,6 @@ import lombok.ToString;
 public class PasswordChangeRequest {
     // ✨ BẢO MẬT: Loại trừ khỏi log/toString()
     @ToString.Exclude
-
     private String currentPassword;
 
     // ✨ BẢO MẬT: Loại trừ khỏi log/toString()
