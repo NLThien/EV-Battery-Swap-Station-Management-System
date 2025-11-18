@@ -58,6 +58,7 @@ function HomeLayout() {
     e.preventDefault();
     console.log("Submit Login:", formData);
     setIsLoading(true);
+
     // Gọi API login ở đây
     try {
       const formatPhoneNumber = formatPhoneNumberVN(formData.phoneNumber);
