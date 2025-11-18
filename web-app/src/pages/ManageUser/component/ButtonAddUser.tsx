@@ -1,4 +1,11 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+
+import {
+  Register,
+  type RegisterRequest,
+  type UserResponse,
+} from "@/api/authentication/register";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CustomDialog } from "@/components/ui/DialogCustom";
 import {
   Form,
   FormControl,
@@ -20,48 +28,63 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SpinnerButton } from "@/components/ui/SpinnerButton";
-import { useEffect, useState } from "react";
-
-import { CustomDialog } from "@/components/ui/DialogCustom";
-import { UpdateUser, type UserUpdate } from "@/api/authentication/editMyInfor";
-import { useAuth } from "@/hooks/useAuth";
+import { FaPlus } from "react-icons/fa";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
 
-function DialogEditInfor() {
-  const { user, refreshUser } = useAuth();
+// Form dùng thêm confirmPassword ở FE, còn khi gọi API chỉ lấy đúng RegisterRequest
+type FormValues = RegisterRequest & {
+  confirmPassword: string;
+};
+
+function ButtonAddUser({
+  onUserAdded,
+}: {
+  onUserAdded: (u: UserResponse) => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const form = useForm<UserUpdate>({
+  const form = useForm<FormValues>({
     defaultValues: {
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
-      birthday: user?.birthday ?? "",
-      email: user?.email ?? "",
-      phoneNumber: user?.phoneNumber ?? "",
+      firstName: "",
+      lastName: "",
+      birthday: "",
+      phoneNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
-  useEffect(() => {
-    refreshUser();
-  }, []);
-
-  const handleChangeInfo = async (values: UserUpdate) => {
-    console.log("Update info request: ", values);
+  const handleCreateUser = async (values: FormValues) => {
+    console.log("Form create user:", values);
     try {
       setIsLoading(true);
-      const formatPhone = formatPhoneNumberVN(values.phoneNumber);
-      const res = await UpdateUser({ ...values, phoneNumber: formatPhone });
+      const phoneNumberFormat = formatPhoneNumberVN(values.phoneNumber);
+
+      // Lấy đúng payload cho API Register
+      const payload: RegisterRequest = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        birthday: values.birthday,
+        phoneNumber: phoneNumberFormat,
+        email: values.email,
+        password: values.password,
+      };
+
+      const res = await Register(payload);
       if (res) {
         setIsSuccess(true);
-        setOpen(false); // chỉ đóng dialog khi thành công
-        console.log("Cập nhật thông tin thành công");
+        console.log("Thêm tài khoản thành công");
+        setOpen(false);
+        form.reset();
+        onUserAdded(res);
       }
       return res;
     } catch (error) {
-      console.log("Không thể chỉnh sửa thông tin: ", error);
+      console.log("Không thể tạo tài khoản: ", error);
       setIsError(true);
     } finally {
       setIsLoading(false);
@@ -71,20 +94,24 @@ function DialogEditInfor() {
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger className="w-full bg-blue-900 hover:bg-blue-950 text-white">
-          Chỉnh sửa thông tin
+        <DialogTrigger asChild>
+          <Button className="bg-blue-800 text-white flex items-center gap-2">
+            <FaPlus className="h-4 w-4" />
+            Tạo tài khoản
+          </Button>
         </DialogTrigger>
+
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Chỉnh sửa thông tin</DialogTitle>
+            <DialogTitle>Tạo tài khoản mới</DialogTitle>
             <DialogDescription>
-              Thay đổi thông tin tài khoản của bạn
+              Vui lòng nhập thông tin người dùng để tạo tài khoản.
             </DialogDescription>
           </DialogHeader>
 
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(handleChangeInfo)}
+              onSubmit={form.handleSubmit(handleCreateUser)}
               className="space-y-4 pt-2"
             >
               {/* Họ */}
@@ -96,7 +123,7 @@ function DialogEditInfor() {
                   <FormItem>
                     <FormLabel>Họ</FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Nhập họ" {...field} />
+                      <Input placeholder="Nhập họ" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +139,7 @@ function DialogEditInfor() {
                   <FormItem>
                     <FormLabel>Tên</FormLabel>
                     <FormControl>
-                      <Input type="text" placeholder="Nhập tên" {...field} />
+                      <Input placeholder="Nhập tên" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -126,7 +153,6 @@ function DialogEditInfor() {
                 rules={{
                   required: "Vui lòng nhập số điện thoại",
                   pattern: {
-                    // 0xxxxxxxxx hoặc +84xxxxxxxxx
                     value: /^(0|\+84)(1|3|5|7|8|9)\d{8}$/,
                     message:
                       "Số điện thoại không đúng định dạng (0xxxxxxxxx hoặc +84xxxxxxxxx)",
@@ -136,11 +162,7 @@ function DialogEditInfor() {
                   <FormItem>
                     <FormLabel>Số điện thoại</FormLabel>
                     <FormControl>
-                      <Input
-                        type="tel"
-                        placeholder="Nhập số điện thoại"
-                        {...field}
-                      />
+                      <Input placeholder="Nhập số điện thoại" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -180,10 +202,57 @@ function DialogEditInfor() {
                   <FormItem>
                     <FormLabel>Ngày sinh</FormLabel>
                     <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Mật khẩu */}
+              <FormField
+                control={form.control}
+                name="password"
+                rules={{
+                  required: "Vui lòng nhập mật khẩu",
+                  minLength: {
+                    value: 8,
+                    message: "Mật khẩu phải ít nhất 8 ký tự",
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mật khẩu</FormLabel>
+                    <FormControl>
                       <Input
-                        type="date"
+                        type="password"
+                        placeholder="Nhập mật khẩu"
                         {...field}
-                        // nếu backend trả về dạng "YYYY-MM-DD" thì dùng được luôn
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Xác nhận mật khẩu */}
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                rules={{
+                  required: "Vui lòng xác nhận mật khẩu",
+                  validate: (value) =>
+                    value === form.getValues("password") ||
+                    "Mật khẩu xác nhận không khớp",
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Xác nhận mật khẩu</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="Nhập lại mật khẩu"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -193,7 +262,7 @@ function DialogEditInfor() {
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant={"outline"} type="button">
+                  <Button variant={"outline"} disabled={isLoading}>
                     Hủy
                   </Button>
                 </DialogClose>
@@ -202,7 +271,7 @@ function DialogEditInfor() {
                   type="submit"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Đang lưu..." : "Xác nhận"}
+                  {isLoading ? "Đang tạo..." : "Tạo tài khoản"}
                 </Button>
               </DialogFooter>
             </form>
@@ -212,23 +281,23 @@ function DialogEditInfor() {
 
       {isLoading && <SpinnerButton />}
 
-      {/* cập nhật thông tin thành công */}
+      {/* Thêm tài khoản thành công */}
       <CustomDialog
         isOpen={isSuccess}
         title="THÀNH CÔNG"
-        description="Cập nhật thông tin tài khoản thành công"
+        description="Tạo tài khoản thành công"
         onOpenChange={setIsSuccess}
       />
 
-      {/* cập nhật thông tin không thành công */}
+      {/* Thêm tài khoản không thành công */}
       <CustomDialog
         isOpen={isError}
         title="Lỗi"
-        description="Cập nhật thông tin tài khoản không thành công"
+        description="Không thể tạo tài khoản. Vui lòng thử lại."
         onOpenChange={setIsError}
       />
     </div>
   );
 }
 
-export default DialogEditInfor;
+export default ButtonAddUser;

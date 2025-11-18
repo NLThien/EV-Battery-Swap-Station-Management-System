@@ -1,3 +1,4 @@
+// từ 0 về +84
 export function formatPhoneNumberVN(phone: string): string {
   // Bỏ ký tự không phải số
   let cleaned = phone.replace(/[^\d+]/g, "");
@@ -11,6 +12,8 @@ export function formatPhoneNumberVN(phone: string): string {
 
   return cleaned;
 }
+
+// từ +84 về 0
 export function formatPhoneNumberLocal(phone: string): string {
   if (!phone) return "";
 

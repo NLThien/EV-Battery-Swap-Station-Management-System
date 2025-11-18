@@ -21,7 +21,6 @@ export const UpdateUser = async (request: UserUpdate) => {
 
     const response = await privateApi.put<ApiResponse<UserResponse>>(
       "/authentication/users/myInfo",
-
       request
     );
     return response.data.result;

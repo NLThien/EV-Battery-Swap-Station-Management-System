@@ -8,7 +8,7 @@ import { Login, type LoginRequest } from "@/api/authentication/login";
 import { CustomDialog } from "@/components/ui/DialogCustom";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
 import { Register, type RegisterRequest } from "@/api/authentication/register";
-import { SpinnerButton } from "@/components/ui/SpinerButton";
+import { SpinnerButton } from "@/components/ui/SpinnerButton";
 
 function HomeLayout() {
   const navigate = useNavigate();

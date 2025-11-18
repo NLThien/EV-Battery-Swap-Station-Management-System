@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { IoMdTrash } from "react-icons/io";
 import { FaUserEdit } from "react-icons/fa";
 import { RiUserSettingsFill } from "react-icons/ri";
-import { MdOutlinePassword } from "react-icons/md";
+import ButtonChangePasswordUser from "./ButtonChangePasswordUser";
 interface UserProps {
   user: UserResponse;
 }
@@ -49,13 +49,7 @@ function ItemUser({ user }: UserProps) {
             Đổi mật khẩu
           </div>
 
-          <Button
-            size="sm"
-            variant="outline"
-            className="border-blue-700 text-blue-700 hover:bg-blue-50"
-          >
-            <MdOutlinePassword />
-          </Button>
+          <ButtonChangePasswordUser userId={user.id} />
         </div>
 
         {/* chỉnh sủa thông tin người dùng */}

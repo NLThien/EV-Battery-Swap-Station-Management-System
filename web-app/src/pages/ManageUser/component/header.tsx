@@ -1,9 +1,11 @@
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { IoMdPerson } from "react-icons/io";
 
-function Header() {
+import type { UserResponse } from "@/api/authentication/register";
+import ButtonAddUser from "./buttonAddUser";
+
+function Header({ onUserAdded }: { onUserAdded: (u: UserResponse) => void }) {
   return (
     <div className="max-w-7xl flex items-center justify-between">
       {/* Tiêu đề */}
@@ -22,10 +24,7 @@ function Header() {
       </div>
 
       {/* Nút tạo tài khoản */}
-      <Button className="bg-blue-800 text-white flex items-center gap-2">
-        <Plus className="h-4 w-4" />
-        Tạo tài khoản
-      </Button>
+      <ButtonAddUser onUserAdded={onUserAdded} />
     </div>
   );
 }

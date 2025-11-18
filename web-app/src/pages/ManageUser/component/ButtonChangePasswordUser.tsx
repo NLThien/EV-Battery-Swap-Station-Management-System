@@ -1,4 +1,7 @@
-import { useForm } from "react-hook-form";
+import {
+  changePasswordUser,
+  type ChangePasswordUserProps,
+} from "@/api/authentication/changePasswordUser";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CustomDialog } from "@/components/ui/DialogCustom";
 import {
   Form,
   FormControl,
@@ -21,33 +25,35 @@ import {
 import { Input } from "@/components/ui/input";
 import { SpinnerButton } from "@/components/ui/SpinnerButton";
 import { useState } from "react";
-import {
-  changePasswordMyInfo,
-  type ChangePasswordProps,
-} from "@/api/authentication/changePasswordMyInfo";
-import { CustomDialog } from "@/components/ui/DialogCustom";
+import { useForm } from "react-hook-form";
 
-function DialogEditPassword() {
+import { MdOutlinePassword } from "react-icons/md";
+
+type ButtonChangePasswordUserProps = {
+  userId: string;
+};
+
+function ButtonChangePasswordUser({ userId }: ButtonChangePasswordUserProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-  const form = useForm<ChangePasswordProps>({
+  const form = useForm<ChangePasswordUserProps>({
     defaultValues: {
-      currentPassword: "",
-      newPassword: "",
-      confirmNewPassword: "",
+      password: "",
     },
   });
 
   const handleChangePassword = async (
-    inputChangePassword: ChangePasswordProps
+    inputChangePassword: ChangePasswordUserProps
   ) => {
+    console.log(inputChangePassword);
+    console.log(userId);
     console.log(inputChangePassword);
     try {
       setOpen(false);
       setIsLoading(true);
-      const res = await changePasswordMyInfo(inputChangePassword);
+      const res = await changePasswordUser(userId, inputChangePassword);
       if (res) {
         setIsSuccess(true);
         console.log("đổi thành công");
@@ -63,8 +69,8 @@ function DialogEditPassword() {
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger className="w-full bg-blue-900 hover:bg-blue-950 text-white">
-          Đổi mật khẩu
+        <DialogTrigger className="border border-blue-700 text-blue-700 hover:bg-blue-50">
+          <MdOutlinePassword />
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -78,28 +84,10 @@ function DialogEditPassword() {
               onSubmit={form.handleSubmit(handleChangePassword)}
               className="space-y-4 pt-2"
             >
-              <FormField
-                control={form.control}
-                name="currentPassword"
-                rules={{ required: "Vui lòng nhập mật khẩu hiện tại" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mật khẩu hiện tại</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Vui lòng nhập mật khẩu hiện tại"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               {/* Mật khẩu mới */}
               <FormField
                 control={form.control}
-                name="newPassword"
+                name="password"
                 rules={{
                   required: "Vui lòng nhập mật khẩu mới",
                   minLength: {
@@ -122,30 +110,6 @@ function DialogEditPassword() {
                 )}
               />
 
-              {/* Xác nhận mật khẩu mới */}
-              <FormField
-                control={form.control}
-                name="confirmNewPassword"
-                rules={{
-                  required: "Vui lòng xác nhận mật khẩu mới",
-                  validate: (value) =>
-                    value === form.getValues("newPassword") ||
-                    "Mật khẩu xác nhận không khớp",
-                }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Xác nhận mật khẩu mới</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Xác nhận nhập mật khẩu mới"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant={"outline"}>Hủy</Button>
@@ -177,4 +141,4 @@ function DialogEditPassword() {
   );
 }
 
-export default DialogEditPassword;
+export default ButtonChangePasswordUser;

@@ -1,27 +1,35 @@
 import type { UserResponse } from "@/api/authentication/register";
 import Header from "./component/header";
 import ItemUser from "./component/itemUser";
-
-const user: UserResponse = {
-  id: "fe6628f7-7a61-44fd-b77d-42a03e58fc33",
-  firstName: "Nguyen",
-  lastName: "Son Hoang",
-  birthday: "2004-07-03",
-
-  email: "sonhoangdz72@gmail.com",
-  phoneNumber: "0977744603",
-
-  roles: ["ADMIN"],
-
-  createdAt: "2025-01-01T10:00:00Z",
-  updatedAt: "2025-01-05T15:30:00Z",
-};
+import { useEffect, useState } from "react";
+import { getUsers } from "@/api/authentication/getAllUser";
 
 function ManageUser() {
+  const [users, setUsers] = useState<UserResponse[]>([]);
+
+  // callback để thêm user mới vào state
+  const handleUserAdded = (newUser: UserResponse) => {
+    setUsers((prev) => [...prev, newUser]); // cập nhật ngay lập tức
+  };
+
+  useEffect(() => {
+    const getAllUsers = async () => {
+      try {
+        const res = await getUsers();
+        if (res) {
+          setUsers(res);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getAllUsers();
+  }, []);
+
   return (
     <div className="w-full max-w-7xl mx-auto bg-white border rounded-xl shadow-sm p-6 mt-10">
       {/* Header */}
-      <Header />
+      <Header onUserAdded={handleUserAdded} />
 
       {/* Line */}
       <div className="border-t my-6" />
@@ -38,10 +46,9 @@ function ManageUser() {
 
       {/* Content — bạn sẽ render danh sách user ở đây */}
       <div className="mt-3">
-        <ItemUser user={user} />
-        <ItemUser user={user} />
-        <ItemUser user={user} />
-        <ItemUser user={user} />
+        {users.map((user) => (
+          <ItemUser user={user} />
+        ))}
       </div>
     </div>
   );
