@@ -9,12 +9,13 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import NotFound from "./pages/NotFound/index.tsx";
 
-import { AuthProvider } from "./contexts/AuthContext.tsx";
 // import { requireAuth, requireRole } from "./utils/auth.ts";
 import SwapTransactions from "./pages/Staff/TransactionManagement/SwapTransaction.tsx";
 import { ProgressDemo } from "./components/ui/ProgressRadix.tsx";
 import { requireRole, testAuth } from "./utils/auth.ts";
+import { AuthProvider } from "./contexts/AuthProvider.tsx";
 
+const NotPermission = React.lazy(() => import("./pages/NotPermission"));
 const HomeLayout = React.lazy(() => import("./layouts/HomeLayout"));
 const DashboardStaffLayout = React.lazy(
   () => import("./layouts/DashboardStaffLayout")
@@ -44,6 +45,7 @@ const ReportStaff = React.lazy(() => import("./pages/Staff/ReportStaff")); // tr
 const DashboardStaff = React.lazy(
   () => import("./pages/Staff/DashboardStaff/DashboardStaff.tsx")
 ); // trang dashboard dành cho nhân viên
+const MyInfo = React.lazy(() => import("@/pages/MyInfo"));
 
 const withSuspense = (el: ReactNode) => (
   <Suspense
@@ -90,6 +92,10 @@ const router = createBrowserRouter([
         path: "reports",
         element: withSuspense(<ReportAdmin />),
       },
+      {
+        path: "my-info",
+        element: withSuspense(<MyInfo />),
+      },
     ],
   },
   {
@@ -122,6 +128,10 @@ const router = createBrowserRouter([
         path: "reports", //báo cáo của nhận(có thể xuất báo cáo)
         element: withSuspense(<ReportStaff />),
       },
+      {
+        path: "my-info",
+        element: withSuspense(<MyInfo />),
+      },
     ],
   },
   {
@@ -141,6 +151,10 @@ const router = createBrowserRouter([
         element: withSuspense(<StationPage />),
       },
     ],
+  },
+  {
+    path: "not-permission",
+    element: withSuspense(<NotPermission />),
   },
   { path: "*", element: withSuspense(<NotFound />) },
 ]);

@@ -13,10 +13,10 @@ import org.example.authenticationservice.exception.ErrorCode;
 import org.example.authenticationservice.mapper.UserMapper;
 import org.example.authenticationservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PostAuthorize;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -129,6 +129,20 @@ public class UserService {
         user.setRoles(roles);
         userRepository.save(user);
 
+    }
+
+//    tìm kiếm user theo số điện thoại
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<UserResponse> findUserByPhoneNumber(String phoneNumber) {
+        List<User> users = userRepository.findByPhoneNumberContaining(phoneNumber);
+
+        if (users.isEmpty()) {
+            throw new AppException(ErrorCode.USER_NOT_EXISTED);
+        }
+
+        return users.stream()
+                .map(userMapper::toUserResponse)
+                .toList();
     }
 
     //cai này đáng phải là chỉ dùng đc cho admin

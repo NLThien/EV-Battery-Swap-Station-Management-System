@@ -14,7 +14,7 @@ export interface UserResponse {
   id: string;
   firstName: string;
   lastName: string;
-  birthDate: string;
+  birthday: string;
   phoneNumber: string;
   email: string;
   roles: string[];

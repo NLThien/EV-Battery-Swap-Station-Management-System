@@ -29,8 +29,9 @@ public class ApplicationInitConfig {
                User user = User
                        .builder()
                        .firstName("Admin")
+                       .lastName("Admin")
                        .phoneNumber("+84123456789")
-                       .password(passwordEncoder.encode("admin"))
+                       .password(passwordEncoder.encode("admin123"))
                        .roles(roles)
                        .build();
                userRepository.save(user);

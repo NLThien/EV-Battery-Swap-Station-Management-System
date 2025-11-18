@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import type { CSSProperties } from "react";
 import { Logout } from "@/api/authentication/logout";
+import { useAuth } from "@/hooks/useAuth";
 
 // Menu items.
 const items = [
@@ -66,8 +67,10 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const { resetAuth } = useAuth();
   const onClickLogout = async () => {
     await Logout();
+    resetAuth();
   };
 
   return (
@@ -162,8 +165,13 @@ export function AppSidebar() {
                     "dark:hover:bg-zinc-800 dark:focus:bg-zinc-800",
                   ].join(" ")}
                 >
-                  <User className="h-4 w-4" />
-                  <span>Thông tin tài khoản</span>
+                  <NavLink
+                    to={"/staff/my-info"}
+                    className={"flex flex-row gap-2 "}
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="text-slate-700">Thông tin tài khoản</span>
+                  </NavLink>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
