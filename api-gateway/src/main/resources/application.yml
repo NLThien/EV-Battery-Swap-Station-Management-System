@@ -22,7 +22,7 @@ spring:
         - id: package-service
           uri: lb://package-service   
           predicates:
-            - Path=/api/packages/**   
+            - Path=/api/packages/** 
           filters:
             - RewritePath=/api/packages/(?<segment>.*), /packages/${segment}
 
@@ -35,37 +35,47 @@ spring:
           uri: lb://station-service
           predicates:
             - Path=/stations/**
-            
-        - id: payment-service
-          uri: lb://payment-service
+    
+        - id: payment-service-secured
+          uri: lb://paymentservice
           predicates:
             - Path=/payment/transactions
           filters:
             - RewritePath=/payment/(?<segment>.*), /${segment}
-            - AuthenticationFilter
+            # - AuthenticationFilter
         
+      
         - id: payment-service-webhook
-          uri: lb://payment-services
+          uri: lb://paymentservice
           predicates:
             - Path=/payment/sepay_webhook
+          filters:
+            - RewritePath=/payment/(?<segment>.*), /${segment}
+        
+      
+        - id: payment-service-simulate
+          uri: lb://paymentservice
+          predicates:
+            - Path=/payment/simulate-success
           filters:
             - RewritePath=/payment/(?<segment>.*), /${segment}
 
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/orders/**
+            - Path=/orders/** , /orders
           filters:
             - RewritePath=/orders/(?<segment>.*), /${segment}
-            - AuthenticationFilter
+            - RewritePath=/orders, /
+            # - AuthenticationFilter
 
         - id: booking-service
           uri: lb://booking-service
           predicates:
             - Path=/api/booking/**
           filters:
-            - RewritePath=/api/booking/(?<segment>.*), /$\{segment}
-            - AuthenticationFilter
+            - RewritePath=/api/booking/(?<segment>.*), /${segment}
+            # - AuthenticationFilter
 
       globalcors:
         cors-configurations:

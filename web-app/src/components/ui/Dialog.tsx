@@ -1,71 +1,141 @@
-// src/components/CustomDialog.tsx
-import * as Dialog from "@radix-ui/react-dialog";
-import { X } from "lucide-react"; // hoặc heroicons tuỳ bạn chọn
+import * as React from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { XIcon } from "lucide-react";
 
-type CustomDialogProps = {
-  title: string;
-  description?: string;
-  children?: React.ReactNode;
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-};
+import { cn } from "@/lib/utils";
 
-export function CustomDialog({
-  title,
-  description,
+function Dialog({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Root>) {
+  return <DialogPrimitive.Root data-slot="dialog" {...props} />;
+}
+
+function DialogTrigger({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
+  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />;
+}
+
+function DialogPortal({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
+  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
+}
+
+function DialogClose({
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Close>) {
+  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+}
+
+// file: components/ui/dialog.tsx
+
+const DialogOverlay = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <DialogPrimitive.Overlay
+    ref={ref}
+    className={cn(
+      "fixed inset-0 z-50 bg-white/10 backdrop-blur-md backdrop-saturate-200 transition-all duration-300",
+      className
+    )}
+    {...props}
+  />
+));
+
+function DialogContent({
+  className,
   children,
-  isOpen,
-  onOpenChange,
-}: CustomDialogProps) {
+  showCloseButton = true,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Content> & {
+  showCloseButton?: boolean;
+}) {
   return (
-    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
-      {/* Nút mở dialog */}
-
-      {/* Overlay mờ nền */}
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm data-[state=open]:animate-fadeIn z-500" />
-
-        {/* Hộp thoại */}
-        <Dialog.Content
-          className="fixed top-[50%] left-[50%] w-[90vw] max-w-md translate-x-[-50%] translate-y-[-50%]
-                     rounded-xl bg-white p-6 shadow-xl data-[state=open]:animate-scaleIn z-500"
-        >
-          <div className="flex justify-between items-center">
-            <Dialog.Title className="text-lg font-semibold">
-              {title}
-            </Dialog.Title>
-            <Dialog.Close
-              asChild
-              className="bg-white rounded-full p-1.5 hover:bg-gray-100 "
-            >
-              <button className="rounded-full p-1.5 hover:bg-gray-100 ">
-                <X size={18} />
-              </button>
-            </Dialog.Close>
-          </div>
-
-          {description && (
-            <Dialog.Description className="text-sm text-gray-500 mt-2 mb-4">
-              {description}
-            </Dialog.Description>
-          )}
-
-          {children}
-
-          <div className="mt-5 flex justify-end gap-3">
-            <Dialog.Close asChild>
-              <button className="px-3 py-1.5 text-sm rounded-md bg-gray-100 hover:bg-gray-200">
-                Hủy
-              </button>
-            </Dialog.Close>
-            <Dialog.Close asChild>
-              <button className="px-3 py-1.5 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700">
-                Đồng ý
-              </button>
-            </Dialog.Close>
-          </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+    <DialogPortal data-slot="dialog-portal">
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        data-slot="dialog-content"
+        className={cn(
+          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        {showCloseButton && (
+          <DialogPrimitive.Close
+            data-slot="dialog-close"
+            className="ring-offset-background focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+          >
+            <XIcon />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
+        )}
+      </DialogPrimitive.Content>
+    </DialogPortal>
   );
 }
+
+function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-header"
+      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+      {...props}
+    />
+  );
+}
+
+function DialogFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="dialog-footer"
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+function DialogTitle({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+  return (
+    <DialogPrimitive.Title
+      data-slot="dialog-title"
+      className={cn("text-lg leading-none font-semibold", className)}
+      {...props}
+    />
+  );
+}
+
+function DialogDescription({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  return (
+    <DialogPrimitive.Description
+      data-slot="dialog-description"
+      className={cn("text-muted-foreground text-sm", className)}
+      {...props}
+    />
+  );
+}
+
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+};

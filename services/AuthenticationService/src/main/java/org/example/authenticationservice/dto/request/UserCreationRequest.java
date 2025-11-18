@@ -1,6 +1,7 @@
 package org.example.authenticationservice.dto.request;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -16,7 +17,9 @@ import java.time.LocalDate;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE) //tạp cáo tát cả privaite
 public class UserCreationRequest {
+     @NotBlank(message = "NOT_BLANK")
      String firstName;
+     @NotBlank(message = "NOT_BLANK")
      String lastName;
      @Email(message = "Email format is invalid")
      String email;

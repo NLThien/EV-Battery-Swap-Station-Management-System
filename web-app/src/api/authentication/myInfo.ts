@@ -1,7 +1,7 @@
 // hàm này để lấy đữ liệu người dùng hiện tại
 
 import { getToken } from "@/utils/auth";
-import { publicApi } from "./httpRequests";
+import { privateApi } from "./httpRequests";
 import type { ApiResponse } from "./apiResponse";
 import type { UserResponse } from "./register";
 
@@ -13,13 +13,8 @@ export const MyInfo = async () => {
       throw new Error("No access token found");
     }
 
-    const response = await publicApi.get<ApiResponse<UserResponse>>(
-      "/authentication/users/myInfo",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    const response = await privateApi.get<ApiResponse<UserResponse>>(
+      "/authentication/users/myInfo"
     );
     return response.data.result;
   } catch (error) {

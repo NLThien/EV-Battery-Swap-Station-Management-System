@@ -1,0 +1,32 @@
+server:
+  port: 3002
+
+spring:
+  application:
+    name: paymentservice
+
+  datasource:
+    url: "jdbc:mysql://localhost:3306/payment_db"
+    username: root
+    password: 0942868460
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+# Rabbit (docker-compose sẽ chạy rabbitmq)
+  rabbitmq:
+    host: localhost
+    # port: ${RABBIT_PORT:5672}
+    # username: ${RABBIT_USERNAME:guest}
+    # password: ${RABBIT_PASSWORD:guest}
+
+
+queue:
+  name: PAYMENT_COMPLETED_QUEUE
+
+sepay:
+  webhook-api-key: "0942868460a"
+  bank-account: "68209022004"
+  bank-name: "TPBank"
+  default-description: "TKPDHD"
