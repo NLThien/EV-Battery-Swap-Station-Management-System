@@ -3,16 +3,12 @@ import { getToken } from "@/utils/auth";
 import { privateApi } from "./httpRequests";
 import type { UserResponse } from "./register";
 import type { ApiResponse } from "./apiResponse";
+import type { UserUpdate } from "./editMyInfor";
 
-export interface UserUpdate {
-  firstName: string;
-  lastName: string;
-  birthday: string;
-  phoneNumber: string;
-  email: string;
-}
-
-export const UpdateUser = async (request: UserUpdate) => {
+export const UpdateUserByAdmin = async (
+  request: UserUpdate,
+  userId: string
+) => {
   const token = getToken();
   try {
     if (!token) {
@@ -20,7 +16,7 @@ export const UpdateUser = async (request: UserUpdate) => {
     }
 
     const response = await privateApi.put<ApiResponse<UserResponse>>(
-      "/authentication/users/myInfo",
+      `/authentication/users/${userId}`,
       request
     );
     return response.data.result;

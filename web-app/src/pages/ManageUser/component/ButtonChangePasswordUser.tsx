@@ -31,9 +31,13 @@ import { MdOutlinePassword } from "react-icons/md";
 
 type ButtonChangePasswordUserProps = {
   userId: string;
+  disabled: boolean;
 };
 
-function ButtonChangePasswordUser({ userId }: ButtonChangePasswordUserProps) {
+function ButtonChangePasswordUser({
+  userId,
+  disabled,
+}: ButtonChangePasswordUserProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -69,8 +73,14 @@ function ButtonChangePasswordUser({ userId }: ButtonChangePasswordUserProps) {
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger className="border border-blue-700 text-blue-700 hover:bg-blue-50">
-          <MdOutlinePassword />
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className=" border-blue-700 text-blue-700 hover:bg-blue-50"
+            disabled={disabled}
+          >
+            <MdOutlinePassword />
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>

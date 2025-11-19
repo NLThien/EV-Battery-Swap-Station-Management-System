@@ -1,4 +1,6 @@
-import { useForm } from "react-hook-form";
+import type { UserUpdate } from "@/api/authentication/editMyInfor";
+import { UpdateUserByAdmin } from "@/api/authentication/editUser";
+import type { UserResponse } from "@/api/authentication/register";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { CustomDialog } from "@/components/ui/DialogCustom";
 import {
   Form,
   FormControl,
@@ -20,15 +23,22 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SpinnerButton } from "@/components/ui/SpinnerButton";
-import { useEffect, useState } from "react";
-
-import { CustomDialog } from "@/components/ui/DialogCustom";
-import { UpdateUser, type UserUpdate } from "@/api/authentication/editMyInfor";
-import { useAuth } from "@/hooks/useAuth";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaUserEdit } from "react-icons/fa";
 
-function DialogEditInfor() {
-  const { userCurrent, setUserCurrent } = useAuth();
+interface ButtonEditUserProps {
+  user: UserResponse;
+  onUpdate: (userUpdate: UserResponse) => void;
+  disabled: boolean;
+}
+
+function ButtonEditUserByAdmin({
+  user,
+  onUpdate,
+  disabled,
+}: ButtonEditUserProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -36,29 +46,35 @@ function DialogEditInfor() {
 
   const form = useForm<UserUpdate>({
     defaultValues: {
-      firstName: userCurrent?.firstName ?? "",
-      lastName: userCurrent?.lastName ?? "",
-      birthday: userCurrent?.birthday ?? "",
-      email: userCurrent?.email ?? "",
-      phoneNumber: userCurrent?.phoneNumber ?? "",
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      birthday: user?.birthday ?? "",
+      email: user?.email ?? "",
+      phoneNumber: user?.phoneNumber ?? "",
     },
   });
-  const userInfo = JSON.parse(localStorage.getItem("user") || "null");
-  useEffect(() => {
-    setUserCurrent(userInfo);
-  }, []);
 
   const handleChangeInfo = async (values: UserUpdate) => {
     console.log("Update info request: ", values);
     try {
       setIsLoading(true);
       const formatPhone = formatPhoneNumberVN(values.phoneNumber);
-      const res = await UpdateUser({ ...values, phoneNumber: formatPhone });
+      const res = await UpdateUserByAdmin(
+        { ...values, phoneNumber: formatPhone },
+        user.id
+      );
       if (res) {
         setIsSuccess(true);
         setOpen(false); // chỉ đóng dialog khi thành công
+        onUpdate({
+          ...user,
+          birthday: values.birthday,
+          email: values.email,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phoneNumber: values.phoneNumber,
+        });
         console.log("Cập nhật thông tin thành công");
-        localStorage.setItem("user", JSON.stringify(res));
       }
       return res;
     } catch (error) {
@@ -72,8 +88,14 @@ function DialogEditInfor() {
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger className="w-full bg-blue-900 hover:bg-blue-950 text-white">
-          Chỉnh sửa thông tin
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="border border-blue-700 text-blue-700 hover:bg-blue-50"
+            disabled={disabled}
+          >
+            <FaUserEdit />
+          </Button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -232,4 +254,4 @@ function DialogEditInfor() {
   );
 }
 
-export default DialogEditInfor;
+export default ButtonEditUserByAdmin;

@@ -11,6 +11,19 @@ function ManageUser() {
   const handleUserAdded = (newUser: UserResponse) => {
     setUsers((prev) => [...prev, newUser]); // cập nhật ngay lập tức
   };
+  const handleUserDeleted = (userId: string) => {
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+  };
+  const handleUserUpdated = (updatedUser: UserResponse) => {
+    setUsers((prev) =>
+      prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+    );
+  };
+  const handleUserUpdateRole = (role: string, userId: string) => {
+    setUsers((prev) =>
+      prev.map((u) => (u.id === userId ? { ...u, roles: [role] } : u))
+    );
+  };
 
   useEffect(() => {
     const getAllUsers = async () => {
@@ -47,7 +60,13 @@ function ManageUser() {
       {/* Content — bạn sẽ render danh sách user ở đây */}
       <div className="mt-3">
         {users.map((user) => (
-          <ItemUser user={user} />
+          <ItemUser
+            key={user.id}
+            user={user}
+            onDeleted={handleUserDeleted}
+            onUpdate={handleUserUpdated}
+            onChangeRole={handleUserUpdateRole}
+          />
         ))}
       </div>
     </div>

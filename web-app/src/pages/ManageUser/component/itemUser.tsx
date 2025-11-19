@@ -1,17 +1,30 @@
 import type { UserResponse } from "@/api/authentication/register";
-import { Button } from "@/components/ui/button";
-import { IoMdTrash } from "react-icons/io";
-import { FaUserEdit } from "react-icons/fa";
-import { RiUserSettingsFill } from "react-icons/ri";
+
 import ButtonChangePasswordUser from "./ButtonChangePasswordUser";
+import ButtonDeleteUser from "./ButtonDeleteUser";
+import ButtonEditUserByAdmin from "./ButtonEditUser";
+import ButtonChangeRole from "./ButtonChangeRole";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
+
 interface UserProps {
   user: UserResponse;
+  onDeleted: (userId: string) => void;
+  onUpdate: (userUpdate: UserResponse) => void;
+  onChangeRole: (updateRole: string, userId: string) => void;
 }
 
-function ItemUser({ user }: UserProps) {
+function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
+  const { userCurrent, setUserCurrent } = useAuth();
+  const userInfo = JSON.parse(localStorage.getItem("user") || "null");
   // Lấy chữ cái đầu cho avatar
   const avatarLetter = user.firstName?.charAt(0).toUpperCase() || "?";
   const role = user.roles?.[0] || "USER";
+
+  const disabled = userCurrent?.id === user.id;
+  useEffect(() => {
+    setUserCurrent(userInfo);
+  }, []);
 
   return (
     <div className="grid grid-cols-5 items-center  gap-4 px-4 py-3 border-t text-sm">
@@ -49,7 +62,7 @@ function ItemUser({ user }: UserProps) {
             Đổi mật khẩu
           </div>
 
-          <ButtonChangePasswordUser userId={user.id} />
+          <ButtonChangePasswordUser userId={user.id} disabled={disabled} />
         </div>
 
         {/* chỉnh sủa thông tin người dùng */}
@@ -60,13 +73,11 @@ function ItemUser({ user }: UserProps) {
           >
             Sửa thông tin
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="border-blue-700 text-blue-700 hover:bg-blue-50"
-          >
-            <FaUserEdit />
-          </Button>
+          <ButtonEditUserByAdmin
+            user={user}
+            onUpdate={onUpdate}
+            disabled={disabled}
+          />
         </div>
         {/* đổi quyền */}
         <div className="relative group">
@@ -76,13 +87,12 @@ function ItemUser({ user }: UserProps) {
           >
             Đổi quyền
           </div>
-          <Button
-            size="sm"
-            variant="outline"
-            className="border-amber-500 text-amber-600 hover:bg-amber-50"
-          >
-            <RiUserSettingsFill />
-          </Button>
+          <ButtonChangeRole
+            userId={user.id}
+            role={user.roles[0] as "ADMIN" | "STAFF" | "USER"}
+            onChangeRole={onChangeRole}
+            disabled={disabled}
+          />
         </div>
         {/* xóa người dùng */}
         <div className="relative group">
@@ -92,12 +102,11 @@ function ItemUser({ user }: UserProps) {
           >
             Xóa tài khoản
           </div>
-          <Button
-            variant="outline"
-            className="border-red-500 text-red-600 hover:bg-red-50"
-          >
-            <IoMdTrash />
-          </Button>
+          <ButtonDeleteUser
+            userId={user.id}
+            onDeleted={onDeleted}
+            disabled={disabled}
+          />
         </div>
       </div>
     </div>

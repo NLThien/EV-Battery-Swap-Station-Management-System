@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { IoMdPerson } from "react-icons/io";
 
 import type { UserResponse } from "@/api/authentication/register";
-import ButtonAddUser from "./buttonAddUser";
+import ButtonAddUser from "./ButtonAddUser";
 
 function Header({ onUserAdded }: { onUserAdded: (u: UserResponse) => void }) {
   return (
