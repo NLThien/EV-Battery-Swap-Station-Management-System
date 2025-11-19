@@ -78,9 +78,8 @@ function ButtonChangeRole({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
-            size="sm"
             variant="outline"
-            className="border-amber-500 text-amber-600 hover:bg-amber-50"
+            className="border-amber-500 text-amber-600 hover:bg-amber-50 w-12 h-10"
             disabled={disabled}
           >
             <RiUserSettingsFill />

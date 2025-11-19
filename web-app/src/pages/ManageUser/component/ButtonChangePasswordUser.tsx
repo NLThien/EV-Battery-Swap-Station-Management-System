@@ -76,7 +76,7 @@ function ButtonChangePasswordUser({
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className=" border-blue-700 text-blue-700 hover:bg-blue-50"
+            className=" border-blue-700 text-blue-700 hover:bg-blue-50 w-12 h-10"
             disabled={disabled}
           >
             <MdOutlinePassword />

@@ -91,7 +91,7 @@ function ButtonEditUserByAdmin({
         <DialogTrigger asChild>
           <Button
             variant="outline"
-            className="border border-blue-700 text-blue-700 hover:bg-blue-50"
+            className="border border-blue-700 text-blue-700 hover:bg-blue-50 w-12 h-10"
             disabled={disabled}
           >
             <FaUserEdit />

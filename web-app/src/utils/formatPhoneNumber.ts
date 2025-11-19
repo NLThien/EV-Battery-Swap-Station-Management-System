@@ -38,3 +38,6 @@ export function formatPhoneNumberLocal(phone: string): string {
   // Mọi trường hợp còn lại
   return cleaned;
 }
+export function removeLeadingZero(phone: string): string {
+  return phone.startsWith("0") ? phone.slice(1) : phone;
+}

@@ -3,9 +3,35 @@ import Header from "./component/header";
 import ItemUser from "./component/itemUser";
 import { useEffect, useState } from "react";
 import { getUsers } from "@/api/authentication/getAllUser";
+import { SearchUser } from "@/api/authentication/searchUser";
+import { removeLeadingZero } from "@/utils/formatPhoneNumber";
 
 function ManageUser() {
   const [users, setUsers] = useState<UserResponse[]>([]);
+  const [searchPhone, setSearchPhone] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      // Gọi API search
+      if (!searchPhone.trim()) {
+        const res = await getUsers();
+        setUsers(res);
+        return;
+      }
+
+      const phoneFormat = removeLeadingZero(searchPhone);
+      console.log(phoneFormat);
+      const result = await SearchUser(phoneFormat);
+      // Cập nhật list user trong UI
+      setUsers(result);
+    } catch (error) {
+      console.error("Lỗi tìm kiếm:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // callback để thêm user mới vào state
   const handleUserAdded = (newUser: UserResponse) => {
@@ -42,7 +68,12 @@ function ManageUser() {
   return (
     <div className="w-full max-w-7xl mx-auto bg-white border rounded-xl shadow-sm p-6 mt-10">
       {/* Header */}
-      <Header onUserAdded={handleUserAdded} />
+      <Header
+        searchValue={searchPhone}
+        setSearchValue={setSearchPhone}
+        onUserAdded={handleUserAdded}
+        onSearch={handleSearch}
+      />
 
       {/* Line */}
       <div className="border-t my-6" />
@@ -68,6 +99,11 @@ function ManageUser() {
             onChangeRole={handleUserUpdateRole}
           />
         ))}
+        {users.length === 0 && !isLoading && (
+          <div className="text-center text-sm text-gray-500 mt-4">
+            Không tìm thấy user nào.
+          </div>
+        )}
       </div>
     </div>
   );
