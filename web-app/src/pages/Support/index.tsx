@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CheckCircle, Clock, MessageSquare, Headphones } from "lucide-react";
+import { CheckCircle, Clock, MessageSquare, Headphones, RefreshCcw } from "lucide-react";
 
 interface Feedback {
   id: string;
@@ -21,244 +21,287 @@ const FeedbackAdmin: React.FC = () => {
   const [filtered, setFiltered] = useState<Feedback[]>([]);
   const [filterDate, setFilterDate] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterStars, setFilterStars] = useState(0);
+  const [searchName, setSearchName] = useState("");
+
   const [replyModal, setReplyModal] = useState(false);
   const [selected, setSelected] = useState<Feedback | null>(null);
   const [replyText, setReplyText] = useState("");
 
-  // 🧩 Mock data (mô phỏng từ app)
   useEffect(() => {
-    const mockData: Feedback[] = [
+    const data: Feedback[] = [
       {
         id: "1",
         user: "Nguyễn Văn A",
         userId: "U001",
         date: "2025-10-25",
-        facility: 4,
-        speed: 5,
-        battery: 4,
-        price: 3,
-        staff: 5,
-        satisfaction: 5,
+        facility: 4, speed: 5, battery: 4, price: 3, staff: 5, satisfaction: 5,
         comment: "Trạm hoạt động tốt, nhân viên hỗ trợ nhiệt tình.",
-        adminReply: "Cảm ơn bạn A, rất vui vì bạn hài lòng với dịch vụ!",
+        adminReply: "Cảm ơn bạn A!",
       },
       {
         id: "2",
         user: "Trần Thị B",
         userId: "U002",
         date: "2025-10-26",
-        facility: 3,
-        speed: 2,
-        battery: 4,
-        price: 3,
-        staff: 4,
-        satisfaction: 3,
-        comment: "Cần cải thiện tốc độ đổi pin, hơi chậm vào giờ cao điểm.",
-      },
-      {
-        id: "3",
-        user: "Lê Văn C",
-        userId: "U003",
-        date: "2025-10-27",
-        facility: 5,
-        speed: 5,
-        battery: 5,
-        price: 4,
-        staff: 5,
-        satisfaction: 5,
-        comment: "Ứng dụng rất tiện lợi, dễ sử dụng.",
-        adminReply: "Cảm ơn bạn C đã góp ý, chúc bạn lái xe an toàn!",
+        facility: 3, speed: 2, battery: 4, price: 3, staff: 4, satisfaction: 3,
+        comment: "Cần cải thiện tốc độ đổi pin",
       },
     ];
-    setFeedbacks(mockData);
-    setFiltered(mockData);
+    setFeedbacks(data);
+    setFiltered(data);
   }, []);
 
-  // 🎯 Lọc dữ liệu
   useEffect(() => {
     let list = [...feedbacks];
-    if (filterDate) list = list.filter((f) => f.date === filterDate);
-    if (filterStatus === "responded") list = list.filter((f) => f.adminReply && f.adminReply.trim() !== "");
-    if (filterStatus === "pending") list = list.filter((f) => !f.adminReply || f.adminReply.trim() === "");
+
+    if (filterDate) list = list.filter(f => f.date === filterDate);
+    if (filterStatus === "responded") list = list.filter(f => f.adminReply);
+    if (filterStatus === "pending") list = list.filter(f => !f.adminReply);
+    if (filterStars > 0) {
+      list = list.filter(f =>
+        Math.round((f.facility + f.speed + f.battery + f.price + f.staff + f.satisfaction) / 6) === filterStars
+      );
+    }
+    if (searchName.trim() !== "")
+      list = list.filter(f => f.user.toLowerCase().includes(searchName.toLowerCase()));
+
     setFiltered(list);
-  }, [filterDate, filterStatus, feedbacks]);
+  }, [filterDate, filterStatus, filterStars, searchName, feedbacks]);
 
-  // 📨 Mở modal phản hồi
-  const handleOpenReply = (item: Feedback) => {
-    setSelected(item);
-    setReplyText(item.adminReply || "");
-    setReplyModal(true);
+  const resetFilters = () => {
+    setFilterDate("");
+    setFilterStatus("all");
+    setFilterStars(0);
+    setSearchName("");
+    setFiltered(feedbacks);
   };
 
-  // 💬 Gửi phản hồi
-  const handleSubmitReply = () => {
-    if (!selected) return;
-    const updated = feedbacks.map((f) =>
-      f.id === selected.id ? { ...f, adminReply: replyText } : f
-    );
-    setFeedbacks(updated);
-    setReplyModal(false);
-    setSelected(null);
-    setReplyText("");
-  };
-
-  // 📊 Thống kê
   const total = feedbacks.length;
-  const responded = feedbacks.filter((f) => f.adminReply && f.adminReply.trim() !== "").length;
-  const pending = total - responded;
+  const responded = feedbacks.filter(f => f.adminReply).length;
   const percent = total > 0 ? Math.round((responded / total) * 100) : 0;
 
+const handleSubmitReply = () => {
+  if (!selected || !replyText.trim()) return;
+
+  setFeedbacks(prev =>
+    prev.map(f =>
+      f.id === selected.id
+        ? { ...f, adminReply: replyText }
+        : f
+    )
+  );
+
+  setReplyText("");
+  setSelected(null);
+  setReplyModal(false);
+};
+
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-8">
-      {/* 🧠 Tiêu đề */}
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 tracking-tight flex items-center gap-3">
-        <Headphones className="w-9 h-9 text-emerald-500 drop-shadow-sm transition-transform duration-200 hover:scale-110" />
-        Hỗ trợ & Phản hồi người dùng
+    <div className="min-h-screen p-8" style={{ background: "var(--background)" }}>
+      <h1 className="text-3xl font-bold mb-6 flex items-center gap-3" style={{ color: "var(--matching-color)" }}>
+        <Headphones className="w-9 h-9 text-emerald-500" /> Hỗ trợ & Phản hồi người dùng
       </h1>
 
-      {/* 📈 Thống kê tổng quan */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-2xl shadow-md p-5 text-center border-t-4 border-blue-400">
-          <p className="text-2xl font-semibold text-blue-700">{total}</p>
-          <p className="text-gray-600 text-sm mt-1">Tổng số phản hồi</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow-md p-5 text-center border-t-4 border-green-500">
-          <p className="text-2xl font-semibold text-green-600">{responded}</p>
-          <p className="text-gray-600 text-sm mt-1">Đã phản hồi</p>
-        </div>
-        <div className="bg-white rounded-2xl shadow-md p-5 text-center border-t-4 border-amber-400">
-          <p className="text-2xl font-semibold text-amber-600">{percent}%</p>
-          <p className="text-gray-600 text-sm mt-1">Tỷ lệ phản hồi</p>
-        </div>
-      </div>
-
-      {/* 🧮 Bộ lọc */}
-      <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-xl shadow-md border border-gray-100">
-        <div>
-          <label className="text-sm font-medium text-gray-700 mr-2">Ngày đánh giá:</label>
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="border rounded-lg px-3 py-1.5 focus:outline-green-500"
-          />
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-700 mr-2">Trạng thái:</label>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="border rounded-lg px-3 py-1.5 focus:outline-green-500"
-          >
-            <option value="all">Tất cả</option>
-            <option value="responded">Đã phản hồi</option>
-            <option value="pending">Chưa phản hồi: {pending}</option>
-          </select>
-        </div>
-      </div>
-
-      {/* 📋 Danh sách phản hồi */}
-      <div className="grid gap-4">
-        {filtered.length === 0 ? (
-          <p className="text-gray-500 italic text-center">Không có phản hồi nào.</p>
-        ) : (
-          filtered.map((item) => (
-            <div
-              key={item.id}
-              className="border border-gray-200 rounded-2xl p-5 shadow-sm bg-white hover:shadow-md transition flex justify-between"
-            >
-              <div>
-                <h3 className="font-semibold text-lg text-gray-800 flex items-center gap-2">
-                  <MessageSquare className="w-5 h-5 text-emerald-500" />
-                  {item.user}
-                </h3>
-
-                <p className="text-sm text-gray-500 mb-2 flex items-center gap-1">
-                  <Clock size={14} className="text-blue-500" />
-                  Ngày đánh giá:{" "}
-                  <span className="text-gray-700 font-medium">{item.date}</span>
-                </p>
-
-                {/* ⭐ Hiển thị 6 tiêu chí */}
-                <div className="grid grid-cols-2 gap-x-6 text-sm text-gray-700 mb-2">
-                  <p>🏢 Cơ sở vật chất: <span className="font-semibold">{item.facility}⭐</span></p>
-                  <p>⚡ Tốc độ đổi pin: <span className="font-semibold">{item.speed}⭐</span></p>
-                  <p>🔋 Chất lượng pin: <span className="font-semibold">{item.battery}⭐</span></p>
-                  <p>💰 Giá cả: <span className="font-semibold">{item.price}⭐</span></p>
-                  <p>👨‍🔧 Nhân viên: <span className="font-semibold">{item.staff}⭐</span></p>
-                  <p>😊 Hài lòng: <span className="font-semibold">{item.satisfaction}⭐</span></p>
-                </div>
-
-                <p className="text-gray-700 italic mb-2">“{item.comment}”</p>
-
-                {item.adminReply && (
-                  <div className="mt-3 bg-blue-50 p-3 rounded-lg border border-blue-100">
-                    <p className="text-gray-800 text-sm">
-                      💬{" "}
-                      <span className="font-semibold text-blue-700">
-                        Phản hồi từ admin:
-                      </span>{" "}
-                      {item.adminReply}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="text-right flex flex-col items-end gap-2">
-                {item.adminReply && item.adminReply.trim() !== "" ? (
-                  <span className="text-green-600 font-medium flex items-center gap-1">
-                    <CheckCircle size={18} /> Đã phản hồi
-                  </span>
-                ) : (
-                  <span className="text-amber-600 font-medium flex items-center gap-1">
-                    <Clock size={18} /> Chưa phản hồi
-                  </span>
-                )}
-
-                <button
-                  onClick={() => handleOpenReply(item)}
-                  className="flex items-center gap-1 bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-1.5 rounded-lg hover:opacity-90 transition text-sm shadow"
-                >
-                  <MessageSquare size={16} /> Ghi phản hồi
-                </button>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* 💬 Modal phản hồi */}
-      {replyModal && selected && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 w-[420px] animate-fadeIn">
-            <h2 className="text-lg font-semibold mb-3 text-gray-800 flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-blue-500" />
-              Ghi phản hồi cho{" "}
-              <span className="text-green-600">{selected.user}</span>
-            </h2>
-            <textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              className="w-full border rounded-lg p-3 h-28 focus:outline-blue-500 focus:ring-2 focus:ring-blue-200"
-              placeholder="Nhập nội dung phản hồi..."
-            />
-            <div className="flex justify-end gap-3 mt-5">
-              <button
-                onClick={() => setReplyModal(false)}
-                className="!px-4 !py-2 !rounded-lg !bg-slate-200 !hover:bg-slate-300 !text-slate-700 !font-medium shadow-sm !hover:shadow-md !transition"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleSubmitReply}
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-green-500 to-blue-500 text-white hover:opacity-90 shadow"
-              >
-                Gửi phản hồi
-              </button>
-            </div>
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4 mb-6">
+        {[
+          { label: "Tổng số phản hồi", value: total, color: "var(--primary-color)" },
+          { label: "Đã phản hồi", value: responded, color: "var(--success)" },
+          { label: "Tỷ lệ phản hồi", value: `${percent}%`, color: "var(--secondary-color)" },
+        ].map((item, i) => (
+          <div key={i} className="p-5 rounded-xl shadow text-center bg-white border-l-4"
+            style={{ borderColor: item.color }}>
+            <p className="text-2xl font-semibold" style={{ color: item.color }}>{item.value}</p>
+            <p className="text-gray-600 text-sm mt-1">{item.label}</p>
           </div>
+        ))}
+      </div>
+
+      {/* Filters */}
+<div className="bg-white p-5 rounded-xl shadow-md border mb-6 text-[15px]"
+     style={{ fontWeight: 500 }}>
+
+  {/* Row 1 */}
+  <div className="grid grid-cols-4 gap-4 mb-4">
+    
+    <div className="flex flex-col gap-1">
+      <label className="text-[var(--matching-color)]">Ngày đánh giá</label>
+      <input type="date" value={filterDate}
+        onChange={(e) => setFilterDate(e.target.value)}
+        className="border rounded-lg px-3 py-2 focus:outline-none w-full"/>
+    </div>
+
+    <div className="flex flex-col gap-1">
+      <label className="text-[var(--matching-color)]">Trạng thái</label>
+      <select value={filterStatus}
+        onChange={(e) => setFilterStatus(e.target.value)}
+        className="border rounded-lg px-3 py-2 focus:outline-none">
+        <option value="all">Tất cả</option>
+        <option value="responded">Đã phản hồi</option>
+        <option value="pending">Chưa phản hồi</option>
+      </select>
+    </div>
+
+    <div className="flex flex-col gap-1">
+      <label className="text-[var(--matching-color)]">Sao trung bình</label>
+      <select value={filterStars}
+        onChange={(e) => setFilterStars(Number(e.target.value))}
+        className="border rounded-lg px-3 py-2 focus:outline-none">
+        <option value={0}>Tất cả</option>
+        {[1,2,3,4,5].map(s => <option key={s} value={s}>{s} ⭐</option>)}
+      </select>
+    </div>
+
+    <div className="flex items-end">
+      <button
+        onClick={resetFilters}
+        className="w-full py-2 rounded-lg font-medium  text-white hover:opacity-90 transition flex items-center justify-center gap-2"
+        style={{ backgroundColor: "#527ea4ff" }}>
+         <RefreshCcw className="w-5 h-5" />
+        Reset
+      </button>
+    </div>
+
+  </div>
+
+  {/* Row 2 */}
+  <div className="flex flex-col gap-1">
+    <label className="text-[var(--matching-color)]">Tìm kiếm theo tên</label>
+    <input
+      type="text"
+      placeholder="Nhập tên người đánh giá..."
+      value={searchName}
+      onChange={(e) => setSearchName(e.target.value)}
+      className="border rounded-lg px-3 py-2 focus:outline-none w-full"/>
+  </div>
+</div>
+
+
+{/* Feedback Cards */}
+<div className="mt-4 grid gap-4">
+  {filtered.map(item => {
+    const stars = [
+      { label: "Cơ sở vật chất", value: item.facility },
+      { label: "Tốc độ đổi pin", value: item.speed },
+      { label: "Chất lượng pin", value: item.battery },
+      { label: "Giá cả", value: item.price },
+      { label: "Nhân viên", value: item.staff },
+      { label: "Hài lòng", value: item.satisfaction },
+    ];
+
+    return (
+      <div
+        key={item.id}
+        className="p-5 rounded-xl shadow bg-white border relative overflow-visible grid grid-cols-[1fr,160px]"
+      >
+        {/* Cột bên trái */}
+        <div>
+          <h3 className="font-semibold text-lg text-[var(--matching-color)] flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-gray-500" /> {item.user}
+          </h3>
+
+          <p className="text-sm text-gray-500 mb-3">
+            Ngày đánh giá: <span className="text-gray-800 font-medium">{item.date}</span>
+          </p>
+
+          {/* Stars */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-[15px] mb-3">
+            {stars.map((s, idx) => (
+              <p key={idx} className="flex items-center gap-1">
+                {s.label}: <span className="font-semibold text-amber-500">{s.value}⭐</span>
+              </p>
+            ))}
+          </div>
+
+          {/* Comment */}
+          <p className="italic text-gray-900 mb-3">“{item.comment}”</p>
+
+          {/* Admin Reply */}
+          {item.adminReply && (
+            <div
+              className="p-3 rounded-lg"
+              style={{
+                background: "var(--primary-bg)",
+                border: "1px solid var(--primary-color)",
+              }}
+            >
+              <p className="text-sm text-[var(--text-primary)]">
+                💬 <span className="font-semibold" style={{ color: "var(--secondary-dark)" }}>
+                  Phản hồi từ admin:
+                </span> {item.adminReply}
+              </p>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Nút và trạng thái trên góc phải */}
+        <div className="absolute top-5 right-5 flex flex-col items-end gap-2">
+          <span className={`flex items-center gap-1 text-sm font-semibold ${
+    item.adminReply ? "text-[var(--success)]" : "text-[var(--warning)]"
+  }`}>
+            {item.adminReply ? (
+              <>
+                <CheckCircle className="w-5 h-5" /> Đã phản hồi
+              </>
+            ) : (
+              <>
+                <Clock className="w-5 h-5" /> Chưa phản hồi
+              </>
+            )}
+          </span>
+
+          <button
+            onClick={() => {
+              setSelected(item);
+              setReplyModal(true);
+              setReplyText(item.adminReply || "");
+            }}
+            className="px-3 py-2 text-sm font-medium rounded-lg !bg-green-600 text-white hover:opacity-90 transition shadow"
+            style={{
+              background: "var(--primary-color)",
+              width: "150px",
+              textAlign: "center",
+            }}
+          >
+            Ghi phản hồi
+          </button>
+        </div>
+      </div>
+    );
+  })}
+</div>
+
+
+{replyModal && selected && (
+  <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-xl w-[400px] relative">
+      <h3 className="text-lg font-semibold mb-3">Phản hồi {selected.user}</h3>
+      <textarea
+        className="w-full border rounded-lg p-2 mb-4"
+        rows={4}
+        value={replyText}
+        onChange={(e) => setReplyText(e.target.value)}
+      />
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={() => setReplyModal(false)}
+          className="!px-4 !py-2 !rounded-lg !bg-gray-300 !hover:bg-gray-400 !transition"
+        >
+          Hủy
+        </button>
+        <button
+          onClick={handleSubmitReply}
+          className="!px-4 !py-2 !rounded-lg !bg-blue-500 !text-white !hover:bg-blue-600 !transition"
+        >
+          Gửi phản hồi
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };
