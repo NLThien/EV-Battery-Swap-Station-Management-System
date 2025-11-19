@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.station_management.model.dto.StationDetailResponse;
 import com.example.station_management.model.dto.StationDetailRequest;
+import com.example.station_management.model.dto.StationDetailResponse;
 import com.example.station_management.model.entity.Station;
 import com.example.station_management.model.entity.StationDetail;
 import com.example.station_management.service.StationDetailService;
-import com.example.station_management.service.StationService;
 
 import jakarta.validation.Valid;
 
@@ -33,9 +32,6 @@ public class StationDetailController {
 
     @Autowired
     private StationDetailService stationDetailService;
-
-    @Autowired
-    private StationService stationService;
         
     @GetMapping
     public ResponseEntity<List<StationDetailResponse>> getAllStationDetails() {
@@ -156,7 +152,7 @@ public class StationDetailController {
         detail.setAvailableSlots(request.getAvailableSlots());
         detail.setTotalBattery(request.getTotalBattery());
         detail.setTotalPowerCapacity(request.getTotalPowerCapacity());
-        detail.setCurrentPoweUsage(request.getCurrentPowerUsage());
+        detail.setCurrentPowerUsage(request.getCurrentPowerUsage());
         detail.setOperationalHours(request.getOperationalHours());
         detail.setContactPhone(request.getContactPhone());
         detail.setContactEmail(request.getContactEmail());
@@ -182,7 +178,7 @@ public class StationDetailController {
             existing.setTotalPowerCapacity(request.getTotalPowerCapacity());
         }
         if (request.getCurrentPowerUsage() != null) {
-            existing.setCurrentPoweUsage(request.getCurrentPowerUsage());
+            existing.setCurrentPowerUsage(request.getCurrentPowerUsage());
         }
         if (request.getOperationalHours() != null) {
             existing.setOperationalHours(request.getOperationalHours());
