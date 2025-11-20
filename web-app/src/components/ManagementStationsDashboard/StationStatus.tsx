@@ -85,32 +85,45 @@ export const StationStatus = () => {
           const stationInfo = getStationInfo(detail.stationId);
           
           return (
-            <div key={detail.id} className="station-item">
+            <div key={detail.id} className={`station-item ${status} ${detailsLoading ? 'loading' : ''}`}>
               <div className="station-info">
-                <div className="station-name">
-                  {getStatusIcon(status)} 
-                  {stationInfo?.name || `Trạm ${detail.stationId}`}
+                <div className="station-header">
+                  <span className="status-icon">{getStatusIcon(status)}</span>
+                  <div className="station-name">
+                    {stationInfo?.name || `Trạm ${detail.stationId}`}
+                  </div>
                 </div>
-                <div className="station-id">
-                  {detail.stationId}
-                  {stationInfo && (
-                    <div className="station-address">
-                      {stationInfo.address}
-                    </div>
+                <div className="station-details">
+                  <div className="station-id">{detail.stationId}</div>
+                  {stationInfo?.address && (
+                    <div className="station-address">{stationInfo.address}</div>
                   )}
                 </div>
               </div>
+              
               <div className="station-stats">
-                <div className="capacity">Dung lượng: {capacity}</div>
-                <div className="load">Tải: {latestLog?.powerDemand || 0} kW</div>
-                <div className="slots">Slot: {detail.availableSlots}/{detail.totalSlots}</div>
+                <div className="stat-item">
+                  <div className="stat-label">Dung lượng</div>
+                  <div className="stat-value capacity-value">{capacity}</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-label">Tải</div>
+                  <div className="stat-value load-value">{latestLog?.powerDemand || 0} kW</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-label">Slot</div>
+                  <div className="stat-value slots-value">{detail.availableSlots}/{detail.totalSlots}</div>
+                </div>
+                <div className="stat-item">
+                  <div className="stat-label">Năng lượng</div>
+                  <div className="stat-value energy-value">{latestLog?.energyConsumed || 0} kWh</div>
+                </div>
+                
                 {stationInfo && (
-                  <div className="station-status-badge">
-                    Trạng thái: {stationInfo.status}
+                  <div className={`station-status-badge ${stationInfo.status}`}>
+                    {stationInfo.status === 'ACTIVE' ? 'Hoạt động' : 
+                    stationInfo.status === 'MAINTENANCE' ? 'Bảo trì' : 'Ngừng hoạt động'}
                   </div>
-                )}
-                {latestLog && (
-                  <div className="energy">Năng lượng: {latestLog.energyConsumed} kWh</div>
                 )}
               </div>
             </div>

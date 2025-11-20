@@ -65,7 +65,7 @@ function StationAdmin() {
   };
 
   const handleDeleteStation = async (id: string): Promise<void> => {
-    if (window.confirm('Are you sure you want to delete this station?')) {
+    if (window.confirm('Chắc chưa?')) {
       try {
         await deleteStation(id);
       } catch (error) {
@@ -90,7 +90,7 @@ function StationAdmin() {
       // Error handled in hook
     } finally {
       setSearchLoading(false);
-      console.log('SEARCH COMPLETE - setting searchLoading to false');
+      // console.log('SEARCH COMPLETE - setting searchLoading to false'); // để test giờ xóa
     }
   };
 
@@ -102,7 +102,7 @@ function StationAdmin() {
       // Error handled in hook
     } finally {
       setClearLoading(false);
-      console.log('CLEAR COMPLETE - setting clearLoading to false');
+      // console.log('CLEAR COMPLETE - setting clearLoading to false'); để test giờ xóa
     }
   };
 
@@ -115,11 +115,11 @@ function StationAdmin() {
         {/* Header */}
         <div className="header">
           <div className="headerContent">
-            <h1>Station Management</h1>
-            <p>Manage your battery swap stations</p>
+            <h1>Quản Lý Trạm Sạc</h1>
+            <p>Quản lý các trạm trao đổi pin</p>
           </div>
           <button className="addButton" onClick={handleCreateStation}>
-            + Add New Station
+            + Thêm trạm mới
           </button>
         </div>
 
@@ -127,7 +127,7 @@ function StationAdmin() {
         {error && (
           <div className="error">
             {error}
-            <button onClick={clearError} className="dismissButton">Dismiss</button>
+            <button onClick={clearError} className="dismissButton">Dismis</button>
           </div>
         )}
 

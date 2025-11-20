@@ -9,6 +9,8 @@ export interface StationEnergyLog {
   powerDemand: number;
   voltage: number;
   current: number;
+  co2Saved: number;
+  equivalentTrees: number;
   loggedAt: string;
   timeSlot: string;
   createdAt?: string;
@@ -21,6 +23,8 @@ export interface StationEnergyLogRequest {
   powerDemand: number;
   voltage: number;
   current: number;
+  co2Saved: number;
+  equivalentTrees: number;
   loggedAt?: string;
   timeSlot: string;
 }
@@ -36,6 +40,8 @@ export interface StationEnergyLogResponse {
   powerDemand: number;
   voltage: number;
   current: number;
+  co2Saved: number;
+  equivalentTrees: number;
   loggedAt: string;
   timeSlot: string;
   createdAt?: string;
