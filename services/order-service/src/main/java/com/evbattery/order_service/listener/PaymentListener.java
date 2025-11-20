@@ -15,13 +15,13 @@ public class PaymentListener {
 
     private final OrderRepository orderRepository;
 
-    @Autowired // Dùng Constructor Injection
+    @Autowired 
     public PaymentListener(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     // Lắng nghe hàng đợi
-    @RabbitListener(queues = "${queue.name}") // Lấy tên từ application.yml
+    @RabbitListener(queues = "${queue.name}")
     public void handlePaymentCompleted(PaymentCompletedEvent event) {
         System.out.println("Nhận được sự kiện: " + event.orderId());
         
@@ -31,7 +31,7 @@ public class PaymentListener {
         if (order != null && "PENDING".equals(order.getStatus())) {
             order.setStatus("PAID");
             orderRepository.save(order);
-            // (Bạn có thể gửi thông báo (Push Notification) cho user tại đây)
+            System.out.println("Cập nhật trạng thái đơn hàng thành PAID cho orderId: " + event.orderId());
         }
     }
 }

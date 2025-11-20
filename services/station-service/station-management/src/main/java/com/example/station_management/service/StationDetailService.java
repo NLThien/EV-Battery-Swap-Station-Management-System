@@ -65,7 +65,7 @@ public class StationDetailService {
         Optional<StationDetail> optionalDetail = stationDetailRepository.findById(id);
         if (optionalDetail.isPresent()) {
             StationDetail detail = optionalDetail.get();
-            detail.setCurrentPoweUsage(currentPowerUsage);
+            detail.setCurrentPowerUsage(currentPowerUsage);
             return stationDetailRepository.save(detail);
         }
         throw new RuntimeException("StationDetail not found with id: " + id);

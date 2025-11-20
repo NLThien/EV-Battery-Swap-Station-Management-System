@@ -1,185 +1,116 @@
-import React, { useState, useEffect } from 'react';
-import { 
-    View, 
-    Text, 
-    StyleSheet, 
-    FlatList, 
-    ActivityIndicator 
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context'; 
-// import { apiClient } from '../../AuthContext'; 
-import { Stack } from 'expo-router';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
-interface Transaction {
-  id: string; // ID của PaymentLog
-  orderId: string;
-  amount: number;
-  status: 'PENDING' | 'PAID' | 'FAILED';
-  createdAt: string; // Dạng chuỗi Date (ISO String)
-}
-
-
-const TransactionItem = ({ item }: { item: Transaction }) => {
+export default function TransactionDetailScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams<{ data: string }>();
   
+  // Parse dữ liệu JSON truyền từ màn hình trước
+  const transaction = params.data ? JSON.parse(params.data) : null;
 
-  const getStatusStyle = (status: Transaction['status']) => {
-    switch (status) {
-      case 'PAID': return styles.statusPaid;
-      case 'PENDING': return styles.statusPending;
-      case 'FAILED': return styles.statusFailed;
-      default: return {};
-    }
-  };
-
-  return (
-    <View style={styles.itemContainer}>
-      {}
-      <View>
-        <Text style={styles.itemOrderId}>Đơn hàng: {item.orderId}</Text>
-        <Text style={styles.itemDate}>
-          {new Date(item.createdAt).toLocaleString('vi-VN')}
-        </Text>
-      </View>
-      
-      {}
-      <View style={{ alignItems: 'flex-end' }}>
-        <Text style={styles.itemAmount}>{item.amount.toLocaleString()} VNĐ</Text>
-        <Text style={[styles.itemStatus, getStatusStyle(item.status)]}>{item.status}</Text>
-      </View>
-    </View>
-  );
-};
-
-export default function TransactionHistoryScreen() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchHistory = async () => {
-      try {
-        setIsLoading(true);
-        
-        const response = await apiClient.get('/payment/transactions');
-        
-        setTransactions(response.data.transactions); 
-      } catch (err) {
-        console.error("Lỗi khi tải lịch sử:", err);
-        setError('Không thể tải lịch sử giao dịch. Vui lòng thử lại.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHistory();
-  }, []);
-
-  if (isLoading) {
+  if (!transaction) {
     return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" />
-        <Text>Đang tải lịch sử...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.errorText}>{error}</Text>
-      </View>
+        <SafeAreaView style={styles.container}><Text>Không tìm thấy dữ liệu</Text></SafeAreaView>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Đặt tiêu đề cho màn hình */}
-      <Stack.Screen 
-        options={{ 
-          title: 'Lịch sử Giao dịch',
-          headerShown: true 
-        }} 
-      />
-      
-      <FlatList
-        data={transactions}
-        renderItem={({ item }) => <TransactionItem item={item} />}
-        keyExtractor={(item) => item.id}
-        ListEmptyComponent={
-          <View style={styles.centered}>
-            <Text>Chưa có giao dịch nào.</Text>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#374151" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Chi tiết Giao dịch</Text>
+        <View style={{ width: 24 }} /> 
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        
+        {/* Số tiền lớn */}
+        <View style={styles.amountCard}>
+          <Text style={styles.label}>Số tiền thanh toán</Text>
+          <Text style={styles.amount}>
+            {transaction.amount.toLocaleString()} VNĐ
+          </Text>
+          <View style={[
+            styles.statusBadge, 
+            transaction.status === 'PAID' ? styles.statusSuccess : styles.statusPending
+          ]}>
+            <Text style={styles.statusText}>{transaction.status}</Text>
           </View>
-        }
-      />
+        </View>
+
+        {/* Chi tiết */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Thông tin chi tiết</Text>
+          
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Mã giao dịch</Text>
+            <Text style={styles.rowValue}>{transaction.gatewayTxnRef}</Text>
+          </View>
+          
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Mã đơn hàng</Text>
+            <Text style={styles.rowValue}>{transaction.orderId}</Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>Thời gian</Text>
+            <Text style={styles.rowValue}>
+              {new Date(transaction.createdAt).toLocaleString('vi-VN')}
+            </Text>
+          </View>
+           
+          <View style={styles.divider} />
+
+           <View style={styles.row}>
+            <Text style={styles.rowLabel}>Ngân hàng</Text>
+            <Text style={styles.rowValue}>TPBank</Text>
+          </View>
+        </View>
+
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#f5f5f5' 
-  },
-  centered: { 
-    flex: 1, 
-    justifyContent: 'center', 
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
+  header: { 
+    flexDirection: 'row', 
     alignItems: 'center', 
-    paddingTop: 50 
+    justifyContent: 'space-between', 
+    padding: 16, 
+    backgroundColor: 'white' 
   },
-  errorText: { 
-    color: 'red', 
-    fontSize: 16 
-  },
-  itemContainer: {
+  headerTitle: { fontSize: 18, fontWeight: '600', color: '#111827' },
+  content: { padding: 16 },
+  amountCard: {
     backgroundColor: 'white',
-    padding: 16,
-    marginVertical: 8,
-    marginHorizontal: 16,
-    borderRadius: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    borderRadius: 16,
+    padding: 24,
     alignItems: 'center',
-    elevation: 2, // Shadow cho Android
-    shadowColor: '#000', // Shadow cho iOS
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    marginBottom: 16,
   },
-  itemOrderId: { 
-    fontSize: 16, 
-    fontWeight: 'bold',
-    color: '#333'
-  },
-  itemDate: { 
-    fontSize: 12, 
-    color: 'gray', 
-    marginTop: 4 
-  },
-  itemAmount: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    color: '#16A34A' // Màu xanh lá
-  },
-  itemStatus: { 
-    fontSize: 12, 
-    fontWeight: 'bold', 
-    marginTop: 4, 
-    paddingHorizontal: 8, 
-    paddingVertical: 3, 
-    borderRadius: 10, 
-    overflow: 'hidden' // Đảm bảo bo góc cho background
-  },
-  statusPaid: { 
-    backgroundColor: '#D1FAE5', // Xanh lá nhạt
-    color: '#065F46' // Xanh lá đậm
-  },
-  statusPending: { 
-    backgroundColor: '#FEF3C7', // Vàng nhạt
-    color: '#92400E' // Vàng đậm
-  },
-  statusFailed: { 
-    backgroundColor: '#FEE2E2', // Đỏ nhạt
-    color: '#991B1B' // Đỏ đậm
-  },
+  label: { fontSize: 14, color: '#6B7280', marginBottom: 8 },
+  amount: { fontSize: 32, fontWeight: 'bold', color: '#111827', marginBottom: 16 },
+  statusBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
+  statusSuccess: { backgroundColor: '#DCFCE7' },
+  statusPending: { backgroundColor: '#FEF3C7' },
+  statusText: { fontWeight: '600', color: '#065F46', fontSize: 14 },
+  
+  section: { backgroundColor: 'white', borderRadius: 16, padding: 16 },
+  sectionTitle: { fontSize: 16, fontWeight: '600', marginBottom: 16, color: '#374151' },
+  row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8 },
+  rowLabel: { color: '#6B7280', fontSize: 14 },
+  rowValue: { color: '#111827', fontSize: 14, fontWeight: '500', maxWidth: '60%', textAlign: 'right' },
+  divider: { height: 1, backgroundColor: '#E5E7EB', marginVertical: 8 },
 });
