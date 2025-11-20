@@ -1,39 +1,46 @@
-# version: '3.8'
-# services:
-#   mysql:
-#     image: mysql:8.0
-#     container_name: ps_mysql
-#     environment:
-#       MYSQL_ROOT_PASSWORD: rootpassword
-#       MYSQL_DATABASE: payment_service
-#     ports:
-#       - "3306:3306"
-#     volumes:
-#       - mysql_data:/var/lib/mysql
 
-#   rabbitmq:
-#     image: rabbitmq:3-management
-#     container_name: ps_rabbitmq
-#     ports:
-#       - "5672:5672"
-#       - "15672:15672"
+services:
+  mysql:
+    image: mysql:8.0.43-debian
+    container_name: ps_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: payment_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 0942868460
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - ps_network
 
-#   payment-service:
-#     build: .
-#     container_name: payment-service
-#     environment:
-#       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/payment_db
-#       - SPRING_DATASOURCE_USERNAME=root
-#       - SPRING_DATASOURCE_PASSWORD=0942868460
-#       - RABBIT_HOST=rabbitmq
-#       - RABBIT_PORT=5672
-#       - RABBIT_USERNAME=guest
-#       - RABBIT_PASSWORD=guest
-#     ports:
-#       - "8082:8082"
-#     depends_on:
-#       - mysql
-#       - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ps_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
-# volumes:
-#   mysql_data:
+  payment-service:
+    build:
+      context: ./
+    container_name: payment-service
+    restart: unless-stopped
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/payment_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=0942868460
+      - RABBIT_HOST=rabbitmq
+      - RABBIT_PORT=5672
+      - RABBIT_USERNAME=guest
+      - RABBIT_PASSWORD=guest
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mysql
+      - rabbitmq
+
+volumes:
+  mysql_data:
