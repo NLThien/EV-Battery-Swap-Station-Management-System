@@ -27,7 +27,7 @@
   gap: 1rem;
   align-items: flex-end;
   flex-wrap: wrap;
-  min-height: 70px; /* GIỮ LAYOUT ỔN ĐỊNH */
+  min-height: 70px;
 }
 
 .filterInput {
@@ -94,10 +94,8 @@
   align-items: center;
   flex-shrink: 0;
 }
-
-/* SỬA LẠI MÀU NÚT SEARCH */
 .searchButton {
-  background-color: var(--primary-supper-dark); /* DÙNG VARIABLE */
+  background-color: var(--primary-supper-dark);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;

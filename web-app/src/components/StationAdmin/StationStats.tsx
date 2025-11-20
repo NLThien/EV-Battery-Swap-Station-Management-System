@@ -31,10 +31,10 @@ const StationStats = ({ stations }: StationStatsProps) => {
 
   return (
     <div className="statsGrid">
-      <StatCard label="Total Stations" value={stats.total} type="total" />
-      <StatCard label="Active Stations" value={stats.active} type="active" />
-      <StatCard label="Inactive Stations" value={stats.inactive} type="inactive" />
-      <StatCard label="Under Maintenance" value={stats.maintenance} type="maintenance" />
+      <StatCard label="Tổng số trạm" value={stats.total} type="total" />
+      <StatCard label="Trạm hoạt động" value={stats.active} type="active" />
+      <StatCard label="Trạm dừng hoạt động" value={stats.inactive} type="inactive" />
+      <StatCard label="Đang bảo trì" value={stats.maintenance} type="maintenance" />
     </div>
   );
 };
