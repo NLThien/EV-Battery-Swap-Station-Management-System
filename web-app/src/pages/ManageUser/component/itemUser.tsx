@@ -6,6 +6,7 @@ import ButtonEditUserByAdmin from "./ButtonEditUser";
 import ButtonChangeRole from "./ButtonChangeRole";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect } from "react";
+import { formatDateTime } from "@/utils/formatDate";
 
 interface UserProps {
   user: UserResponse;
@@ -29,13 +30,36 @@ function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
   return (
     <div className="grid grid-cols-5 items-center  gap-4 px-4 py-3 border-t text-sm">
       {/* Tên */}
-      <div className="flex items-center gap-3 font-medium  text-gray-900">
+      <div className="flex relative items-center gap-3 font-medium  text-gray-900 group cursor-pointer">
         <div className="h-9 w-9 bg-blue-100 rounded-full flex items-center justify-center text-lg font-semibold text-blue-600">
           {avatarLetter}
         </div>
         <span>
           {user.firstName} {user.lastName}
         </span>
+        {/* tooltip  */}
+        <div className="absolute w-60 md:w-72 flex-col bg-white border border-gray-100 rounded-lg shadow-2xl p-4 space-y-3 top-12 left-0 z-20 hidden group-hover:flex animate-slide-down-scale">
+          {/* Tiêu đề Phân cách */}
+          <div className="text-xs font-semibold uppercase text-gray-500 tracking-wider border-b pb-1 border-gray-100">
+            Thông tin cơ bản
+          </div>
+
+          {/* Nội dung đã được cải thiện Typography và Spacing */}
+          <div className="space-y-2">
+            <div className="text-sm text-gray-700">
+              <span className="font-medium text-gray-600 mr-2">Ngày sinh:</span>
+              {user.birthday}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium text-gray-600 mr-2">Ngày tạo:</span>
+              {formatDateTime(user.createAt)}
+            </div>
+            <div className="text-sm text-gray-700">
+              <span className="font-medium text-gray-600 mr-2">Cập nhật:</span>
+              {formatDateTime(user.updateAt)}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Số điện thoại */}
@@ -57,7 +81,7 @@ function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
         <div className="relative group">
           <div
             className="absolute bottom-10 right-0.5 w-max px-2 py-1 bg-gray-100 border rounded-md shadow-lg 
-             text-gray-700 text-sm font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200"
+             text-gray-700 text-sm font-semibold hidden translate-y-2 group-hover:flex animate-drop"
           >
             Đổi mật khẩu
           </div>
@@ -69,7 +93,7 @@ function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
         <div className="relative group">
           <div
             className="absolute bottom-10 right-0.5 w-max px-2 py-1 bg-gray-100 border rounded-md shadow-lg 
-             text-gray-700 text-sm font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200"
+             text-gray-700 text-sm font-semibold hidden translate-y-2 group-hover:flex animate-drop"
           >
             Sửa thông tin
           </div>
@@ -83,7 +107,7 @@ function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
         <div className="relative group">
           <div
             className="absolute bottom-10 right-0.5 w-max px-2 py-1 bg-gray-100 border rounded-md shadow-lg 
-             text-gray-700 text-sm font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200"
+             text-gray-700 text-sm font-semibold hidden translate-y-2 group-hover:flex animate-drop"
           >
             Đổi quyền
           </div>
@@ -98,7 +122,7 @@ function ItemUser({ user, onDeleted, onUpdate, onChangeRole }: UserProps) {
         <div className="relative group">
           <div
             className="absolute bottom-10 right-0.5 w-max px-2 py-1 bg-gray-100 border rounded-md shadow-lg 
-             text-gray-700 text-sm font-semibold opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200"
+             text-gray-700 text-sm font-semibold hidden translate-y-2 group-hover:flex animate-drop"
           >
             Xóa tài khoản
           </div>
