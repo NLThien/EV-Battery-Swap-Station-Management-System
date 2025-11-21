@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { View, Text, Alert, ScrollView, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
+import { createNewFeedback } from "@/api/feedbackApi"; // 👈 Import API
 import Button from "@/components/button";
 import CustomInput from "@/components/custom-input";
 import { MaterialIcons } from "@expo/vector-icons";
-
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 // ✅ Các tiêu chí đánh giá cố định
 const ratingCategories = [
   { key: "facility", label: "Cơ sở vật chất" },
@@ -22,6 +22,7 @@ type RatingCategory = typeof ratingCategories[number]["key"];
 export default function CreateFeedback() {
   const router = useRouter();
   const [feedback, setFeedback] = useState("");
+  const [isSending, setIsSending] = useState(false); // Thêm state cho loading  
   const [ratings, setRatings] = useState<Record<RatingCategory, number>>({
     facility: 0,
     speed: 0,
@@ -37,29 +38,36 @@ export default function CreateFeedback() {
   };
 
   // ✅ Gửi đánh giá
-  const onPressSendFeedback = () => {
+ const onPressSendFeedback = async () => { 
     const allRated = Object.values(ratings).every((v) => v > 0);
     if (!allRated) {
       Alert.alert("⚠️ Vui lòng đánh giá đầy đủ tất cả các mục!");
       return;
     }
 
-    // ✅ Giả lập dữ liệu feedback mới (thêm user, userId)
-    const newFeedback = {
-      id: Date.now().toString(),
-      userId: "U001", // 👈 Tạm cố định, sau này thay bằng user thật
-      userName: "Nguyễn Văn A", // 👈 Có thể lấy từ context đăng nhập
-      date: new Date().toISOString().split("T")[0],
+    if (isSending) return;
+
+    const payload = {
+      userId: "U001", 
       ...ratings,
       comment: feedback,
-      adminReply: "",
     };
 
-    console.log("📤 Feedback gửi đi:", newFeedback);
+    setIsSending(true);
 
-    Alert.alert("🎉 Gửi thành công", "Cảm ơn bạn đã đóng góp ý kiến!");
-    router.back();
-  };
+    try {
+      // ✅ 'await' hợp lệ bên trong hàm 'async'
+      await createNewFeedback(payload); 
+      
+      Alert.alert("🎉 Gửi thành công", "Cảm ơn bạn đã đóng góp ý kiến!");
+      router.back();
+    } catch (error) {
+      console.error(error);
+      Alert.alert("❌ Lỗi", "Gửi phản hồi thất bại. Vui lòng thử lại.");
+    } finally {
+      setIsSending(false);
+    }
+};
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -126,7 +134,7 @@ export default function CreateFeedback() {
 
         {/* Nút gửi */}
         <View className="mt-8 mb-10">
-          <Button title="Gửi đánh giá" onPress={onPressSendFeedback} />
+          <Button title="Gửi đánh giá" onPress={onPressSendFeedback} disabled={isSending} />
         </View>
       </ScrollView>
     </SafeAreaView>
