@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { chargingSessionService } from '../services/stations/chargingSession';
-import { type ChargingSession, type ChargingSessionRequest, type ChargingSessionResponse, type CompleteSessionRequest, type ChargingStatus, type VehicleType } from '../types/chargingSession';
+import { type ChargingSession, type ChargingSessionRequest, type ChargingSessionResponse, type CompleteSessionRequest, type ChargingStatus } from '../types/chargingSession';
 
 interface UseChargingSessionsReturn {
   // State
@@ -18,6 +18,8 @@ interface UseChargingSessionsReturn {
   completeSession: (id: string, completeData: CompleteSessionRequest) => Promise<ChargingSessionResponse>;
   cancelSession: (id: string) => Promise<ChargingSessionResponse>;
   deleteSession: (id: string) => Promise<void>;
+  pauseSession(id: string): Promise<ChargingSessionResponse>;
+  resumeSession(id: string): Promise<ChargingSessionResponse>;
   getSessionsByStation: (stationId: string) => Promise<ChargingSessionResponse[]>;
   getSessionsByUser: (userId: string) => Promise<ChargingSessionResponse[]>;
   getSessionsByStatus: (status: ChargingStatus) => Promise<ChargingSessionResponse[]>;
@@ -36,7 +38,7 @@ interface SessionFilters {
   stationId?: string;
   userId?: string;
   status?: ChargingStatus;
-  vehicleType?: VehicleType;
+  vehicleType?: string;
   dateRange?: {
     start: Date;
     end: Date;
@@ -194,22 +196,74 @@ export const useChargingSessions = (initialFilters?: SessionFilters): UseChargin
     }
   }, [selectedSession, applyFilters]);
 
-  // Specialized fetch methods
+  // dừng phiên
+  const pauseSession = useCallback(async (id: string): Promise<ChargingSessionResponse> => {
+    setError(null);
+    
+    try {
+      const updatedSession = await chargingSessionService.pauseSession(id);
+      setSessions(prev => {
+        const updated = prev.map(session => 
+          session.id === id ? updatedSession : session
+        );
+        return applyFilters(updated);
+      });
+      
+      if (selectedSession?.id === id) {
+        setSelectedSession(updatedSession);
+      }
+      
+      return updatedSession;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to pause charging session';
+      setError(errorMessage);
+      console.error('Error pausing charging session:', err);
+      throw err;
+    }
+  }, [selectedSession, applyFilters]);
+
+  // Tiếp tục phiên sạc
+  const resumeSession = useCallback(async (id: string): Promise<ChargingSessionResponse> => {
+    setError(null);
+    
+    try {
+      const updatedSession = await chargingSessionService.resumeSession(id);
+      setSessions(prev => {
+        const updated = prev.map(session => 
+          session.id === id ? updatedSession : session
+        );
+        return applyFilters(updated);
+      });
+      
+      if (selectedSession?.id === id) {
+        setSelectedSession(updatedSession);
+      }
+      
+      return updatedSession;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to resume charging session';
+      setError(errorMessage);
+      console.error('Error resuming charging session:', err);
+      throw err;
+    }
+  }, [selectedSession, applyFilters]);
+
+  // lấy phiên theo id trạm
   const getSessionsByStation = useCallback(async (stationId: string): Promise<ChargingSessionResponse[]> => {
     setLoading(true);
     setError(null);
     
     try {
-      const stationSessions = await chargingSessionService.getSessionsByStation(stationId);
-      return stationSessions;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch station sessions';
-      setError(errorMessage);
-      console.error('Error fetching station sessions:', err);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
+        const stationSessions = await chargingSessionService.getSessionsByStation(stationId);
+        return stationSessions;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch station sessions';
+        setError(errorMessage);
+        console.error('Error fetching station sessions:', err);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
   }, []);
 
   const getSessionsByUser = useCallback(async (userId: string): Promise<ChargingSessionResponse[]> => {
@@ -364,6 +418,8 @@ export const useChargingSessions = (initialFilters?: SessionFilters): UseChargin
     completeSession,
     cancelSession,
     deleteSession,
+    pauseSession,
+    resumeSession,
     getSessionsByStation,
     getSessionsByUser,
     getSessionsByStatus,
@@ -386,7 +442,7 @@ export const useSessionStats = (sessions: ChargingSessionResponse[]) => {
     active: sessions.filter(s => s.status === 'ACTIVE').length,
     completed: sessions.filter(s => s.status === 'COMPLETED').length,
     cancelled: sessions.filter(s => s.status === 'CANCELLED').length,
-    pending: sessions.filter(s => s.status === 'PENDING').length,
+    failed: sessions.filter(s => s.status === 'FAILED').length,
   };
 
   const energyStats = {
@@ -404,17 +460,14 @@ export const useSessionStats = (sessions: ChargingSessionResponse[]) => {
       : 0,
   };
 
-  const byVehicleType = {
-    car: sessions.filter(s => s.vehicleType === 'CAR').length,
-    motorbike: sessions.filter(s => s.vehicleType === 'MOTORBIKE').length,
-    bus: sessions.filter(s => s.vehicleType === 'BUS').length,
-    truck: sessions.filter(s => s.vehicleType === 'TRUCK').length,
-    scooter: sessions.filter(s => s.vehicleType === 'SCOOTER').length,
-  };
+  const byVehicleName = sessions.reduce((acc, session) => {
+    acc[session.vehicleType] = (acc[session.vehicleType] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   return {
     stats,
     energyStats,
-    byVehicleType,
+    byVehicleName,
   };
 };

@@ -1,4 +1,4 @@
-import { type ChargingSession, type ChargingSessionRequest, type ChargingSessionResponse, type CompleteSessionRequest, type ChargingStatus, type VehicleType } from '../../types/chargingSession';
+import { type ChargingSessionRequest, type ChargingSessionResponse, type CompleteSessionRequest, type ChargingStatus } from '../../types/chargingSession';
 
 const API_BASE_URL = 'http://localhost:8082/api';
 
@@ -48,11 +48,48 @@ export const chargingSessionService = {
     return response.json();
   },
 
-  // Lấy sessions theo station
-  async getSessionsByStation(stationId: string): Promise<ChargingSessionResponse[]> {
-    const response = await fetch(`${API_BASE_URL}/charging-sessions/station/${stationId}`);
-    if (!response.ok) throw new Error('Failed to fetch station charging sessions');
+  // tạm dừng session
+  async pauseSession(id: string): Promise<ChargingSessionResponse> {
+    const response = await fetch(`${API_BASE_URL}/charging-sessions/${id}/pause`, {
+      method: 'PATCH',
+    });
+    if (!response.ok) throw new Error('Failed to pause charging session');
     return response.json();
+  },
+
+  // Tiếp tục
+  async resumeSession(id: string): Promise<ChargingSessionResponse> {
+    const response = await fetch(`${API_BASE_URL}/charging-sessions/${id}/resume`, {
+      method: 'PATCH',
+    });
+    if (!response.ok) throw new Error('Failed to resume charging session');
+    return response.json();
+  },
+
+  // Lấy sessions theo station
+  async getSessionsByStation(stationId: string): Promise<any[]> {
+    const response = await fetch(`${API_BASE_URL}/charging-sessions/station/${stationId}`);
+    if (!response.ok) throw new Error('Failed to fetch sessions');
+    const data = await response.json();
+    // Mapping chính xác từ database fields
+    return data.map((session: any) => ({
+      id: session.id,
+      stationId: session.station_id || session.stationId,
+      userId: session.userid || session.userId,
+      vehicleName: session.vehicle_type || session.vehicleName,
+      batteryCapacity: session.battery_capacity || session.batteryCapacity,
+      startBatteryLevel: session.start_battery_level || session.startBatteryLevel,
+      endBatteryLevel: session.end_battery_level || session.endBatteryLevel,
+      energyDelivered: session.energy_delivered || session.energyDelivered,
+      maxChargingRate: session.max_charging_rate || session.maxChargingRate,
+      startTime: session.start_time || session.startTime,
+      endTime: session.end_time || session.endTime,
+      duration: session.charging_duration || session.duration,
+      cost: session.total_cost || session.cost,
+      status: session.status,
+      createdAt: session.created_at || session.createdAt,
+      updatedAt: session.updated_at || session.updatedAt
+    }));
   },
 
   // Lấy sessions theo user
@@ -70,10 +107,9 @@ export const chargingSessionService = {
   },
 
   // Lấy active sessions theo station
-  async getActiveSessionsByStation(stationId: string): Promise<ChargingSessionResponse[]> {
-    const response = await fetch(`${API_BASE_URL}/charging-sessions/station/${stationId}/active`);
-    if (!response.ok) throw new Error('Failed to fetch active station sessions');
-    return response.json();
+  async getActiveSessionsByStation(stationId: string): Promise<any[]> {
+    const sessions = await this.getSessionsByStation(stationId);
+    return sessions.filter(session => session.status === 'ACTIVE');
   },
 
   // Lấy active sessions theo user
@@ -140,20 +176,10 @@ export const chargingSessionService = {
       ACTIVE: '#28a745',
       COMPLETED: '#007bff',
       CANCELLED: '#6c757d',
-      PENDING: '#ffc107'
+      FAILED: '#ffc107',
+      PAUSED: '#6c757d',
+      PENDING: '#6c757d',
     };
     return colors[status];
   },
-
-  // Helper để lấy icon cho vehicle type
-  getVehicleIcon(vehicleType: VehicleType): string {
-    const icons = {
-      CAR: '🚗',
-      MOTORBIKE: '🏍️',
-      BUS: '🚌',
-      TRUCK: '🚚',
-      SCOOTER: '🛵'
-    };
-    return icons[vehicleType];
-  }
 };
