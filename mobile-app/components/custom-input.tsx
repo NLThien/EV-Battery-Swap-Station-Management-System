@@ -5,12 +5,17 @@ import { TextInput, TextInputProps, View } from "react-native";
 interface CustomInputProps extends TextInputProps {
   iconName?: keyof typeof MaterialIcons.glyphMap;
   // placeholder?: string;
-  // value?: string;
-  // onChangeText?: (text: string) => void;
+  value: string;
+  // onChangeText: (text: string) => void;
   // onBlur?: () => void;
 }
 
-function CustomInput({ iconName, ...props }: CustomInputProps) {
+function CustomInput({
+  iconName,
+  value,
+  onChangeText,
+  ...props
+}: CustomInputProps) {
   const [focused, setFocused] = useState(false);
   return (
     <View
@@ -29,8 +34,8 @@ function CustomInput({ iconName, ...props }: CustomInputProps) {
       <TextInput
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        // value={value}
-        // onChangeText={onChangeText}
+        value={value}
+        onChangeText={onChangeText}
         className={` flex-1 h-12 text-text text-lg border-0 border-transparent 
            ${focused ? "font-semibold" : "font-semibold"}`}
         {...props}
