@@ -40,7 +40,7 @@ const items = [
   },
   
   {
-    title: "Quản lí giao dịch",
+    title: "Quản lí tồn kho pin",
     url: "/staff/inventory-management",
     icon: Inbox,
     activeIcon: Check,
