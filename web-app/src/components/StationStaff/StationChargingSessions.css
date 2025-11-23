@@ -33,7 +33,7 @@
   flex-wrap: wrap;
 }
 .btn-primary {
-  background-color: var(--primary-color);
+  background-color: var(--primary-dark);
   color: white;
   border: none;
   padding: 10px 16px;
@@ -44,7 +44,7 @@
   white-space: nowrap;
 }
 .btn-primary:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-supper-dark);
   transform: translateY(-1px);
 }
 .filter-controls {

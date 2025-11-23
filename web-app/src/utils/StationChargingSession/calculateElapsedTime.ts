@@ -1,17 +1,26 @@
-// tính thời gian sạc
-
-export const calculateElapsedTime = (session: any) => {
-  if (!session.startTime) return '0 phút';
+export const calculateElapsedTime = (session: any): string => {
+  const startTimeStr = session.start_time || session.startTime;
+  const endTimeStr = session.end_time || session.endTime;
   
-  const startTime = new Date(session.startTime).getTime();
-  const now = new Date().getTime();
-  const elapsedMinutes = Math.floor((now - startTime) / (1000 * 60));
+  if (!startTimeStr) return '0 phút';
   
-  if (elapsedMinutes < 60) {
+  const startTime = new Date(startTimeStr).getTime();
+  
+  const endTime = session.status === 'ACTIVE' 
+    ? new Date().getTime() 
+    : endTimeStr 
+      ? new Date(endTimeStr).getTime() 
+      : new Date().getTime();
+  
+  const elapsedMinutes = Math.floor((endTime - startTime) / (1000 * 60));
+  
+  if (elapsedMinutes < 1) {
+    return 'dưới 1 phút';
+  } else if (elapsedMinutes < 60) {
     return `${elapsedMinutes} phút`;
   } else {
     const hours = Math.floor(elapsedMinutes / 60);
     const minutes = elapsedMinutes % 60;
-    return `${hours} giờ ${minutes} phút`;
+    return minutes > 0 ? `${hours} giờ ${minutes} phút` : `${hours} giờ`;
   }
 };
