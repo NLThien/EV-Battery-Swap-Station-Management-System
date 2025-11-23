@@ -24,6 +24,9 @@ const Profile: React.FC = () => {
     await signOut(); // Gọi hàm signOut
     // Chuyển hướng sau khi đã đăng xuất
   };
+  const pressChangePassword = () => {
+    router.push("../../updatePassword");
+  };
 
   return (
     <SafeAreaView className="flex-1 ">
@@ -62,9 +65,7 @@ const Profile: React.FC = () => {
               title="Đổi mật khẩu"
               iconName="lock"
               isArrowRight
-              onPress={() => {
-                console.log("Change Password Pressed");
-              }}
+              onPress={pressChangePassword}
             />
             <CardItem
               title="Thông tin về ứng dụng"
