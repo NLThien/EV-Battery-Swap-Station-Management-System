@@ -1,36 +1,25 @@
 import './OverviewCards.css';
+import { useOverviewStats } from '../../hooks/stationAdminDashBoard/useOverviewStats';
 
 export const OverviewCards = () => {
-  const stats = [
-    {
-      title: 'Tổng Trạm',
-      value: '48',
-      subtitle: 'Đang hoạt động',
-      trend: '+12%',
-      color: 'var(--primary-color)'
-    },
-    {
-      title: 'Đang Sạc',
-      value: '156',
-      subtitle: 'Xe đang sạc',
-      trend: '+8%',
-      color: 'var(--success-color)'
-    },
-    {
-      title: 'Công Suất',
-      value: '2.4 MW',
-      subtitle: 'Đang sử dụng',
-      trend: '+15%',
-      color: 'var(--warning-color)'
-    },
-    {
-      title: 'Hiệu Suất',
-      value: '94%',
-      subtitle: 'Trung bình',
-      trend: '+2%',
-      color: 'var(--info-color)'
-    }
-  ];
+  const { stats, loading } = useOverviewStats();
+
+  if (loading) {
+    return (
+      <div className="overview-cards">
+        {[1, 2, 3, 4].map((item) => (
+          <div key={item} className="stat-card loading">
+            <div className="stat-header">
+              <div className="stat-title skeleton"></div>
+              <div className="trend skeleton"></div>
+            </div>
+            <div className="stat-value skeleton"></div>
+            <div className="stat-subtitle skeleton"></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="overview-cards">
@@ -38,7 +27,7 @@ export const OverviewCards = () => {
         <div key={index} className="stat-card">
           <div className="stat-header">
             <h3>{stat.title}</h3>
-            <span className="trend" style={{ color: stat.color }}>
+            <span className={`trend ${stat.trend.includes('+') ? 'positive' : 'negative'}`}>
               {stat.trend}
             </span>
           </div>

@@ -11,25 +11,25 @@ function Index() {
       {/* Header */}
       <div className="dashboard-header">
         <h1>Dashboard Quản Lý Trạm Sạc</h1>
-        <div className="header-actions">
-          <button className="btn-primary">Báo Cáo</button>
-          <button className="btn-secondary">Cài Đặt</button>
-        </div>
       </div>
 
       {/* Main Content */}
       <div className="dashboard-content">
-        {/* Left Column */}
-        <div className="dashboard-left">
+        <div className="dashboard-row-1">
           <OverviewCards />
-          <EnergyConsumption />
-          <EnvironmentalStats />
         </div>
 
-        {/* Right Column */}
-        <div className="dashboard-right">
-          <StationStatus />
+        <div className="dashboard-row-2">
+          <EnvironmentalStats />
           <AlertsPanel />
+        </div>
+
+        <div className="dashboard-row-3">
+          <EnergyConsumption />
+        </div>
+
+        <div className="dashboard-row-4">
+          <StationStatus />
         </div>
       </div>
     </div>

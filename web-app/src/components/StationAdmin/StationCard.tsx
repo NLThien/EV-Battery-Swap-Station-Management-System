@@ -107,7 +107,7 @@ const StationCard = ({
         <select
           className={getSelectClass(station.status)}
           value={station.status}
-          onClick={(e) => handleActionClick(e)} // CHỈ STOP PROPAGATION, KHÔNG CALL CALLBACK
+          onClick={(e) => handleActionClick(e)}
           onChange={handleSelectChange}
         >
           <option value="ACTIVE">Active</option>
