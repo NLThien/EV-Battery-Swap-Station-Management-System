@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SpinnerButton } from "@/components/ui/SpinerButton";
+import { SpinnerButton } from "@/components/ui/SpinnerButton";
 import { useEffect, useState } from "react";
 
 import { CustomDialog } from "@/components/ui/DialogCustom";
@@ -28,7 +28,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
 
 function DialogEditInfor() {
-  const { user, refreshUser } = useAuth();
+  const { userCurrent, setUserCurrent } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -36,16 +36,16 @@ function DialogEditInfor() {
 
   const form = useForm<UserUpdate>({
     defaultValues: {
-      firstName: user?.firstName ?? "",
-      lastName: user?.lastName ?? "",
-      birthday: user?.birthday ?? "",
-      email: user?.email ?? "",
-      phoneNumber: user?.phoneNumber ?? "",
+      firstName: userCurrent?.firstName ?? "",
+      lastName: userCurrent?.lastName ?? "",
+      birthday: userCurrent?.birthday ?? "",
+      email: userCurrent?.email ?? "",
+      phoneNumber: userCurrent?.phoneNumber ?? "",
     },
   });
-
+  const userInfo = JSON.parse(localStorage.getItem("user") || "null");
   useEffect(() => {
-    refreshUser();
+    setUserCurrent(userInfo);
   }, []);
 
   const handleChangeInfo = async (values: UserUpdate) => {
@@ -58,6 +58,7 @@ function DialogEditInfor() {
         setIsSuccess(true);
         setOpen(false); // chỉ đóng dialog khi thành công
         console.log("Cập nhật thông tin thành công");
+        localStorage.setItem("user", JSON.stringify(res));
       }
       return res;
     } catch (error) {

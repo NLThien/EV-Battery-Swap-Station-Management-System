@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  View,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -17,7 +17,8 @@ const dataSample: FeedbackItem[] = [
     id: "1",
     userId: "U001",
     userName: "Nguyễn Văn A",
-    description: "Yêu cầu đổi pin và bị gì đấy rất nhiều tôi không thể giải thích được",
+    description:
+      "Yêu cầu đổi pin và bị gì đấy rất nhiều tôi không thể giải thích được",
     createdAt: "2025-01-01T08:30:00Z",
     adminReply: "Cảm ơn bạn, trạm sẽ kiểm tra lại thiết bị trong hôm nay.",
   },
@@ -121,7 +122,7 @@ function Feedback() {
           <TouchableOpacity
             onPress={onPressAdd}
             activeOpacity={0.8}
-            className="bg-emerald-600 py-4 rounded-full shadow-lg items-center justify-center"
+            className="bg-primary py-4 rounded-full shadow-lg items-center justify-center"
           >
             <Text className="text-white font-semibold text-base">
               ＋ Tạo yêu cầu mới

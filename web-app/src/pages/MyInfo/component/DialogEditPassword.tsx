@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SpinnerButton } from "@/components/ui/SpinerButton";
+import { SpinnerButton } from "@/components/ui/SpinnerButton";
 import { useState } from "react";
 import {
   changePasswordMyInfo,
