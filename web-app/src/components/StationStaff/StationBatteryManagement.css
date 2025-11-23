@@ -1,0 +1,260 @@
+.station-battery-management {
+  background: var(--surface);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+.battery-loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.battery-summary {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.battery-summary .total,
+.battery-summary .available {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.battery-summary .total {
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.battery-summary .available {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+}
+
+.battery-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.battery-stats .stat-card {
+  text-align: center;
+  padding: 16px;
+  background: var(--background);
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+}
+
+.battery-stats .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.battery-stats .stat-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.batteries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.battery-card {
+  background: var(--background);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  border-left: 4px solid var(--border-light);
+  transition: all 0.2s ease;
+}
+
+.battery-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.battery-card.available {
+  border-left-color: #16a34a;
+}
+
+.battery-card.charging {
+  border-left-color: #d97706;
+}
+
+.battery-card.maintenance {
+  border-left-color: #dc2626;
+}
+
+.battery-card.low {
+  border-left-color: #ef4444;
+}
+
+.battery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.battery-id {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.battery-status {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.battery-progress {
+  margin-bottom: 12px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-light);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.battery-details {
+  margin-bottom: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+
+.detail-item .label {
+  color: var(--text-secondary);
+}
+
+.detail-item .value {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.battery-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-small.primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-small.warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-small.error {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-small.secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+
+.btn-small:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.battery-management-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary, .btn-warning {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+
+.btn-warning {
+  background: #f59e0b;
+  color: white;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .batteries-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .battery-stats {
+    grid-template-columns: 1fr;
+  }
+  
+  .battery-management-actions {
+    flex-direction: column;
+  }
+}
