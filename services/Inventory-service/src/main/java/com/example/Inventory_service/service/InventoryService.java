@@ -1,21 +1,16 @@
 package com.example.Inventory_service.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Service
-public class InventoryService {
+import com.example.Inventory_service.model.Inventory;
 
-    private String location;
+public interface InventoryService {
 
-    public String getLocation() {
-        return location;
-    }
+    Inventory createBattery(Inventory inventory);
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    List<Inventory> handleGetBatteries();
 
-    public void updateLocation(String newLocation) {
-        this.location = newLocation;
-    }
+    Inventory handleUpdateInventory(Long id, Inventory updataBattery);
+
+    void handleDeleteInventory(Long id);
 }

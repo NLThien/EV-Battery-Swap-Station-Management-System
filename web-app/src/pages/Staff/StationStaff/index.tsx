@@ -1,3 +1,4 @@
+import React from "react";
 //này là quản lí 1 trạm của staff đó như quản lí pin kiểm tra pin
 import './StationStaff.css';
 import { StationOverview } from '../../../components/StationStaff/StationOverview';
@@ -9,6 +10,8 @@ import { StationQuickActions } from '../../../components/StationStaff/StationQui
 import { useStations } from '../../../hooks/useStations';
 import { useEffect, useState } from 'react';
 
+
+// Đây là trang quản lý 1 trạm cho staff, ví dụ kiểm tra pin, quản lý kho pin, v.v.
 function StationStaff() {
 
   // Sau này sẽ lấy từ AuthContext khi đăng nhập

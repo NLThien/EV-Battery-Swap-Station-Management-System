@@ -1,6 +1,7 @@
 package org.example.authenticationservice.dto.request;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -16,7 +17,9 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE) //tạp cáo tát cả privaite
 public class UserUpdateRequest {
+    @NotBlank(message = "NOT_BLANK")
     String firstName;
+    @NotBlank(message = "NOT_BLANK")
     String lastName;
     @Email(message = "Email format is invalid")
     String email;
@@ -25,9 +28,8 @@ public class UserUpdateRequest {
             message = "Phone number format is invalid (e.g., 0xxxxxxxxx or +84xxxxxxxxx)"
     )
     String phoneNumber;
-    @Size(min=8,message = "password must be at least 8 character and max 20 character ")
-    String password;
+
     LocalDate birthday;
-    String role;
+
 
 }

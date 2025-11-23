@@ -2,6 +2,7 @@ import {
   Calendar,
   Check,
   ChevronUp,
+  ClipboardMinus,
   Home,
   Inbox,
   LogOut,
@@ -31,6 +32,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { CSSProperties } from "react";
+import { Logout } from "@/api/authentication/logout";
+import { useAuth } from "@/hooks/useAuth";
 
 // Menu items.
 const items = [
@@ -52,7 +55,7 @@ const items = [
     url: "/admin/packages",
     icon: Package,
     activeIcon: Check,
-  },  
+  },
   {
     title: "Hỗ trợ & phản hồi",
     url: "/admin/supports",
@@ -62,12 +65,18 @@ const items = [
   {
     title: "Báo cáo",
     url: "/admin/reports",
-    icon: Settings,
+    icon: ClipboardMinus,
     activeIcon: Check,
   },
 ];
 
 export function AppSidebar() {
+  const { resetAuth } = useAuth();
+  const onClickLogout = async () => {
+    await Logout();
+    resetAuth();
+  };
+
   return (
     <Sidebar
       className="border-r bg-white text-slate-700 dark:bg-zinc-900 dark:text-zinc-100"
@@ -160,8 +169,13 @@ export function AppSidebar() {
                     "dark:hover:bg-zinc-800 dark:focus:bg-zinc-800",
                   ].join(" ")}
                 >
-                  <User className="h-4 w-4" />
-                  <span>Thông tin tài khoản</span>
+                  <NavLink
+                    to={"/admin/my-info"}
+                    className={"flex flex-row gap-2 "}
+                  >
+                    <User className="h-4 w-4" />
+                    <span className="text-slate-700">Thông tin tài khoản</span>
+                  </NavLink>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
@@ -181,7 +195,10 @@ export function AppSidebar() {
                     "hover:bg-red-50 focus:bg-red-50",
                     "dark:hover:bg-red-950/40 dark:focus:bg-red-950/40",
                   ].join(" ")}
-                  // onSelect={(e) => { e.preventDefault(); logout(); }}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    onClickLogout();
+                  }}
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Đăng xuất</span>

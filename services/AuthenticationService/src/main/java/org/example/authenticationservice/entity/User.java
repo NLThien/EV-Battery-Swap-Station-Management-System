@@ -28,7 +28,6 @@ public class User {
     String phoneNumber;
     String password;
     LocalDate birthday;
-
     @CreationTimestamp
     LocalDateTime createAt;
     @UpdateTimestamp
