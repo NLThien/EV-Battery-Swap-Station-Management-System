@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { apiClient } from '../../constants/authContext';
+import  apiClient  from '../../../lib/apiClient';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Transaction {
@@ -29,7 +29,7 @@ export default function HistoryScreen() {
 
   const fetchHistory = async () => {
     try {
-      const { data } = await apiClient.get('/payment/transactions');
+      const { data } = await apiClient.get('/(payment)/transactions');
       setTransactions(data.transactions);
     } catch (error) {
       console.error('Lỗi tải lịch sử:', error);
@@ -39,7 +39,6 @@ export default function HistoryScreen() {
     }
   };
 
-  // Tự động tải lại khi màn hình được focus
   useFocusEffect(
     useCallback(() => {
       fetchHistory();
@@ -63,7 +62,7 @@ export default function HistoryScreen() {
     <TouchableOpacity 
       style={styles.card}
       onPress={() => router.push({
-        pathname: '/payment/transaction',
+        pathname: '/(payment)/transaction',
         params: { data: JSON.stringify(item) }
       })}
     >

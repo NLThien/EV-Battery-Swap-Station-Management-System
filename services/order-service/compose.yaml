@@ -1,1 +1,47 @@
-# services:
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0.43-debian
+    container_name: os_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 0942868460
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 0942868460
+    ports:
+      - "3306:3306"
+    volumes:
+      - order_mysql_data:/var/lib/mysql
+    networks:
+      - os_network
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: os_rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+  order-service:
+    build:
+      context: ./
+    container_name: order-service
+    restart: unless-stopped
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/order_db
+        SPRING_DATASOURCE_USERNAME: root
+        SPRING_DATASOURCE_PASSWORD: 0942868460
+        RABBIT_HOST: rabbitmq
+        RABBIT_PORT: 5672
+        RABBIT_USERNAME: guest
+        RABBIT_PASSWORD: guest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - rabbitmq
+volumes:
+  order_mysql_data:
+
+networks:
+  os_network:
+    driver: bridge

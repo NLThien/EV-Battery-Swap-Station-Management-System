@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import TransactionResult from '../../components/Payment/TransactionResult';
+import TransactionResult from '../TransactionResult';
 
 export default function PaymentSuccessScreen() {
   const router = useRouter();

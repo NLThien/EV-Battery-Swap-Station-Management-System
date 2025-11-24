@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouter } from 'expo-router';
-import TransactionResult from '../../components/Payment/TransactionResult';
+import TransactionResult from '../TransactionResult';
 
 export default function PaymentFailureScreen() {
   const router = useRouter();

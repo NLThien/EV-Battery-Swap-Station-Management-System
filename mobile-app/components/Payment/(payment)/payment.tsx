@@ -11,9 +11,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 // Import đúng đường dẫn theo ảnh của bạn
-import { usePaymentFlow } from '../../hooks/usePaymentFlow';
-import QRCodeDisplay from '../../components/Payment/QRCodeDisplay';
-import PaymentStatusIndicator from '../../components/Payment/PaymentStatusIndicator';
+import { usePaymentFlow } from '../../../hooks/usePaymentFlow';
+import QRCodeDisplay from '../QRCodeDisplay';
+import PaymentStatusIndicator from '../PaymentStatusIndicator';
 
 const TRANSACTION_TIMEOUT_SECONDS = 300; // 5 phút
 
