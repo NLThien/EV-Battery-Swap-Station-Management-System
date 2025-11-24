@@ -1,14 +1,12 @@
-
+version: '3.8'
 services:
   mysql:
     image: mysql:8.0.43-debian
     container_name: ps_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 0942868460
       MYSQL_DATABASE: payment_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 0942868460
+      MYSQL_ROOT_PASSWORD: 0942868460
     ports:
       - "3306:3306"
     volumes:
@@ -22,10 +20,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - ps_network
 
   payment-service:
     build:
-      context: ./
+      context: ./ 
     container_name: payment-service
     restart: unless-stopped
     environment:
@@ -37,13 +37,16 @@ services:
       RABBIT_USERNAME: guest
       RABBIT_PASSWORD: guest
     ports:
-      - "8082:8082"
+      - "8082:8080"
     depends_on:
       - mysql
       - rabbitmq
+    networks:
+      - ps_network
 
 volumes:
   mysql_data:
+
 networks:
   ps_network:
     driver: bridge
