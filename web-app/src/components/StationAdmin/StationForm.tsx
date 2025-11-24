@@ -48,7 +48,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
 
   useEffect(() => {
     if (station) {
-      // Khi edit: có availableSlots
       setFormData({
         name: station.name || '',
         address: station.address || '',
@@ -60,7 +59,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
         status: station.status || 'ACTIVE'
       });
     } else {
-      // Khi tạo mới: không có availableSlots
       setFormData({
         name: '',
         address: '',
@@ -102,7 +100,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
       newErrors.totalSlots = 'Total slots must be a positive number';
     }
 
-    // Validate availableSlots chỉ khi có (edit mode)
     if (formData.availableSlots !== undefined) {
       if (parseInt(formData.availableSlots) < 0) {
         newErrors.availableSlots = 'Available slots must be a positive number';
@@ -123,7 +120,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
       [name]: value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -136,7 +132,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
     e.preventDefault();
     
     if (validateForm()) {
-      // Tạo submitData với type đúng
       const submitData: SubmitData = {
         name: formData.name,
         address: formData.address,
@@ -148,7 +143,6 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
         availableSlots: 0
       };
 
-      // Chỉ thêm availableSlots khi edit
       if (station && formData.availableSlots !== undefined) {
         submitData.availableSlots = parseInt(formData.availableSlots);
       }
@@ -177,7 +171,7 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
         <form onSubmit={handleSubmit} className="form" noValidate>
           <div className="formGroup">
             <label htmlFor="name" className="formLabel required">
-              Station Name
+              Tên trạm
             </label>
             <input
               type="text"
@@ -194,7 +188,7 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
 
           <div className="formGroup">
             <label htmlFor="address" className="formLabel required">
-              Address
+              Địa chỉ
             </label>
             <input
               type="text"
@@ -260,12 +254,11 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
               min="1"
               required
               className="formInput"
-              placeholder="Enter total number of slots"
+              placeholder="Tổng số lượng slot sạc của trạm"
             />
             {errors.totalSlots && <div className="errorMessage">{errors.totalSlots}</div>}
           </div>
 
-          {/* CHỈ HIỆN availableSlots KHI EDIT */}
           {station && (
             <div className="formGroup">
               <label htmlFor="availableSlots" className="formLabel">
@@ -280,7 +273,7 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
                 min="0"
                 max={formData.totalSlots}
                 className="formInput"
-                placeholder="Available slots"
+                placeholder="Số lượng chỗ sạc có thể sử dụng"
               />
               {errors.availableSlots && <div className="errorMessage">{errors.availableSlots}</div>}
             </div>
@@ -297,7 +290,7 @@ const StationForm = ({ station, onSubmit, onCancel }: StationFormProps) => {
               value={formData.managerId}
               onChange={handleChange}
               className="formInput"
-              placeholder="Enter manager ID"
+              placeholder="Nhập manager ID"
             />
           </div>
 
