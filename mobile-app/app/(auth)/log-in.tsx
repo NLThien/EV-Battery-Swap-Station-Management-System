@@ -1,5 +1,6 @@
 import Button from "@/components/button";
 import CustomInput from "@/components/custom-input";
+import { OTPDialog } from "@/components/input-otp-dialog";
 import { SpinnerButton } from "@/components/SpinnerButton";
 import { useAuth } from "@/constants/authContext";
 import { VAR } from "@/constants/varriable";
@@ -34,12 +35,14 @@ export default function SignIn() {
   const { signIn, signOut, authLoading } = useAuth(); // nhớ đã thêm authLoading trong context
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const [otp, setOtp] = useState("");
+  const [visible, setVisible] = useState(false);
 
   const [isSecure, setIsSecure] = useState(true);
-
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<SignInFormValues>({
     defaultValues: {
@@ -48,27 +51,47 @@ export default function SignIn() {
     },
   });
 
-  const onSubmit = async (data: SignInFormValues) => {
+  const handleConfirm = async (code: string) => {
+    // setLoading(true);
     try {
-      const formatPhone = formatPhoneNumberVN(data.phoneNumber);
-      await signIn({
-        phoneNumber: formatPhone,
-        password: data.password,
-      });
+      // gọi API verify OTP ở đây
+      console.log("OTP gửi lên server:", code);
+      //  xác thực otp nếu thành công thì sẽ gọi hàm đăng nhập còn thất bại ném try cactch
+      // await verifyOtpApi(code)
+      try {
+        const data = getValues();
+        const formatPhone = formatPhoneNumberVN(data.phoneNumber);
+        await signIn({
+          phoneNumber: formatPhone,
+          password: data.password,
+        });
 
-      console.log("Đăng nhập thành công");
-      router.replace("/(app)/(tabs)");
-    } catch (err: any) {
-      console.log("Lỗi đăng nhập:", err);
-      if (err.message === "ROLE_NOT_ALLOWED") {
-        Alert.alert(
-          "Không thể đăng nhập",
-          "Tài khoản này không được phép sử dụng ứng dụng mobile."
-        );
-        return;
+        console.log("Đăng nhập thành công");
+        router.replace("/(app)/(tabs)");
+      } catch (err: any) {
+        console.log("Lỗi đăng nhập:", err);
+        if (err.message === "ROLE_NOT_ALLOWED") {
+          Alert.alert(
+            "Không thể đăng nhập",
+            "Tài khoản này không được phép sử dụng ứng dụng mobile."
+          );
+          return;
+        }
+        Alert.alert("Đăng nhập thất bại", "Sai số điện thoại hoặc mật khẩu");
       }
-      Alert.alert("Đăng nhập thất bại", "Sai số điện thoại hoặc mật khẩu");
+      setVisible(false);
+      setOtp("");
+    } catch (e) {
+      console.log("mã xác thực kh hợp lệ: " + e);
+      Alert.alert("Lỗi", "OTP không hợp lệ");
+    } finally {
+      // setLoading(false);
     }
+  };
+
+  const onSubmitLogin = async (data: SignInFormValues) => {};
+  const onPressButtonLogin = () => {
+    setVisible(true);
   };
 
   const onPressRegister = () => {
@@ -79,6 +102,19 @@ export default function SignIn() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView className="flex-1">
         {authLoading && <SpinnerButton />}
+        <OTPDialog
+          visible={visible}
+          value={otp}
+          onChange={setOtp}
+          onConfirm={handleConfirm}
+          onClose={() => {
+            setVisible(false);
+            setOtp("");
+          }}
+          isSubmitting={authLoading}
+          pinCount={6}
+          title="Nhập mã OTP để xác thực"
+        />
 
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -178,7 +214,9 @@ export default function SignIn() {
             >
               <Button
                 title={authLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-                onPress={handleSubmit(onSubmit)}
+                //cái này cho thẻ form
+                // onPress={handleSubmit(onSubmitLogin)}
+                onPress={onPressButtonLogin}
                 // disabled={authLoading}
               />
             </View>
