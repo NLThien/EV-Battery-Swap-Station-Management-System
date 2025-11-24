@@ -5,6 +5,6 @@ public enum ChargingStatus {
     COMPLETED, 
     CANCELLED,
     PENDING,
-    WAITING
-
+    FAILED,
+    PAUSED
 }

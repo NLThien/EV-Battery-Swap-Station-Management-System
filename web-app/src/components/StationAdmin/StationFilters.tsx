@@ -30,7 +30,6 @@ const StationFilters = ({ onSearch, onClear }: StationFiltersProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Chỉ truyền các filter có giá trị
     const searchFilters: { name?: string; status?: string } = {};
     if (filters.name.trim()) searchFilters.name = filters.name.trim();
     if (filters.status) searchFilters.status = filters.status;
@@ -57,7 +56,7 @@ const StationFilters = ({ onSearch, onClear }: StationFiltersProps) => {
 
   return (
     <div className="filters">
-      <h3>Search Stations</h3>
+      <h3>Tìm kiếm trạm</h3>
       <form onSubmit={handleSubmit} className="filterForm">
         <div className="filterInput">
           <input
@@ -65,7 +64,7 @@ const StationFilters = ({ onSearch, onClear }: StationFiltersProps) => {
             name="name"
             value={filters.name}
             onChange={handleChange}
-            placeholder="Search by station name..."
+            placeholder="Tìm kiếm tên trạm..."
             className="filterInputField"
           />
         </div>
@@ -77,10 +76,10 @@ const StationFilters = ({ onSearch, onClear }: StationFiltersProps) => {
             onChange={handleChange}
             className={getSelectClass(filters.status)}
           >
-            <option value="">All Status</option>
-            <option value="ACTIVE" className="option-active">Active</option>
-            <option value="INACTIVE" className="option-inactive">Inactive</option>
-            <option value="MAINTENANCE" className="option-maintenance">Maintenance</option>
+            <option value="">Tất cả trạng thái</option>
+            <option value="ACTIVE" className="option-active">Hoạt động</option>
+            <option value="INACTIVE" className="option-inactive">Ngưng hoạt động</option>
+            <option value="MAINTENANCE" className="option-maintenance">Bảo trì</option>
           </select>
         </div>
 

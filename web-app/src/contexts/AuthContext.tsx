@@ -65,8 +65,8 @@ import type { UserResponse } from "@/api/authentication/register";
 import { createContext } from "react";
 
 interface AuthContextType {
-  user: UserResponse | null;
-  setUser: (user: UserResponse | null) => void;
+  userCurrent: UserResponse | null;
+  setUserCurrent: (user: UserResponse | null) => void;
   refreshUser: () => void;
   resetAuth: () => void;
 }

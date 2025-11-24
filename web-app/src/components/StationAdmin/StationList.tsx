@@ -9,7 +9,7 @@ interface StationListProps {
   onDelete: (id: string) => void;
   onStatusChange: (id: string, status: string) => void;
   onViewDetails: (station: Station) => void;
-  isSearching?: boolean; // THÊM PROP MỚI ĐỂ PHÂN BIỆT
+  isSearching?: boolean;
 }
 
 export const StationList = ({ 
@@ -19,9 +19,8 @@ export const StationList = ({
   onDelete, 
   onStatusChange,
   onViewDetails,
-  isSearching = false // MẶC ĐỊNH LÀ FALSE
+  isSearching = false
 }: StationListProps) => {
-  // NẾU ĐANG LOADING NHƯNG ĐÃ CÓ DỮ LIỆU -> HIỆN OVERLAY
   if (loading && stations.length > 0) {
     const message = isSearching ? "Searching..." : "Loading...";
     return (
@@ -46,7 +45,6 @@ export const StationList = ({
     );
   }
 
-  // ... các phần còn lại giữ nguyên
   if (loading) {
     return (
       <div className="loading">
@@ -60,8 +58,8 @@ export const StationList = ({
     return (
       <div className="emptyState">
         <div className="emptyIcon">🔍</div>
-        <h3>No stations found</h3>
-        <p>Try adjusting your search criteria or create a new station</p>
+        <h3>Không tìm thấy trạm</h3>
+        <p>Sử dụng một từ khóa khác hoặc xem trạm mới</p>
       </div>
     );
   }

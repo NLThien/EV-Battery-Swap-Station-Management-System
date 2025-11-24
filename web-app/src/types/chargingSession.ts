@@ -1,5 +1,4 @@
-export type ChargingStatus = 'ACTIVE' | 'COMPLETED' | 'CANCELLED' | 'PENDING';
-export type VehicleType = 'CAR' | 'MOTORBIKE' | 'BUS' | 'TRUCK' | 'SCOOTER';
+export type ChargingStatus = 'ACTIVE'| 'COMPLETED'| 'CANCELLED'| 'FAILED' | 'PENDING' | 'PAUSED';
 
 export interface StationInfo {
   id: string;
@@ -19,7 +18,7 @@ export interface ChargingSession {
   station?: StationInfo;
   userId: string;
   user?: UserInfo;
-  vehicleType: VehicleType;
+  vehicleType: string;
   batteryCapacity: number;
   startBatteryLevel: number;
   endBatteryLevel?: number;
@@ -37,7 +36,7 @@ export interface ChargingSession {
 export interface ChargingSessionRequest {
   stationId: string;
   userId: string;
-  vehicleType: VehicleType;
+  vehicleType: string;
   batteryCapacity: number;
   startBatteryLevel: number;
   maxChargingRate: number;
@@ -50,7 +49,7 @@ export interface ChargingSessionResponse {
   station?: StationInfo;
   userId: string;
   user?: UserInfo;
-  vehicleType: VehicleType;
+  vehicleType: string;
   batteryCapacity: number;
   startBatteryLevel: number;
   endBatteryLevel?: number;

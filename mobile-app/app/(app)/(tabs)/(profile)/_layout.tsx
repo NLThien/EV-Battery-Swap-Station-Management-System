@@ -15,6 +15,10 @@ function ProfileLayout() {
         name="feedback"
         options={{ headerTitle: "feedback", headerShown: false }}
       />
+      <Stack.Screen
+        name="updatePassword"
+        options={{ headerTitle: "Đổi mật khẩu", headerShown: false }}
+      />
     </Stack>
   );
 }

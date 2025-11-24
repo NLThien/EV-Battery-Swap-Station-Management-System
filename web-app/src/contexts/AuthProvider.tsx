@@ -4,13 +4,13 @@ import { AuthContext } from "./AuthContext";
 import { MyInfo } from "@/api/authentication/myInfo";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserResponse | null>(
+  const [userCurrent, setUserCurrent] = useState<UserResponse | null>(
     // nếu muốn giữ sau khi reload
     JSON.parse(localStorage.getItem("user") || "null")
   );
 
   const handleSetUser = (newUser: UserResponse | null) => {
-    setUser(newUser);
+    setUserCurrent(newUser);
     if (newUser) {
       localStorage.setItem("user", JSON.stringify(newUser));
     } else {
@@ -18,22 +18,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   const resetAuth = () => {
-    setUser(null);
+    setUserCurrent(null);
   };
   // trong AuthContext
   const refreshUser = async () => {
     try {
       const user = await MyInfo();
-      setUser(user);
+      setUserCurrent(user);
     } catch (e) {
       console.error(e);
-      setUser(null);
+      setUserCurrent(null);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser: handleSetUser, resetAuth, refreshUser }}
+      value={{
+        userCurrent,
+        setUserCurrent: handleSetUser,
+        resetAuth,
+        refreshUser,
+      }}
     >
       {children}
     </AuthContext.Provider>
