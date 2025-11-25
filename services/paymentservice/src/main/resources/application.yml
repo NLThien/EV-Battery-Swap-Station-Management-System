@@ -6,9 +6,9 @@ spring:
     name: paymentservice
 
   datasource:
-    url: "jdbc:mysql://mysql:3306/payment_db"
+    url: "jdbc:mysql://mysql:3308/payment_db"
     username: root
-    password: 0942868460
+    password: "0942868460"
   jpa:
     hibernate:
       ddl-auto: update

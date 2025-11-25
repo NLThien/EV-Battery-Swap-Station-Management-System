@@ -6,13 +6,20 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: payment_db
-      MYSQL_ROOT_PASSWORD: 0942868460
+      MYSQL_ROOT_PASSWORD: "0942868460"
     ports:
-      - "3306:3306"
+      - "3308:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
     networks:
       - ps_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -36,6 +43,7 @@ services:
       RABBIT_PORT: 5672
       RABBIT_USERNAME: guest
       RABBIT_PASSWORD: guest
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8082:8080"
     depends_on:
