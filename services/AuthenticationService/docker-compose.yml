@@ -10,7 +10,7 @@ services:
       MYSQL_USER: evuser
       MYSQL_PASSWORD: evpass123
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - evbss-mysql-data:/var/lib/mysql
     networks:
