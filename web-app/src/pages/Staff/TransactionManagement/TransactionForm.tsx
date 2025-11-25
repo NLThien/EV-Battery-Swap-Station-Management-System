@@ -261,7 +261,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd }) => {
               </option>
             ))}
           </select>
-          <small className="muted">Nếu là pin trả về, bạn có thể cập nhật trạng thái sau khi tạo giao dịch.</small>
         </div>
 
         {/* Old battery action after return */}
@@ -278,7 +277,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd }) => {
             <option value="maintenance">Đánh dấu Bảo dưỡng</option>
             <option value="ready">Đánh dấu Sẵn sàng (FULL)</option>
           </select>
-          <small className="muted">Chọn để tự động cập nhật inventory service sau khi tạo giao dịch.</small>
         </div>
 
         {/* New Battery: chỉ show những pin sẵn sàng (100%) */}
