@@ -6,10 +6,12 @@ services:
     container_name: inventory-mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: inventorydb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123456
     ports:
-      - "3306:3306"
+      - "2704:3306"
     volumes:
       - inventory-mysql-data:/var/lib/mysql
     networks:
@@ -24,8 +26,8 @@ services:
       - mysql
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/inventorydb
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root123
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8083:8083"
