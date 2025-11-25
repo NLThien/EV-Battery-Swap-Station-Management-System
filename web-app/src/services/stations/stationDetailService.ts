@@ -1,6 +1,6 @@
 import {type StationDetail, type StationDetailRequest, type StationDetailSearchParams } from '../../types/stationDetail'
 
-const API_BASE_URL = 'http://localhost:8082/api';
+const API_BASE_URL = 'http://localhost:8086/api';
 
 export const stationDetailService = {
     // thông tin chi tiết trạm

@@ -13,7 +13,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - station-network
+      - ev-network
 
     healthcheck:  # healthcheck cho việc biết khi db đã hoạt động
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
@@ -37,7 +37,7 @@ services:
       mysql-db:
         condition: service_healthy  # Chờ đến khi database chạy
     networks:
-      - station-network
+      - ev-network
     healthcheck:  #healthcheck
       test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
       interval: 30s
@@ -49,5 +49,5 @@ volumes:
   mysql_data:
 
 networks:
-  station-network:
+  ev-network:
     driver: bridge
