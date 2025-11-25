@@ -1,11 +1,12 @@
 package com.evbattery.paymentservice.controller;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
+import com.evbattery.paymentservice.dto.PaymentCompletedEvent;
+import com.evbattery.paymentservice.dto.PaymentRequest;
+import com.evbattery.paymentservice.dto.SepayWebhookPayload;
+import com.evbattery.paymentservice.dto.UserResponse;
+import com.evbattery.paymentservice.entity.PaymentLog;
+import com.evbattery.paymentservice.repository.PaymentLogRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,22 +16,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import com.evbattery.paymentservice.dto.PaymentCompletedEvent; // (MỚI) Import
-import com.evbattery.paymentservice.dto.PaymentRequest;
-import com.evbattery.paymentservice.dto.SepayWebhookPayload;
-import com.evbattery.paymentservice.dto.UserResponse;
-import com.evbattery.paymentservice.entity.PaymentLog;
-import com.evbattery.paymentservice.repository.PaymentLogRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/")
@@ -39,11 +32,11 @@ public class PaymentController {
     private final PaymentLogRepository paymentLogRepository;
     private final RabbitTemplate rabbitTemplate;
     private final Queue queue;
-    // private final HmacService hmacService; // (XÓA)
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
     
-    private final String sepayWebhookApiKey; // (MỚI)
+    
+    private final String sepayWebhookApiKey;
     private final String sepayBankAccount;
     private final String sepayBankName;
     private final String sepayDefaultDescription;
@@ -53,10 +46,9 @@ public class PaymentController {
             PaymentLogRepository paymentLogRepository,
             RabbitTemplate rabbitTemplate,
             Queue queue,
-            // HmacService hmacService, // (XÓA)
             ObjectMapper objectMapper,
             RestTemplate restTemplate,
-            @Value("${sepay.webhook-api-key}") String sepayWebhookApiKey, // (MỚI)
+            @Value("${sepay.webhook-api-key}") String sepayWebhookApiKey,
             @Value("${sepay.bank-account}") String sepayBankAccount,
             @Value("${sepay.bank-name}") String sepayBankName,
             @Value("${sepay.default-description}") String sepayDefaultDescription) {
@@ -64,23 +56,21 @@ public class PaymentController {
         this.paymentLogRepository = paymentLogRepository;
         this.rabbitTemplate = rabbitTemplate;
         this.queue = queue;
-        // this.hmacService = hmacService; // (XÓA)
         this.objectMapper = objectMapper;
         this.restTemplate = restTemplate;
-        this.sepayWebhookApiKey = sepayWebhookApiKey; // (MỚI)
+        this.sepayWebhookApiKey = sepayWebhookApiKey;
         this.sepayBankAccount = sepayBankAccount;
         this.sepayBankName = sepayBankName;
         this.sepayDefaultDescription = sepayDefaultDescription;
     }
 
-    /**
-     * Endpoint nội bộ, được OrderService gọi.
-     */
+    
     @PostMapping("/create-payment-request")
     public ResponseEntity<Object> createPaymentRequest(
             @RequestBody PaymentRequest request,
             @RequestHeader(value = "Authorization", required = false) String token) {
         
+        // Tạo mã tham chiếu duy nhất: OrderID + Timestamp
         String gatewayTxnRef = request.orderId() + "_" + System.currentTimeMillis();
 
         PaymentLog log = new PaymentLog();
@@ -90,16 +80,15 @@ public class PaymentController {
         log.setStationId(request.stationId());
         log.setGatewayTxnRef(gatewayTxnRef);
 
-        // 1. Gọi Auth Service để lấy thông tin User
+        // Gọi AuthService để lấy tên người dùng (hoặc dùng Mock nếu đang test)
         if (token != null) {
             try {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", token);
                 HttpEntity<String> entity = new HttpEntity<>(headers);
 
-                // Gọi endpoint "/users/my-info" của "auth-service" qua Eureka
                 ResponseEntity<UserResponse> userResp = restTemplate.exchange(
-                        "http://auth-service/users/my-info", // Tên service của Auth
+                        "http://auth-service/users/my-info", 
                         HttpMethod.GET, 
                         entity, 
                         UserResponse.class
@@ -107,21 +96,20 @@ public class PaymentController {
 
                 if (userResp.getBody() != null) {
                     UserResponse u = userResp.getBody();
-                    String info = String.format("%s - %s", u.lastName(), u.phoneNumber());
+                    String info = String.format("%s %s - %s", u.firstName(), u.lastName(), u.phoneNumber());
                     log.setUserInfo(info);
                 }
             } catch (Exception e) {
-                System.err.println("Không lấy được thông tin user: " + e.getMessage());
+                System.err.println("Lỗi lấy thông tin user: " + e.getMessage());
                 log.setUserInfo("Unknown User");
             }
         } else {
              log.setUserInfo("Test User (No Token)");
         }
 
-        // 2. Lưu log PENDING
         paymentLogRepository.save(log);
 
-        // 3. Tạo QR Code (dùng link Sepay)
+        // Tạo link QR Code
         try {
             String description = sepayDefaultDescription + " " + gatewayTxnRef;
             String encodedDescription = URLEncoder.encode(description, StandardCharsets.UTF_8);
@@ -141,58 +129,94 @@ public class PaymentController {
         }
     }
 
-    
     @PostMapping("/sepay_webhook")
     public ResponseEntity<String> handleSepayWebhook(
             @RequestBody SepayWebhookPayload payload,
-            @RequestHeader("Authorization") String authorizationHeader) { // Nhận header "Authorization"
+            @RequestHeader("Authorization") String authorizationHeader) {
+        
         try {
+          
             String expectedAuthHeader = "Apikey " + sepayWebhookApiKey;
-
-            if (authorizationHeader == null || !Objects.equals(authorizationHeader, expectedAuthHeader)) {
             
+            if (authorizationHeader == null || !Objects.equals(authorizationHeader, expectedAuthHeader)) {
                  return ResponseEntity.status(401).body("Invalid or missing API Key");
             }
-            
-            // 3. Tìm log
-            PaymentLog log = paymentLogRepository.findByGatewayTxnRef(payload.orderId()).orElse(null);
-            
-            if (log == null || !"PENDING".equals(log.getStatus())) {
-                return ResponseEntity.badRequest().body("Giao dịch không hợp lệ");
+
+            // B. Chỉ xử lý giao dịch tiền vào ("in")
+            if (!"in".equalsIgnoreCase(payload.transferType())) {
+                return ResponseEntity.ok("Ignored outgoing transaction");
             }
 
-            // 4. Cập nhật trạng thái
-            if ("SUCCESS".equals(payload.status())) {
-                log.setStatus("PAID");
-                paymentLogRepository.save(log);
-                rabbitTemplate.convertAndSend(queue.getName(), new PaymentCompletedEvent(log.getOrderId()));
-            } else {
-                log.setStatus("FAILED");
-                paymentLogRepository.save(log);
+            String content = payload.content();
+            String gatewayTxnRef = null;
+            
+            if (content != null && content.contains(sepayDefaultDescription)) {
+                
+                String[] parts = content.split(sepayDefaultDescription);
+                if (parts.length > 1) {
+                    
+                    gatewayTxnRef = parts[1].trim().split(" ")[0]; 
+                }
+            }
+
+            if (gatewayTxnRef == null) {
+                // Không tìm thấy mã đơn trong nội dung -> Bỏ qua
+                return ResponseEntity.ok("Transaction ref not found in content");
+            }
+
+            // D. Tìm đơn hàng trong Database
+            PaymentLog log = paymentLogRepository.findByGatewayTxnRef(gatewayTxnRef).orElse(null);
+            
+            if (log == null) {
+                return ResponseEntity.ok("Transaction not found in system");
             }
             
-            return ResponseEntity.ok("Webhook received");
+            // Nếu đơn đã xử lý rồi thì thôi
+            if (!"PENDING".equals(log.getStatus())) {
+                return ResponseEntity.ok("Transaction already processed");
+            }
+
+            // E. Kiểm tra số tiền
+            if (payload.transferAmount() < log.getAmount()) {
+                log.setStatus("FAILED");
+                paymentLogRepository.save(log);
+                return ResponseEntity.ok("Amount mismatch");
+            }
+
+            // F. Thành công -> Cập nhật & Gửi sự kiện
+            log.setStatus("PAID");
+            paymentLogRepository.save(log);
+            
+            // Gửi tin nhắn sang OrderService qua RabbitMQ
+            rabbitTemplate.convertAndSend(queue.getName(), new PaymentCompletedEvent(log.getOrderId()));
+            
+            return ResponseEntity.ok("Webhook processed successfully");
+
         } catch (Exception ex) {
-            return ResponseEntity.status(500).body("Failed to process webhook: " + ex.getMessage());
+            ex.printStackTrace();
+            return ResponseEntity.status(500).body("Failed: " + ex.getMessage());
         }
     }
 
-    
+    /**
+     * 3. LỊCH SỬ GIAO DỊCH
+     */
     @GetMapping("/transactions")
     public ResponseEntity<Object> getTransactionHistory(
             @RequestHeader(name = "X-User-Id", required = false) String userId,
             @RequestHeader(name = "X-User-Role", required = false) String userRole) {
         
-        // mock dữ liệu khi chạy local
+        // Mock dữ liệu để test
         if (userId == null) userId = "TEST_USER_ID_MOCK";
-        if (userRole == null) userRole = "admin"; 
+        if (userRole == null) userRole = "ADMIN"; 
         
         List<PaymentLog> transactions;
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        String role = userRole.toUpperCase();
 
-        if ("customer".equalsIgnoreCase(userRole)) {
+        if (role.equals("USER")) {
             transactions = paymentLogRepository.findByUserId(userId, sort);
-        } else if ("admin".equalsIgnoreCase(userRole) || "staff".equalsIgnoreCase(userRole)) {
+        } else if (role.equals("ADMIN") || role.equals("STAFF")) {
             transactions = paymentLogRepository.findAll(sort);
         } else {
             return ResponseEntity.status(403).body("Không có quyền truy cập");
@@ -201,7 +225,7 @@ public class PaymentController {
         return ResponseEntity.ok(Map.of("transactions", transactions));
     }
 
-    //giả lập thanh toán
+    //giả lập webhook sepay thành công
     @GetMapping("/simulate-success")
     public ResponseEntity<String> simulateSepaySuccess(@RequestParam String orderId) {
         

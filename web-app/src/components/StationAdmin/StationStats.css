@@ -1,17 +1,14 @@
-/* StationStats.css */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
-
 @media (min-width: 768px) {
   .statsGrid {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-
 .statCard {
   background: white;
   padding: 1rem;
@@ -20,26 +17,21 @@
   border: 1px solid #e5e7eb;
   transition: transform 0.2s, box-shadow 0.2s;
 }
-
 .statCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
 .statValue {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 0.25rem;
 }
-
 .statValue.total {
   color: #2563eb;
 }
-
 .statValue.active {
   color: #059669;
 }
-
 .statValue.inactive {
   color: #dc2626;
 }
@@ -47,19 +39,15 @@
 .statValue.maintenance {
   color: #d97706;
 }
-
 .statLabel {
   color: #6b7280;
   font-size: 0.875rem;
   font-weight: 500;
 }
-
 .statIcon {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
 }
-
-/* Optional: Add icons for better visual */
 .statCard:nth-child(1) .statIcon::before { content: "🏢"; }
 .statCard:nth-child(2) .statIcon::before { content: "✅"; }
 .statCard:nth-child(3) .statIcon::before { content: "⏸️"; }

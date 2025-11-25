@@ -127,6 +127,26 @@ public class ChargingSessionController {
         }
     }
 
+    @PatchMapping("/{id}/pause")
+    public ResponseEntity<ChargingSessionResponse> pauseSession(@PathVariable String id) {
+        try {
+            ChargingSession updatedSession = sessionService.pauseSession(id);
+            return ResponseEntity.ok(new ChargingSessionResponse(updatedSession));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}/resume")
+    public ResponseEntity<ChargingSessionResponse> resumeSession(@PathVariable String id) {
+        try {
+            ChargingSession updatedSession = sessionService.resumeSession(id);
+            return ResponseEntity.ok(new ChargingSessionResponse(updatedSession));
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/station/{stationId}/energy")
     public ResponseEntity<Double> getTotalEnergyDelivered(@PathVariable String stationId) {
         Double totalEnergy = sessionService.getTotalEnergyDelivered(stationId);

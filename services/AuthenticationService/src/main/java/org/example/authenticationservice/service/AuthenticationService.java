@@ -109,8 +109,6 @@ public class AuthenticationService {
         } catch (AppException e) {
             log.info("Token already expired");
         }
-
-
     }
 
     //đối với đăng nhập bằng số điện thaotj thì username = phoneNumber còn Email thì tương tự

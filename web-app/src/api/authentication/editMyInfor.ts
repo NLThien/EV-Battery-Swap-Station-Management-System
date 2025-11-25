@@ -21,12 +21,11 @@ export const UpdateUser = async (request: UserUpdate) => {
 
     const response = await privateApi.put<ApiResponse<UserResponse>>(
       "/authentication/users/myInfo",
-
       request
     );
     return response.data.result;
   } catch (error) {
-    console.log("Đổi mật khẩu không thành: " + error);
+    console.log("Đổi thông tin không thành: " + error);
     throw error;
   }
 };

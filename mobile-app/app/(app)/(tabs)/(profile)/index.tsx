@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile: React.FC = () => {
   const router = useRouter();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   const onPressProfileUser = () => {
     router.push("../../profileUser");
@@ -22,8 +22,15 @@ const Profile: React.FC = () => {
   };
   const pressSignOut = async () => {
     await signOut(); // Gọi hàm signOut
-    router.replace("/(auth)/log-in"); // Chuyển hướng sau khi đã đăng xuất
+    // Chuyển hướng sau khi đã đăng xuất
   };
+  const pressChangePassword = () => {
+    router.push("../../updatePassword");
+  };
+  // xử lý navigation
+  const onPressBookings = () => {
+  router.push("../bookings");
+};
 
   return (
     <SafeAreaView className="flex-1 ">
@@ -32,10 +39,15 @@ const Profile: React.FC = () => {
           {/* chỗ này để hiển thị Avatar và tên người dùng */}
           <View className="h-44 flex-col justify-center items-center  gap-3">
             <View>
-              <UserAvatar name="Nguyen Van A" size={70} />
+              <UserAvatar
+                name={user?.firstName ?? "Không xác định"}
+                size={70}
+              />
             </View>
             <View>
-              <Text className="text-3xl font-semibold">Nguyen Van Alo</Text>
+              <Text className="text-3xl font-semibold">
+                {user?.firstName + "" + user?.lastName}
+              </Text>
             </View>
           </View>
           {/* Chỗ này để hiển thị thông tin tài khoản */}
@@ -46,6 +58,14 @@ const Profile: React.FC = () => {
               isArrowRight
               onPress={onPressProfileUser}
             />
+
+            <CardItem
+              title="Lịch sử đặt lịch"
+              iconName="event"
+              isArrowRight
+              onPress={onPressBookings}
+            />
+
             <CardItem
               title="Gửi phản hồi hỗ trợ"
               iconName="feedback"
@@ -57,9 +77,7 @@ const Profile: React.FC = () => {
               title="Đổi mật khẩu"
               iconName="lock"
               isArrowRight
-              onPress={() => {
-                console.log("Change Password Pressed");
-              }}
+              onPress={pressChangePassword}
             />
             <CardItem
               title="Thông tin về ứng dụng"

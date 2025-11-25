@@ -1,10 +1,10 @@
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: battery-station-mysql
+    container_name: station-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: battery_station_db 
+      MYSQL_DATABASE: station_management
       MYSQL_USER: station_user
       MYSQL_PASSWORD: station_password
     ports:
@@ -15,24 +15,35 @@ services:
     networks:
       - station-network
 
+    healthcheck:  # healthcheck cho việc biết khi db đã hoạt động
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot_password"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+      start_period: 40s
+
   station-service:
-    build: ./station-management
-    image: ev-battery-swap-management-station-system/station-service
+    build: .
+    image: EVSMSS/station-service
     container_name: station-service
     ports:
-      - "8080:8080"
+      - "8086:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/battery_station_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/station_management
       - SPRING_DATASOURCE_USERNAME=station_user
       - SPRING_DATASOURCE_PASSWORD=station_password
     depends_on:
-      - mysql-db
+      mysql-db:
+        condition: service_healthy  # Chờ đến khi database chạy
     networks:
       - station-network
-
-    battery:
-       url: localhost:8083
+    healthcheck:  #healthcheck
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
 volumes:
   mysql_data:

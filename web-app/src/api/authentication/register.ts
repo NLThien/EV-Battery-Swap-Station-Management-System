@@ -18,8 +18,8 @@ export interface UserResponse {
   phoneNumber: string;
   email: string;
   roles: string[];
-  createdAt: string;
-  updatedAt: string;
+  createAt: string;
+  updateAt: string;
 }
 
 // Hàm đăng ký người dùng

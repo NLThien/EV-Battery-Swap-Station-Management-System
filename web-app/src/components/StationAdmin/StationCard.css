@@ -8,8 +8,8 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Đảm bảo chiều cao đồng nhất */
-  min-height: 280px; /* Chiều cao tối thiểu */
+  height: 100%;
+  min-height: 280px;
 }
 
 .stationCard:hover {
@@ -23,7 +23,7 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
-  flex-shrink: 0; /* Không bị co lại */
+  flex-shrink: 0;
 }
 
 .stationName {
@@ -36,12 +36,12 @@
 }
 
 .statusBadge {
-  padding: 0.25rem 0.75rem; /* Tăng padding cho đẹp */
+  padding: 0.25rem 0.75rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
-  flex-shrink: 0; /* Không bị co lại */
+  flex-shrink: 0;
 }
 
 .statusActive {
@@ -62,9 +62,9 @@
 .stationDetails {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem; /* Tăng khoảng cách */
+  gap: 0.75rem;
   margin-bottom: 1rem;
-  flex: 1; /* Chiếm không gian còn lại */
+  flex: 1;
 }
 
 .detailItem {
@@ -77,7 +77,7 @@
   font-weight: 500;
   color: #374151;
   display: inline-block;
-  min-width: 100px; /* Căn đều label */
+  min-width: 100px;
 }
 
 .cardActions {
@@ -87,20 +87,20 @@
   padding-top: 1rem;
   border-top: 1px solid #e5e7eb;
   flex-shrink: 0;
-  margin-top: auto; /* Đẩy actions xuống dưới cùng */
+  margin-top: auto;
 }
 
 .editButton, .deleteButton {
   border: none;
-  padding: 0.5rem 1rem; /* Padding bằng nhau */
+  padding: 0.5rem 1rem;
   border-radius: 0.375rem;
   font-size: 0.75rem;
   cursor: pointer;
   font-weight: 500;
-  min-width: 80px; /* Chiều rộng tối thiểu bằng nhau */
+  min-width: 80px; 
   text-align: center;
   transition: all 0.2s ease;
-  flex: 1; /* Các nút có kích thước bằng nhau */
+  flex: 1;
   justify-content: space-evenly;
   margin: 10px;
 }
@@ -132,8 +132,8 @@
   font-size: 0.75rem;
   background: white;
   cursor: pointer;
-  min-width: 50px; /* Chiều rộng cố định */
-  flex-shrink: 0; /* Không bị co lại */
+  min-width: 50px; 
+  flex-shrink: 0;
 }
 
 .statusSelect:focus {
@@ -160,10 +160,9 @@
   display: inline-block;
 }
 
-/* Đảm bảo grid container cũng có chiều cao đồng nhất */
 .stationsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  align-items: stretch; /* QUAN TRỌNG: Các card có chiều cao bằng nhau */
+  align-items: stretch;
 }

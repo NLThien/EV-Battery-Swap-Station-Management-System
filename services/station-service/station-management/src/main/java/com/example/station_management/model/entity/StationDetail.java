@@ -29,7 +29,7 @@ public class StationDetail {
     @NotBlank(message = "manager_id is required")
     private String managerId;
 
-    @Column(name = "tota_slots")
+    @Column(name = "total_slots")   // thì ra là m
     @NotNull(message = "Total slots is required")
     private Integer totalSlots = 0;
 
@@ -40,7 +40,7 @@ public class StationDetail {
     @Column(name = "total_battery")
     private Integer totalBattery;
 
-    @Column(name = "totalPowerCapacity is required")
+    @Column(name = "total_power_capacity") // nhầm name là message ạ tui lạy tui của 2 tuần trước quá
     private Integer totalPowerCapacity;
 
     @Column(name = "current_power_usage")
@@ -127,7 +127,7 @@ public class StationDetail {
     public void setTotalPowerCapacity(Integer totalPowerCapacity) {this.totalPowerCapacity = totalPowerCapacity;}
     
     public Integer getCurrentPowerUsage() {return currentPowerUsage;}
-    public void setCurrentPoweUsage(Integer currentPowerUsage) {this.currentPowerUsage = currentPowerUsage;}
+    public void setCurrentPowerUsage(Integer currentPowerUsage) {this.currentPowerUsage = currentPowerUsage;} // gõ còn thiếu "r" chịu
 
     public String getOperationalHours() {return operationalHours;}
     public void setOperationalHours(String operationalHours) {this.operationalHours = operationalHours;}

@@ -6,6 +6,7 @@ export const Logout = async () => {
     token: localStorage.getItem("access_token"),
   });
   localStorage.removeItem("access_token");
+  localStorage.removeItem("user");
   // Chuyển hướng về trang đăng nhập
   window.location.href = "/";
 };

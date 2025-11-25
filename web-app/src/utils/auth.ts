@@ -14,41 +14,41 @@ export function getToken() {
   }
 }
 
-//để tạm đây chưa phải tối ưu nhất vì request lập lại
-export async function redirectIfAuthenticated() {
-  const token = getToken();
-  if (!token) return null;
+// //để tạm đây chưa phải tối ưu nhất vì request lập lại
+// export async function redirectIfAuthenticated() {
+//   const token = getToken();
+//   if (!token) return null;
 
-  try {
-    const resAuth = await Authenticated(token);
+//   try {
+//     const resAuth = await Authenticated(token);
 
-    if (!resAuth?.valid) return null;
+//     if (!resAuth?.valid) return null;
 
-    const user = await MyInfo();
-    if (!user) return null;
+//     const user = await MyInfo();
+//     if (!user) return null;
 
-    const userRoles = normalizeRoles(user.roles);
+//     const userRoles = normalizeRoles(user.roles);
 
-    if (userRoles.includes("ADMIN")) {
-      throw redirect("/admin");
-    }
+//     if (userRoles.includes("ADMIN")) {
+//       throw redirect("/admin");
+//     }
 
-    if (userRoles.includes("STAFF")) {
-      throw redirect("/staff");
-    }
+//     if (userRoles.includes("STAFF")) {
+//       throw redirect("/staff");
+//     }
 
-    return null;
-  } catch (e) {
-    //đừng bắt redirect - bắt error thật thôi
-    if (e instanceof Response) {
-      // đây là redirect => phải ném lại cho router
-      throw e;
-    }
+//     return null;
+//   } catch (e) {
+//     //đừng bắt redirect - bắt error thật thôi
+//     if (e instanceof Response) {
+//       // đây là redirect => phải ném lại cho router
+//       throw e;
+//     }
 
-    console.error("redirectIfAuthenticated lỗi thật:", e);
-    return null;
-  }
-}
+//     console.error("redirectIfAuthenticated lỗi thật:", e);
+//     return null;
+//   }
+// }
 
 export function testAuth() {
   const token = getToken();
@@ -78,6 +78,7 @@ export function requireRole(requiredRoles: string[]) {
       if (resAuth.valid) {
         //thực thiên đăng nhâp
         const user = await MyInfo();
+        localStorage.setItem("user", JSON.stringify(user));
         console.log("User info for role check:", user);
         console.log("Required roles:", user.roles);
         const userRoles = normalizeRoles(user.roles);
@@ -103,6 +104,7 @@ export function requireRole(requiredRoles: string[]) {
         if (response.authenticated) {
           localStorage.setItem("access_token", response.token);
           const user = await MyInfo();
+          localStorage.setItem("user", JSON.stringify(user));
           console.log("token refresh" + localStorage.getItem("access_token"));
           const userRoles = normalizeRoles(user.roles);
           const hasAccess = requiredRoles.some((role) =>

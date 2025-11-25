@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "13403269-2779-4554-aa9c-b76a4fe1a2ab",
+		"name": "Payment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49386219",
+		"_collection_link": "https://dohuudao12345-9558564.postman.co/workspace/%C4%90%E1%BB%97-H%E1%BB%AFu-%C4%90%E1%BA%A1o's-Workspace~8a1b0c49-7d0f-4c51-86e4-d59152c0e867/collection/49386219-13403269-2779-4554-aa9c-b76a4fe1a2ab?action=share&source=collection_link&creator=49386219"
+	},
+	"item": [
+		{
+			"name": "Post orders",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"PIN_01\",\r\n            \"quantity\": 1\r\n        }\r\n    ],\r\n    \"totalAmount\": 50000,\r\n    \"stationId\": \"STATION_A1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get payment(giả lập vì sepay chỉ bắn webhook cho web public)",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"PIN_01\",\r\n            \"quantity\": 1\r\n        }\r\n    ],\r\n    \"totalAmount\": 50000,\r\n    \"stationId\": \"STATION_A1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/payment/simulate-success?orderId=21d831ab-c678-43b5-bdbd-293d3824d83a",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payment",
+						"simulate-success"
+					],
+					"query": [
+						{
+							"key": "orderId",
+							"value": "21d831ab-c678-43b5-bdbd-293d3824d83a"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"productId\": \"PIN_01\",\r\n            \"quantity\": 1\r\n        }\r\n    ],\r\n    \"totalAmount\": 50000,\r\n    \"stationId\": \"STATION_A1\"\r\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/orders/04b4e28e-a124-4f18-abd5-eae14fe1ca07/status",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"orders",
+						"04b4e28e-a124-4f18-abd5-eae14fe1ca07",
+						"status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/payment/transactions",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"payment",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

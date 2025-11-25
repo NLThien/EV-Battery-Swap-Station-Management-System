@@ -11,11 +11,3 @@ export interface Station {
   createdAt: string;
   updatedAt: string;
 }
-
-export interface StationStats {
-  totalStations: number;
-  availableBatteries: number;
-  activeSwaps: number;
-  totalUsers: number;
-  averageChargingTime: number;
-}

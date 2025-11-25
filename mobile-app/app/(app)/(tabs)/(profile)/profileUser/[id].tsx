@@ -1,20 +1,21 @@
-import { User } from "@/api/mockApi";
 import Button from "@/components/button";
 import CardItem from "@/components/cardItem";
 import Header from "@/components/header";
 import UserAvatar from "@/components/user-avatar";
+import { useAuth } from "@/constants/authContext";
 import { useRouter, useSegments } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileUserScreen() {
+  const { user } = useAuth();
+  console.log("🔥 USER TRONG UI:", user);
   const router = useRouter();
   const segments = useSegments();
   console.log(segments);
 
   //chô nay bình thường thì sẽ lấy param id để fetch data user
   //nhưng do chưa có backend nên tạm thời lấy data từ mockApi
-  const user = User;
 
   const onPressBack = () => {
     router.back();
@@ -40,9 +41,12 @@ export default function ProfileUserScreen() {
         <View className="flex-1 px-4 py-2">
           {/* cardName */}
           <View className="flex-col justify-center items-center h-48 w-full rounded-2xl bg-[#A8D4FF] ">
-            <UserAvatar name={user.firstName + " " + user.lastName} size={80} />
+            <UserAvatar
+              name={user?.firstName + " " + user?.lastName}
+              size={80}
+            />
             <Text className="text-3xl font-semibold text-text mt-4">
-              {user.firstName + " " + user.lastName}
+              {user?.firstName + " " + user?.lastName}
             </Text>
           </View>
           {/* Thông tin chi tiết */}
@@ -56,7 +60,7 @@ export default function ProfileUserScreen() {
                   backgroundColor: "#A8D4FF",
                   width: "100%",
                 }}
-                title={user.firstName + " " + user.lastName}
+                title={user?.firstName + " " + user?.lastName}
                 iconName="person"
               />
             </View>
@@ -74,7 +78,7 @@ export default function ProfileUserScreen() {
                   backgroundColor: "#A8D4FF",
                   width: "100%",
                 }}
-                title={user.email}
+                title={user?.email ?? "chưa có"}
                 iconName="email"
               />
             </View>
@@ -88,7 +92,7 @@ export default function ProfileUserScreen() {
                   backgroundColor: "#A8D4FF",
                   width: "100%",
                 }}
-                title={user.phone}
+                title={user?.phoneNumber ?? "chưa có"}
                 iconName="phone"
               />
             </View>
@@ -100,7 +104,7 @@ export default function ProfileUserScreen() {
                   backgroundColor: "#A8D4FF",
                   width: "100%",
                 }}
-                title={user.birthday}
+                title={user?.birthday ?? "chưa có"}
                 iconName="cake"
               />
             </View>
