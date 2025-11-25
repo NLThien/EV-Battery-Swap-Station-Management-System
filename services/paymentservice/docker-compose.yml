@@ -1,20 +1,25 @@
-
+version: '3.8'
 services:
   mysql:
     image: mysql:8.0.43-debian
     container_name: ps_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: 0942868460
       MYSQL_DATABASE: payment_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 0942868460
+      MYSQL_ROOT_PASSWORD: "0942868460"
     ports:
-      - "3306:3306"
+      - "3308:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
     networks:
       - ps_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -22,10 +27,12 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - ps_network
 
   payment-service:
     build:
-      context: ./
+      context: ./ 
     container_name: payment-service
     restart: unless-stopped
     environment:
@@ -36,14 +43,18 @@ services:
       RABBIT_PORT: 5672
       RABBIT_USERNAME: guest
       RABBIT_PASSWORD: guest
+      SPRING_PROFILES_ACTIVE: docker
     ports:
-      - "8082:8082"
+      - "8082:8080"
     depends_on:
       - mysql
       - rabbitmq
+    networks:
+      - ps_network
 
 volumes:
   mysql_data:
+
 networks:
   ps_network:
     driver: bridge

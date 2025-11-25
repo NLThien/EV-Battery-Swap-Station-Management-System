@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY target/paymentservice-0.0.1-SNAPSHOT.jar paymentservice.jar
 
-EXPOSE 3002
+EXPOSE 8080
 
 ENTRYPOINT [ "java", "-jar", "paymentservice.jar" ]
