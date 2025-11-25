@@ -8,14 +8,15 @@ import { useAuth } from "@/hooks/useAuth";
 
 function MyInfoPage() {
   // const [userInfo, setUserInfor] = useState<UserResponse | null>(null);
-  const { user, refreshUser } = useAuth();
-  useEffect(() => {
-    refreshUser();
-  }, []);
+  const { userCurrent, setUserCurrent } = useAuth();
 
+  const userInfo = JSON.parse(localStorage.getItem("user") || "null");
+  useEffect(() => {
+    setUserCurrent(userInfo);
+  }, []);
   return (
     <div className=" p-4">
-      {user && <MyInfoCard user={user} />}
+      {userCurrent && <MyInfoCard user={userCurrent} />}
       <ButtonGroup />
     </div>
   );

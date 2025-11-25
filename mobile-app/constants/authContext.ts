@@ -1,18 +1,22 @@
+import { LoginRequest, UserResponse } from "@/api/authenticationService/login";
 import { createContext, useContext } from "react";
 
-export type User = { id: string; name?: string };
-type AuthCtx = {
-  user: User | null;
+interface AuthCtx {
+  user: UserResponse | null;
   token: string | null;
   loading: boolean;
-  signIn: (username: string, password: string) => Promise<void>;
+  authLoading: boolean;
+  signIn: (loginRequest: LoginRequest) => Promise<string>;
+  updateUser: (partial: Partial<UserResponse>) => void;
   signOut: () => Promise<void>;
-};
+}
 export const AuthContext = createContext<AuthCtx>({
   user: null,
   token: null,
   loading: true,
-  signIn: async () => {},
+  authLoading: false,
+  signIn: async (_loginRequest: LoginRequest) => "",
+  updateUser: () => {},
   signOut: async () => {},
 });
 export const useAuth = () => useContext(AuthContext);

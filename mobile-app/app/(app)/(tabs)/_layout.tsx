@@ -16,6 +16,7 @@ export default function TabLayout() {
     ["(app)", "(tabs)", "(profile)", "feedback"],
     ["(app)", "(tabs)", "(profile)", "feedback", "[id]"],
     ["(app)", "(tabs)", "(profile)", "feedback", "createFeedback"],
+    ["(app)", "(tabs)", "(profile)", "updatePassword"],
   ];
 
   //kiêm tra xem tab có nên ẩn hay không

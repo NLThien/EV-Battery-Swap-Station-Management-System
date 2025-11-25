@@ -55,6 +55,7 @@ export const useStationDetails = (): UseStationDetailsReturn => {
         
         try {
         const detail: StationDetail = await stationDetailService.getStationDetailById(id);
+        setSelectedDetail(detail);
         return detail;
         } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch station detail';

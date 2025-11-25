@@ -23,7 +23,7 @@ public interface ChargingSessionRepository extends JpaRepository<ChargingSession
     List<ChargingSession> findByStatus(ChargingSession.ChargingStatus status);
     
     // Tìm phiên hoạt động cho một trạm(danh sách các trạm đang hoạt động)
-    List<ChargingSession> findByStationIdAndStatus(String stationId, ChargingSession.ChargingStatus status);
+    List<ChargingSession> findByStationIdAndStatus(String stationId, @Param("status") ChargingSession.ChargingStatus status);
     
     // Tìm phiên trong phạm vi thời gian(phiên sạc có khoảng thời gian cần tìm)
     List<ChargingSession> findByStartTimeBetween(LocalDateTime start, LocalDateTime end);
@@ -45,5 +45,5 @@ public interface ChargingSessionRepository extends JpaRepository<ChargingSession
     Double getTotalRevenueByStation(@Param("stationId") String stationId);
     
     // Đếm các phiên hoạt động theo trạm
-    Long countByStationIdAndStatus(String stationId, ChargingSession.ChargingStatus status);
+    Long countByStationIdAndStatus(String stationId, @Param("status") ChargingSession.ChargingStatus status);
 }

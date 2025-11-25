@@ -1,10 +1,18 @@
+import {
+  Register,
+  RegisterRequest,
+} from "@/api/authenticationService/register";
 import Button from "@/components/button";
 import CustomInput from "@/components/custom-input";
 import Header from "@/components/header";
+import { SpinnerButton } from "@/components/SpinnerButton";
+import { formatBirthdayToApi } from "@/utils/formatDate";
+import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -18,55 +26,87 @@ import {
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-// Định nghĩa kiểu dữ liệu form
-type RegisterFormValues = {
-  userName: string;
-  password: string;
+type RegisterFormValues = RegisterRequest & {
   confirmPassword: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  birthday: string;
 };
 
-function Register() {
+function RegisterScreen() {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     defaultValues: {
-      userName: "",
-      password: "",
-      confirmPassword: "",
       firstName: "",
       lastName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       birthday: "",
+      password: "",
+      confirmPassword: "",
     },
-    mode: "onChange", // ✅ validate theo thời gian thực
+    mode: "onChange",
     criteriaMode: "all",
   });
+
+  const password = useWatch({ control, name: "password" });
 
   const onPressBack = () => {
     router.back();
   };
 
-  const onSubmit = (data: RegisterFormValues) => {
+  const onSubmit = async (data: RegisterFormValues) => {
+    setIsLoading(true);
     console.log("Dữ liệu đăng ký:", data);
-    // TODO: Thực hiện gọi API đăng ký tại đây
-  };
+    const birthdayApi = formatBirthdayToApi(data.birthday);
+    const formatPhone = formatPhoneNumberVN(data.phoneNumber);
 
-  const password = useWatch({ control, name: "password" });
+    const payload: RegisterRequest = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phoneNumber: formatPhone,
+      birthday: birthdayApi,
+      password: data.password,
+    };
+
+    // call API đăng ký
+    try {
+      const res = await Register(payload);
+      if (res) {
+        setIsLoading(false);
+        Alert.alert(
+          "Đăng ký thành công",
+          "Đăng ký tài khoản thành công, vui lòng đăng nhập",
+          [
+            {
+              text: "OK",
+              onPress: onPressBack,
+            },
+          ]
+        );
+
+        return res;
+      }
+    } catch (error) {
+      console.log("lỗi đăng kí: " + error);
+      Alert.alert(
+        "Đăng kí thất bại",
+        "Có thể bị trùng số điện thoạt hoặc email"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView className="flex-1">
+        {isLoading && <SpinnerButton />}
         <Header
           title="Đăng ký"
           iconLeft="chevron-left"
@@ -82,31 +122,6 @@ function Register() {
             contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
           >
             <View className="flex-col mt-6 space-y-4 px-4">
-              {/* Tên đăng nhập */}
-              <View className="flex-col gap-2">
-                <Text className="text-xl font-semibold text-text">
-                  Tên đăng nhập *
-                </Text>
-                <Controller
-                  control={control}
-                  name="userName"
-                  // ✨ ĐÃ THÊM message cho rules
-                  rules={{ required: "Tên đăng nhập không được để trống" }}
-                  render={({ field: { onChange, value } }) => (
-                    <CustomInput
-                      iconName="person"
-                      value={value}
-                      onChangeText={onChange}
-                    />
-                  )}
-                />
-                {errors.userName && (
-                  <Text className="text-red-500 text-sm">
-                    {errors.userName.message}
-                  </Text>
-                )}
-              </View>
-
               {/* Họ và Tên */}
               <View className="flex-row items-center space-x-4">
                 <View className="flex-col flex-1 gap-2">
@@ -132,7 +147,6 @@ function Register() {
                   <Controller
                     control={control}
                     name="lastName"
-                    // ✨ ĐÃ THÊM message cho rules
                     rules={{ required: "Tên không được để trống" }}
                     render={({ field: { onChange, value } }) => (
                       <CustomInput value={value} onChangeText={onChange} />
@@ -154,7 +168,6 @@ function Register() {
                 <Controller
                   control={control}
                   name="email"
-                  // ✨ ĐÃ THÊM rules và message đầy đủ
                   rules={{
                     required: "Email không được để trống",
                     pattern: {
@@ -181,11 +194,19 @@ function Register() {
               {/* Số điện thoại */}
               <View className="flex-col gap-2">
                 <Text className="text-xl font-semibold text-text">
-                  Số điện thoại
+                  Số điện thoại *
                 </Text>
                 <Controller
                   control={control}
-                  name="phone"
+                  name="phoneNumber"
+                  rules={{
+                    required: "Số điện thoại không được để trống",
+                    pattern: {
+                      value: /^(0|\+84)(1|3|5|7|8|9)\d{8}$/,
+                      message:
+                        "Số điện thoại không hợp lệ (VD: 0987654321 hoặc +84987654321)",
+                    },
+                  }}
                   render={({ field: { onChange, value } }) => (
                     <CustomInput
                       iconName="phone"
@@ -195,17 +216,31 @@ function Register() {
                     />
                   )}
                 />
+
+                {errors.phoneNumber && (
+                  <Text className="text-red-500 text-sm">
+                    {errors.phoneNumber.message}
+                  </Text>
+                )}
               </View>
 
               {/* Ngày sinh */}
               <View className="flex-col gap-2">
-                {/* ✨ ĐÃ SỬA nhãn bị ghi nhầm là "Email" */}
                 <Text className="text-xl font-semibold text-text">
                   Ngày sinh
                 </Text>
+
                 <Controller
                   control={control}
                   name="birthday"
+                  rules={{
+                    required: "Ngày sinh không được để trống",
+                    pattern: {
+                      value:
+                        /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[0-2])[\/\-]\d{4}$/,
+                      message: "Định dạng phải là dd/mm/yyyy",
+                    },
+                  }}
                   render={({ field: { onChange, value } }) => (
                     <CustomInput
                       iconName="calendar-today"
@@ -215,6 +250,13 @@ function Register() {
                     />
                   )}
                 />
+
+                {/* 🔥 Warning message xuất hiện tại đây */}
+                {errors.birthday && (
+                  <Text className="text-red-500 text-sm">
+                    {errors.birthday.message}
+                  </Text>
+                )}
               </View>
 
               {/* Mật khẩu */}
@@ -225,12 +267,11 @@ function Register() {
                 <Controller
                   control={control}
                   name="password"
-                  // ✨ ĐÃ THÊM rules và message
                   rules={{
                     required: "Mật khẩu không được để trống",
                     minLength: {
-                      value: 6,
-                      message: "Mật khẩu phải có ít nhất 6 ký tự",
+                      value: 8,
+                      message: "Mật khẩu phải có ít nhất 8 ký tự",
                     },
                   }}
                   render={({ field: { onChange, value } }) => (
@@ -257,7 +298,6 @@ function Register() {
                 <Controller
                   control={control}
                   name="confirmPassword"
-                  // ✨ ĐÃ THÊM rules kiểm tra khớp mật khẩu và message
                   rules={{
                     required: "Vui lòng xác nhận mật khẩu",
                     validate: (value) =>
@@ -280,7 +320,7 @@ function Register() {
               </View>
             </View>
 
-            {/* nút xác nhận đăng */}
+            {/* nút xác nhận đăng ký */}
             <View className="mt-8 px-4">
               <Button title="Đăng ký" onPress={handleSubmit(onSubmit)} />
             </View>
@@ -291,4 +331,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default RegisterScreen;

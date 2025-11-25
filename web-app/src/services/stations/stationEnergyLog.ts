@@ -1,6 +1,6 @@
 import { type StationEnergyLog, type StationEnergyLogRequest, type StationEnergyLogResponse} from '../../types/stationEnergyLog';
 
-const API_BASE_URL = 'http://localhost:8082/api';
+const API_BASE_URL = 'http://localhost:8086/api';
 
 export const stationEnergyLogService = {
   // Lấy tất cả energy logs

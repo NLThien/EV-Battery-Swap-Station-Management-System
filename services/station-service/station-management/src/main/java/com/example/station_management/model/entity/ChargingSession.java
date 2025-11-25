@@ -74,7 +74,7 @@ public class ChargingSession {
 
     // Enum for charging status
     public enum ChargingStatus {
-        ACTIVE, COMPLETED, CANCELLED, FAILED
+        ACTIVE, COMPLETED, CANCELLED, FAILED, PENDING, PAUSED,
     }
 
     // Constructors
@@ -148,7 +148,7 @@ public class ChargingSession {
     public Station getStation() { return station; }
     public void setStation(Station station) { this.station = station; }
 
-        public String getStationId() { return stationId;}
+    public String getStationId() { return stationId;}
     public void setStationId(String stationId) {this.stationId = stationId; }
 
     public String getUserId() { return userId; }
@@ -207,7 +207,7 @@ public class ChargingSession {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, station, stationId, userId, vehicleType, startTime,
+        return Objects.hash(id, station, stationId, userId, vehicleType,
         batteryCapacity, startBatteryLevel, endBatteryLevel, endBatteryLevel, energyDelivered,
         chargingDuration, maxChargingRate, totalCost, startTime, endTime, status, createdAt, updatedAt);
     }
