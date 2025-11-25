@@ -7,15 +7,17 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: transaction_db
+      MYSQL_DATABASE: transactiondb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123456
     ports:
-      - "3306:3306"
+      - "2705:3306"
     volumes:
       - transaction-mysql-data:/var/lib/mysql
     networks:
       - backend
 
-  transaction-service:
+  inventory-service:
     build:
       context: ./
     container_name: transaction-service
@@ -23,8 +25,8 @@ services:
     depends_on:
       - mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/transaction_db
-      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/transactiondb
+      SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: 123456
       SPRING_PROFILES_ACTIVE: docker
     ports:
