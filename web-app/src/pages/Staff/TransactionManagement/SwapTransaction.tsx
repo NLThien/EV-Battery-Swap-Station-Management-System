@@ -52,8 +52,8 @@ const SwapTransactions = () => {
 
   return (
     <div className="transactions-page">
-      <h1>⚡ Swap Transactions Management</h1>
-      <p>Trang quản lý giao dịch đổi pin (kết nối MySQL).</p>
+      <h1>Swap Transactions Management</h1>
+      <p>Trang quản lý giao dịch đổi pin.</p>
 
       <button className="add-button" onClick={() => setShowForm(true)}>
         + Thêm giao dịch

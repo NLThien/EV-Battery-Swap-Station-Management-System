@@ -131,7 +131,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({ onAdd }) => {
     <div className="transaction-form" aria-live="polite">
       <header className="tf-header">
         <h2>🧾 Thêm giao dịch mới</h2>
-        <p className="tf-sub">Form lưu giao dịch thật vào MySQL</p>
       </header>
 
       <form onSubmit={handleSubmit} className="form-grid" noValidate>
