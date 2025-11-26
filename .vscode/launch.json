@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "FeedbackserviceApplication",
+            "request": "launch",
+            "mainClass": "com.example.feedbackservice.FeedbackserviceApplication",
+            "projectName": ""
+        },
+        {
+            "type": "java",
             "name": "Spring Boot-Main<api-gateway>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -18,7 +25,8 @@
             "mainClass": "com.example.EurekaServerApplication",
             "projectName": "eureka-server",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=63998 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=eureka-server"
         },
         {
             "type": "java",
@@ -28,7 +36,8 @@
             "mainClass": "com.example.packageservice.PackageServiceApplication",
             "projectName": "package-service",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": " -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=52669 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Dspring.jmx.enabled=true -Djava.rmi.server.hostname=localhost -Dspring.application.admin.enabled=true -Dspring.boot.project.name=package-service"
         },
         {
             "type": "java",
@@ -37,6 +46,16 @@
             "cwd": "${workspaceFolder}",
             "mainClass": "com.example.station_management.StationManagementApplication",
             "projectName": "station-management",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AuthenticationServiceApplication<AuthenticationService>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.example.authenticationservice.AuthenticationServiceApplication",
+            "projectName": "AuthenticationService",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
         }

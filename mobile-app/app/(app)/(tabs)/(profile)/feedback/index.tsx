@@ -1,12 +1,14 @@
+import { fetchFeedbacks } from "@/api/feedbackApi"; // 👈 Import API
 import { FeedbackItem } from "@/api/mockApi";
 import { VAR } from "@/constants/varriable";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react"; // Thêm useCallback
 import {
   ActivityIndicator,
   FlatList,
   Text,
   TouchableOpacity,
+  View,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -55,18 +57,10 @@ function Feedback() {
 
   const onPressAdd = () => router.push("../feedback/createFeedback");
 
-  useEffect(() => {
-    // ✅ Giả lập fetch dữ liệu
-    setTimeout(() => {
-      setDataFeedback(dataSample);
-      setLoading(false);
-    }, 1200);
-  }, []);
-
   const onPressItem = (detailFeedback: FeedbackItem) => {
     router.push({
       pathname: "../feedback/[id]",
-      params: { detailFeedback: JSON.stringify(detailFeedback) },
+      params: { id: detailFeedback.id }, // 👈 Chỉ truyền ID
     });
   };
 
@@ -102,9 +96,6 @@ function Feedback() {
                     {new Date(item.createdAt).toLocaleString("vi-VN")}
                   </Text>
 
-                  {/* ⚡ Không hiển thị userId & user nhưng vẫn có trong data */}
-
-                  {/* Trạng thái phản hồi */}
                   {item.adminReply && item.adminReply.trim() !== "" ? (
                     <Text className="text-green-700 bg-green-100 px-2 py-1 rounded-lg self-start text-xs">
                       ✅ Đã phản hồi
@@ -115,7 +106,6 @@ function Feedback() {
                     </Text>
                   )}
 
-                  {/* Xem chi tiết */}
                   <Text
                     onPress={() => onPressItem(item)}
                     className="text-emerald-600 text-sm mt-2 underline"
@@ -144,5 +134,4 @@ function Feedback() {
     </View>
   );
 }
-
 export default Feedback;
