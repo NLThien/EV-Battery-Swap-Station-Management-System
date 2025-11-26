@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import apiClient from "../lib/apiClient";
+import apiClient from "../lib/apiClient"; // chắc chắn có file apiClient.ts
 
 const PAYMENT_CHECK_INTERVAL = 5000; // 5s
 
@@ -10,9 +10,7 @@ interface UsePaymentFlowProps {
 }
 
 export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlowProps) {
-  const [statusText, setStatusText] = useState(
-    "Vui lòng quét mã QR để thanh toán..."
-  );
+  const [statusText, setStatusText] = useState("Vui lòng quét mã QR để thanh toán...");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -21,11 +19,7 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
       return;
     }
 
-    let isCancelled = false;
-
     const checkPaymentStatus = async () => {
-      if (isCancelled) return;
-
       try {
         const { data } = await apiClient.get(`/orders/${orderId}/status`);
 
@@ -43,6 +37,7 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
         // PENDING → không làm gì
       } catch (error) {
         console.log("Polling error:", error);
+        setStatusText("Đang chờ thanh toán...");
       }
     };
 
@@ -52,8 +47,8 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
     // bắt đầu polling
     intervalRef.current = setInterval(checkPaymentStatus, PAYMENT_CHECK_INTERVAL);
 
+    // cleanup
     return () => {
-      isCancelled = true;
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
     };

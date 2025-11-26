@@ -13,7 +13,7 @@ interface EVPackage {
   price: number;
 }
 
-const API_GATEWAY = "http://192.168.2.10:8087/api/packages";
+const API_GATEWAY = "http://192.168.1.15:8087/api/packages";
 
 const DriverPackagesScreen: React.FC = () => {
   const [packages, setPackages] = useState<EVPackage[]>([]);
@@ -34,7 +34,7 @@ const DriverPackagesScreen: React.FC = () => {
 
   const onPressRent = (pkg: EVPackage) => {
     router.push({
-      pathname: "../payment",
+      pathname: "../payment/payment",
       params: { packageId: pkg.id, packageName: pkg.type, price: pkg.price },
     });
   };

@@ -2,7 +2,7 @@ import axios from "axios";
 import { getToken, deleteToken } from "../lib/secure";
 
 // API Gateway
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://192.168.1.15:8080";
 
 const apiClient = axios.create({
   baseURL: BASE_URL,
