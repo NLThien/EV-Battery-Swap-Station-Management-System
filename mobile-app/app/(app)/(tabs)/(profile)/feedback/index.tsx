@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ✅ Dữ liệu mẫu có thêm user & userId
 const dataSample: FeedbackItem[] = [
@@ -51,6 +51,7 @@ function Feedback() {
   const router = useRouter();
   const [dataFeedback, setDataFeedback] = useState<FeedbackItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const insets = useSafeAreaInsets();
 
   const onPressAdd = () => router.push("../feedback/createFeedback");
 
@@ -70,7 +71,17 @@ function Feedback() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-50">
+    <View
+      style={{
+        flex: 1,
+        // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+      className="bg-gray-50"
+    >
       <View className="flex-1">
         <View className="px-3 mt-2 pb-24 flex-1">
           {loading ? (
@@ -130,7 +141,7 @@ function Feedback() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

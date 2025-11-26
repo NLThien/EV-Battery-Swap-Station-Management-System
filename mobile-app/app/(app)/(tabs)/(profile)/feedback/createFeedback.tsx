@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, Alert, ScrollView, Image } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 import Button from "@/components/button";
 import CustomInput from "@/components/custom-input";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Alert, Image, ScrollView, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // ✅ Các tiêu chí đánh giá cố định
 const ratingCategories = [
@@ -17,7 +17,7 @@ const ratingCategories = [
 ] as const;
 
 // ✅ Tạo kiểu tương ứng
-type RatingCategory = typeof ratingCategories[number]["key"];
+type RatingCategory = (typeof ratingCategories)[number]["key"];
 
 export default function CreateFeedback() {
   const router = useRouter();
@@ -30,6 +30,7 @@ export default function CreateFeedback() {
     staff: 0,
     satisfaction: 0,
   });
+  const insets = useSafeAreaInsets();
 
   // ✅ Sự kiện đánh giá
   const onRate = (key: RatingCategory, value: number) => {
@@ -62,7 +63,17 @@ export default function CreateFeedback() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View
+      style={{
+        flex: 1,
+        // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+        backgroundColor: "white", // Nên set màu nền
+      }}
+    >
       <ScrollView className="px-4" showsVerticalScrollIndicator={false}>
         {/* Logo & lời chào */}
         <View className="items-center mb-4 mt-2">
@@ -129,6 +140,6 @@ export default function CreateFeedback() {
           <Button title="Gửi đánh giá" onPress={onPressSendFeedback} />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

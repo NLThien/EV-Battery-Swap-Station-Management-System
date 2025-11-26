@@ -5,7 +5,7 @@ import UserAvatar from "@/components/user-avatar";
 import { useAuth } from "@/constants/authContext";
 import { useRouter, useSegments } from "expo-router";
 import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileUserScreen() {
   const { user } = useAuth();
@@ -13,6 +13,7 @@ export default function ProfileUserScreen() {
   const router = useRouter();
   const segments = useSegments();
   console.log(segments);
+  const insets = useSafeAreaInsets();
 
   //chô nay bình thường thì sẽ lấy param id để fetch data user
   //nhưng do chưa có backend nên tạm thời lấy data từ mockApi
@@ -29,7 +30,16 @@ export default function ProfileUserScreen() {
   };
 
   return (
-    <SafeAreaView edges={["top"]} className="flex-1 bg-background">
+    <View
+      style={{
+        flex: 1,
+        // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <View className="flex-1">
         {/* Header */}
         <Header
@@ -115,6 +125,6 @@ export default function ProfileUserScreen() {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

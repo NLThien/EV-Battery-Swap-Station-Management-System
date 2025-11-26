@@ -6,10 +6,10 @@ import { VAR } from "@/constants/varriable";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Profile: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { signOut, user } = useAuth();
 
@@ -29,7 +29,15 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 ">
+    <View
+      style={{
+        flex: 1,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <ScrollView>
         <View style={styles.container}>
           {/* chỗ này để hiển thị Avatar và tên người dùng */}
@@ -87,7 +95,7 @@ const Profile: React.FC = () => {
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
