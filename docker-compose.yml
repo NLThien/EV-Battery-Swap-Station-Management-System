@@ -1,6 +1,3 @@
-# docker-compose.yml
-version: '3.8'
-
 services:
   # --- INFRASTRUCTURE SERVICES ---
   eureka-server:
@@ -35,51 +32,199 @@ services:
       - ev-network
 
   # --- DATABASE SERVICES ---
+  # database của trạm (Thien)
   mysql-station-db:
     image: mysql:8.0
-    container_name: mysql-station-db
+    container_name: station-mysql-db
     environment:
       MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: station_db
+      MYSQL_DATABASE: station_management
       MYSQL_USER: station_user
       MYSQL_PASSWORD: station_password
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3309:3306"
+    volumes:
+      - station_data:/var/lib/mysql
+      - ./services/station-service/station-management/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost","-u", "root", "-proot_password"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+      start_period: 40s
+
+  # database authen (a Hoàng)
+  mysql-auth-db:
+    image: mysql:8.0.43-debian
+    container_name: evbss-mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: AuthenticationService
+      MYSQL_USER: evuser
+      MYSQL_PASSWORD: evpass123
     ports:
       - "3307:3306"
     volumes:
-      - station_data:/var/lib/mysql
-      - ./shared/init-scripts:/docker-entrypoint-initdb.d
+      - evbss-mysql-data:/var/lib/mysql
     networks:
       - ev-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+      interval: 10s
+      start_period: 30s
 
-  mysql-user-db:
+  # booking (thien)
+  mysql-booking:
     image: mysql:8.0
-    container_name: mysql-user-db
+    container_name: booking_service-mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: user_db
-      MYSQL_USER: user_user
-      MYSQL_PASSWORD: user_password
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: booking_station_db
+      MYSQL_USER: booking_user
+      MYSQL_PASSWORD: password
     ports:
-      - "3308:3306"
+      - "3310:3306"
     volumes:
-      - user_data:/var/lib/mysql
+      - mysql_booking_data:/var/lib/mysql
+      - ./services/booking-service/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+      start_period: 40s
+
+  # inventort(Phuc)
+  mysql-inventory:
+    image: mysql:8.0.43
+    container_name: inventory-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: inventorydb
+    ports:
+      - "3308:3306" # nhớ sửa nha Thiên
+    volumes:
+      - inventory-mysql-data:/var/lib/mysql
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 30s
+
+  # order(Đạo)
+  mysql-order:
+    image: mysql:8.0.43-debian
+    container_name: os_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "0942868460"
+      MYSQL_DATABASE: order_db
+    ports:
+      - "3303:3306" 
+    volumes:
+      - order_mysql_data:/var/lib/mysql
+      - .services/order-service/init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    networks:
+      - ev-network
+
+  # package(Huy)
+  mysql-db-package:
+    image: mysql:8.0
+    container_name: battery-station-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: package_service_db
+      MYSQL_USER: package_user
+      MYSQL_PASSWORD: package_password
+    ports:
+      - "3304:3306"
+    volumes:
+      - mysql_package_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 30s
+  # payment(Đạo)
+  mysql-payment:
+    image: mysql:8.0.43-debian
+    container_name: ps_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: payment_db
+      MYSQL_ROOT_PASSWORD: "0942868460"
+    ports:
+      - "3312:3306"
+    volumes:
+      - mysql_payment_data:/var/lib/mysql
+      - ./init_database.sql:/docker-entrypoint-initdb.d/init_database.sql
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    
+  # transaction(Phúc)
+  mysql-transaction:
+    image: mysql:8.0.43
+    container_name: transaction-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: transaction_db
+    ports:
+      - "3311:3306" # sửa 
+    volumes:
+      - transaction-mysql-data:/var/lib/mysql
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 30s
 
   # --- BUSINESS SERVICES ---
     # --- quản lý trạm ---
   station-service:
     image: ev-battery-swap-management-station-system/station-service
     build: ./services/station-service/station-management
-    container_name: station-service
+    container_name: ev-station-service
+    ports:
+      - "8086:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-station-db:3306/station_db
+      - SPRING_DATASOURCE_URL=jdbc:mysql://station-mysql-db:3306/station_management
       - SPRING_DATASOURCE_USERNAME=station_user
       - SPRING_DATASOURCE_PASSWORD=station_password
     depends_on:
@@ -89,53 +234,224 @@ services:
         condition: service_healthy
     networks:
       - ev-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
-    # --- quản lý người dùng ---
-  # user-service:
-  #   images: ev-battery-swap-management-station-system/user-service
-  #   build: ./user-service
-  #   container_name: user-service
-  #   environment:
-  #     - SPRING_PROFILES_ACTIVE=docker
-  #     - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
-  #     - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-user-db:3306/user_db
-  #     - SPRING_DATASOURCE_USERNAME=user_user
-  #     - SPRING_DATASOURCE_PASSWORD=user_password
-  #   depends_on:
-  #     eureka-server:
-  #       condition: service_healthy
-  #     mysql-user-db:
-  #       condition: service_healthy
-  #   networks:
-  #     - ev-network
-      # --- quản lý pin  ---
-
-  # --- WEB APPLICATION ---
-  web-app:
-    image: ev-battery-swap-management-station-system/web-app
-    build: ./web-app
-    container_name: web-app
-    ports:
-      - "3000:80"
+  # authen (a Hoàng)
+  authentication-service:
+    build: ./services/AuthenticationService
+    container_name: ev-authentication-service
+    restart: unless-stopped
     environment:
-      - REACT_APP_API_URL=http://localhost:8080
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-auth-db:3306/AuthenticationService
+      - SPRING_DATASOURCE_USERNAME=evuser
+      - SPRING_DATASOURCE_PASSWORD=evpass123
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    ports:
+      - "8085:8080"
     depends_on:
-      - api-gateway
+      eureka-server:
+        condition: service_healthy
+      mysql-auth-db:
+        condition: service_healthy
+    networks:
+      - ev-network
+  # booking (thien)
+  booking-service:
+    build: ./services/booking-service
+    image: EVSMSS/booking-service
+    container_name: ev-booking-service
+    ports:
+      - "8087:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_URL=jdbc:mysql://booking_service-mysql-db:3306/booking_station_db
+      - SPRING_DATASOURCE_USERNAME=booking_user
+      - SPRING_DATASOURCE_PASSWORD=password
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-booking:
+        condition: service_healthy
     networks:
       - ev-network
 
-  # mobile-app-dev:
-  #   image: ev-battery-swap-management-station-system/mobile-app
-  #   build: ./mobile-app
-  #   ports: ["8081:8081"]
-  #   volumes:
-  #     - ./mobile-app:/app
-  #     - /app/node_modules
-  #   networks: ["ev-network"]
+  # inventort(Phuc)
+  inventory-service:
+    build: ./services/Inventory-service/ 
+    container_name: ev-inventory-service
+    restart: unless-stopped
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/inventorydb
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root123
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8083:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-inventory:
+        condition: service_healthy
+    networks:
+      - ev-network
+  # order(Đạo)
+  order-service:
+    build: ./services/order-service/ 
+    container_name: ev-order-service
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka 
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/order_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=0942868460
+
+      - RABBIT_HOST=rabbitmq-order
+      - RABBIT_PORT=5672
+      - RABBIT_USERNAME=guest
+      - RABBIT_PASSWORD=guest
+    ports:
+      - "8084:8080" # đổi
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-order:
+        condition: service_healthy
+      rabbitmq-order:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+  # package(Huy)
+  package-service:
+    build: ./services/package_service
+    container_name: ev-package-service
+    ports:
+      - "8081:8080" #
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/package_service_db
+      - SPRING_DATASOURCE_USERNAME=package_user
+      - SPRING_DATASOURCE_PASSWORD=package_password
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-db-package:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+  # payment(Đạo)
+  payment-service:
+    build: ./services/paymentservice
+    container_name: ev-payment-service
+    restart: unless-stopped
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/payment_db
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=0942868460
+      - RABBIT_HOST=rabbitmq-package
+      - RABBIT_PORT=5672
+      - RABBIT_USERNAME=guest
+      - RABBIT_PASSWORD=guest
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8082:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-payment:
+        condition: service_healthy
+      rabbitmq-payment:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+  # transaction(Phúc)
+  transaction-service:
+    build: ./services/transaction-service
+    container_name: ev-transaction-service
+    restart: unless-stopped
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/transaction_db
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8088:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      mysql-transaction:
+        condition: service_healthy
+    networks:
+      - ev-network
+
+  # RABBITMQ
+  rabbitmq-order:
+    image: rabbitmq:3-management
+    container_name: os_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5673:5672"     # host:container
+      - "15673:15672"
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+  rabbitmq-payment:
+    image: rabbitmq:3-management
+    container_name: ps_rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - ev-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # --- WEB APPLICATION ---
+  # web-app:
+  #   image: ev-battery-swap-management-station-system/web-app
+  #   build: ./web-app
+  #   container_name: web-app
+  #   ports:
+  #     - "3000:80"
+  #   environment:
+  #     - REACT_APP_API_URL=http://localhost:8080
+  #   depends_on:
+  #     - api-gateway
+  #   networks:
+  #     - ev-network
 
 volumes:
   station_data:
-  user_data:
+  evbss-mysql-data:
+  mysql_booking_data:
+  inventory-mysql-data:
+  order_mysql_data:
+  mysql_package_data:
+  mysql_payment_data:
+  transaction-mysql-data:
 
 networks:
   ev-network:

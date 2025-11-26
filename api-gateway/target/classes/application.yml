@@ -12,8 +12,8 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
-        - id: auth-service
-          uri: lb://auth-service
+        - id: authentication-service
+          uri: lb://authentication-service
           predicates:
             - Path=/auth/**, /users/**
           filters:
@@ -25,31 +25,16 @@ spring:
             - Path=/api/packages/** 
           filters:
             - RewritePath=/api/packages/(?<segment>.*), /packages/${segment}
-
-        - id: feedback-service
-          uri: lb://feedback-service
-          predicates:
-            - Path=/api/feedback/** 
-          filters:
-            - RewritePath=/api/feedback/(?<segment>.*), /${segment}
-
-            
-            # - AuthenticationFilter
-
-        - id: battery-service
-          uri: lb://battery-service
-          predicates:
-            - Path=/batteries/**
             
         - id: station-service
           uri: lb://station-service
           predicates:
             - Path=/stations/**
     
-        - id: payment-service-secured
-          uri: lb://paymentservice
+        - id: payment-service
+          uri: lb://payment-service
           predicates:
-            - Path=/payment/transactions
+            - Path=/payment/**
           filters:
             - RewritePath=/payment/(?<segment>.*), /${segment}
             # - AuthenticationFilter
@@ -61,22 +46,13 @@ spring:
             - Path=/payment/sepay_webhook
           filters:
             - RewritePath=/payment/(?<segment>.*), /${segment}
-        
-      
-        - id: payment-service-simulate
-          uri: lb://paymentservice
-          predicates:
-            - Path=/payment/simulate-success
-          filters:
-            - RewritePath=/payment/(?<segment>.*), /${segment}
 
         - id: order-service
           uri: lb://order-service
           predicates:
-            - Path=/orders/** , /orders
+            - Path=/orders/**
           filters:
             - RewritePath=/orders/(?<segment>.*), /${segment}
-            - RewritePath=/orders, /
             # - AuthenticationFilter
 
         - id: booking-service
@@ -86,6 +62,20 @@ spring:
           filters:
             - RewritePath=/api/booking/(?<segment>.*), /${segment}
             # - AuthenticationFilter
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            - RewritePath=/api/inventory/(?<segment>.*), /$\{segment}
+
+        - id: transaction-service
+          uri: lb://transaction-service
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - RewritePath=/api/transactions/(?<segment>.*), /$\{segment}
 
       globalcors:
         cors-configurations:

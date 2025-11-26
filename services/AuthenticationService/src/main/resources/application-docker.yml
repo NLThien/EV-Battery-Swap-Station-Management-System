@@ -4,8 +4,10 @@ server:
     context-path: /authentication
 
 spring:
+  application:
+    name: authentication-service
   datasource:
-    url: "jdbc:mysql://mysql:3306/AuthenticationService"
+    url: "jdbc:mysql://mysql-auth-db:3306/AuthenticationService"
     username: evuser
     password: evpass123
 
@@ -14,7 +16,22 @@ spring:
       ddl-auto: update
     show-sql: true
 
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
 jwt:
   signerKey: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE3NjE0OTAzOTgsImV4cCI6MTc2MTQ5Mzk5OCwianRpIjoiNzY4MTMxMTEtMTI2Zi00NTVlLTkwMmEtOWE2OTZkYmUzNDYzIiwiaXNzIjoiYXBpLmV4YW1wbGUuY29tIiwic3ViIjoidXNlcl8xNjM5IiwiYXVkIjoiaHR0cHM6Ly9leGFtcGxlLmNvbSJ9.B1QrS7RqtTpjL_cA1RkRwU7dCWOmWvOEN6PZUlaRzyY"
   valid-duration: 3600
   refreshable-duration: 36000
+logging:
+  level:
+    com.netflix.eureka: DEBUG
+    com.netflix.discovery: DEBUG
+    org.springframework.cloud.netflix.eureka: DEBUG
