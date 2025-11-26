@@ -72,7 +72,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="(settings)"
         options={{
-          title: "Setting",
+          title: "Cài đặt",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />
           ),

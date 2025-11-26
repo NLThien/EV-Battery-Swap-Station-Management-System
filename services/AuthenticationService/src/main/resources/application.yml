@@ -8,9 +8,9 @@ spring:
   application:
     name: authentication-service
   datasource:
-    url: "jdbc:mysql://localhost:3306/AuthenticationService"
+    url: "jdbc:mysql://localhost:3307/AuthenticationService"
     username: root
-    password: 0977744603
+    password: root123
   jpa:
     hibernate:
       ddl-auto: update

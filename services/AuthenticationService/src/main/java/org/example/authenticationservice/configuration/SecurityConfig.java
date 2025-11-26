@@ -60,8 +60,8 @@ public class SecurityConfig {
 
                 )
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                )
-                        .cors(corsConfigurer ->corsConfigurer.configurationSource(corsConfigurationSource()));
+                );
+//                        .cors(corsConfigurer ->corsConfigurer.configurationSource(corsConfigurationSource()));
 
 
 
@@ -92,20 +92,20 @@ public class SecurityConfig {
 //
 //        return new CorsFilter(urlBasedCorsConfigurationSource);
 //    }
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // FE
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration config = new CorsConfiguration();
+//
+//        config.setAllowedOrigins(List.of("http://localhost:3000")); // FE
+//        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        config.setAllowedHeaders(List.of("*"));
+//        config.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", config);
+//
+//        return source;
+//    }
 
 
     @Bean
