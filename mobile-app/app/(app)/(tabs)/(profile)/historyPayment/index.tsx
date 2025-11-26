@@ -7,13 +7,10 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-
 
 import Header from "@/components/header";
 import { useAuth } from "@/constants/authContext";
-
 import { PaymentAPI, Transaction } from "@/api/paymentService";
 
 function HistoryPaymentScreen() {
@@ -23,8 +20,6 @@ function HistoryPaymentScreen() {
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
-
 
   const formatCurrency = (amount: number) => {
     return amount.toLocaleString("vi-VN") + " đ";
@@ -52,12 +47,9 @@ function HistoryPaymentScreen() {
     }
   };
 
-
-
   const fetchHistory = async () => {
     if (!user?.id) return;
     try {
-
       const data = await PaymentAPI.getTransactionHistory(user.id);
 
       if (data?.transactions) {
@@ -96,7 +88,6 @@ function HistoryPaymentScreen() {
       <TouchableOpacity
         className="bg-white p-4 mb-3 rounded-xl border border-gray-100 shadow-sm"
         onPress={() => {
-
           router.push({
             pathname: "./[id]",
             params: { 
@@ -135,9 +126,8 @@ function HistoryPaymentScreen() {
     );
   };
 
-
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View className="flex-1 bg-white">
       <View className="flex-1">
         <Header
           iconLeft="chevron-left"
@@ -171,7 +161,7 @@ function HistoryPaymentScreen() {
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
