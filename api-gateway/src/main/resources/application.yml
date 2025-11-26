@@ -26,6 +26,16 @@ spring:
           filters:
             - RewritePath=/api/packages/(?<segment>.*), /packages/${segment}
 
+        - id: feedback-service
+          uri: lb://feedback-service
+          predicates:
+            - Path=/api/feedback/** 
+          filters:
+            - RewritePath=/api/feedback/(?<segment>.*), /${segment}
+
+            
+            # - AuthenticationFilter
+
         - id: battery-service
           uri: lb://battery-service
           predicates:

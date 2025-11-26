@@ -5,7 +5,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 interface ButtonProps {
   title?: string;
   iconName?: keyof typeof MaterialIcons.glyphMap;
-  onPress: () => void;
+  onPress: () => void | Promise<void>;
+  disabled?: boolean;
   style?: object;
   colorIcon?: string;
 }

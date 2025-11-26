@@ -1,6 +1,6 @@
 import { type Station } from '../../types/station';
 
-const API_BASE_URL = 'http://localhost:8082/api';
+const API_BASE_URL = 'http://localhost:8086/api';
 
 export const stationService = {
   // Lấy tất cả trạm

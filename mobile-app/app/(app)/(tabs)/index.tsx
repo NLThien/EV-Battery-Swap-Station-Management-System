@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
-
+import { Platform, StyleSheet, TouchableOpacity  } from "react-native";
+import { useRouter } from "expo-router";
 import { HelloWave } from "@/components/hello-wave";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
@@ -8,6 +8,8 @@ import { ThemedView } from "@/components/themed-view";
 import { Link } from "expo-router";
 
 export default function HomeScreen() {
+  const router = useRouter();
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -22,6 +24,23 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
+
+      {/* nút đặt booking */}
+      <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Đặt lịch đổi pin</ThemedText>
+        <ThemedText>
+          Đặt lịch đổi pin nhanh chóng và tiện lợi
+        </ThemedText>
+        
+        <Link href="../../(bookingSwap)/booking" asChild>
+          <TouchableOpacity style={styles.bookingButton}>
+            <ThemedText style={styles.bookingButtonText}>
+              🚗 Đặt lịch đổi pin ngay
+            </ThemedText>
+          </TouchableOpacity>
+</Link>
+      </ThemedView>
+
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
@@ -103,5 +122,19 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: "absolute",
+  },
+  
+  //css cho nút booking
+  bookingButton: {
+    backgroundColor: "#007AFF",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 8,
+  },
+  bookingButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

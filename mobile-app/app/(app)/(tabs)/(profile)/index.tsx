@@ -27,6 +27,10 @@ const Profile: React.FC = () => {
   const pressChangePassword = () => {
     router.push("../../updatePassword");
   };
+  // xử lý navigation
+  const onPressBookings = () => {
+  router.push("../bookings");
+};
 
   return (
     <SafeAreaView className="flex-1 ">
@@ -54,6 +58,14 @@ const Profile: React.FC = () => {
               isArrowRight
               onPress={onPressProfileUser}
             />
+
+            <CardItem
+              title="Lịch sử đặt lịch"
+              iconName="event"
+              isArrowRight
+              onPress={onPressBookings}
+            />
+
             <CardItem
               title="Gửi phản hồi hỗ trợ"
               iconName="feedback"
