@@ -20,7 +20,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // nếu bạn để file khác thì chỉnh lại đường dẫn
 
@@ -29,7 +29,7 @@ function EditUserScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const user = JSON.parse(params.user as string) as UserUpdate;
-
+  const insets = useSafeAreaInsets();
   const {
     control,
     handleSubmit,
@@ -53,6 +53,7 @@ function EditUserScreen() {
     const formatPhone = formatPhoneNumberVN(data.phoneNumber);
     const formatDate = formatBirthdayToApi(data.birthday);
     console.log("Dữ liệu update:", formatPhone + " " + formatDate);
+
     try {
       const res = await UpdateUser({
         ...data,
@@ -77,7 +78,16 @@ function EditUserScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView className="flex-1">
+      <View
+        style={{
+          flex: 1,
+          // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+      >
         <View className="flex-1">
           {/* Header */}
           <Header
@@ -227,7 +237,7 @@ function EditUserScreen() {
             <Button title="Xác nhận" onPress={handleSubmit(onSubmit)} />
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

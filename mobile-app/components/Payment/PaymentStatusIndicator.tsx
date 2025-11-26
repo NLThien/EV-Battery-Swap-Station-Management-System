@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
@@ -8,53 +8,33 @@ interface Props {
 }
 
 export default function PaymentStatusIndicator({ status, text }: Props) {
-  let iconName: keyof typeof Ionicons.glyphMap = 'time';
-  let color = '#6B7280'; // Gray
-  let bgColor = '#F3F4F6';
+  // Kiểm tra trạng thái
+  const isSuccess = status === 'PAID' || text?.toLowerCase().includes('thành công');
+  const isFailed = status === 'FAILED' || text?.toLowerCase().includes('thất bại') || text?.toLowerCase().includes('lỗi');
+  const isPending = !isSuccess && !isFailed;
 
-  // Logic hiển thị theo trạng thái hoặc text
-  if (status === 'PAID' || text?.includes('thành công')) {
-    iconName = 'checkmark-circle';
-    color = '#16A34A'; // Green
-    bgColor = '#DCFCE7';
-  } else if (status === 'FAILED' || text?.includes('thất bại') || text?.includes('Lỗi')) {
-    iconName = 'alert-circle';
-    color = '#DC2626'; // Red
-    bgColor = '#FEE2E2';
-  } else {
-    // PENDING hoặc đang chờ
+  if (isPending) {
     return (
-      <View style={[styles.container, { backgroundColor: '#E0F2FE' }]}>
+      <View className="flex-row items-center px-4 py-2 rounded-full mt-2 bg-blue-100">
         <ActivityIndicator size="small" color="#0284C7" />
-        <Text style={[styles.text, { color: '#0284C7' }]}>
+        <Text className="ml-2 text-blue-700 font-semibold text-sm">
           {text || 'Đang chờ thanh toán...'}
         </Text>
       </View>
     );
   }
 
+  // Nếu PAID hoặc FAILED
+  const iconName = isSuccess ? 'checkmark-circle' : 'alert-circle';
+  const color = isSuccess ? '#16A34A' : '#DC2626';
+  const bgColor = isSuccess ? '#DCFCE7' : '#FEE2E2';
+
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
+    <View className="flex-row items-center px-4 py-2 rounded-full mt-2" style={{ backgroundColor: bgColor }}>
       <Ionicons name={iconName} size={20} color={color} />
-      <Text style={[styles.text, { color: color }]}>
+      <Text className="ml-2 font-semibold text-sm" style={{ color }}>
         {text || status}
       </Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    marginTop: 10,
-    gap: 8,
-  },
-  text: {
-    fontWeight: '600',
-    fontSize: 14,
-  },
-});

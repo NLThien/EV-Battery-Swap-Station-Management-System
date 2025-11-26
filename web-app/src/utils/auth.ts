@@ -64,6 +64,8 @@ export function requireRole(requiredRoles: string[]) {
     const token = getToken();
     console.log("token:" + token);
 
+    // cho qua trang staff không cần kiểm tra quyền
+
     if (!token) {
       const url = new URL(request.url);
       // chuyển hướng sang /login và nhớ đường dẫn gốc để quay lại

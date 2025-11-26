@@ -1,8 +1,9 @@
 package com.evbattery.paymentservice.dto;
+import java.math.BigDecimal;
 
 public record PaymentRequest(
     String orderId,
-    Double amount,
+    BigDecimal amount,
     String orderInfo,
     String userId,
     String userEmail,

@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS payment_logs (
     user_id VARCHAR(255) NOT NULL,
     station_id VARCHAR(255),
     user_info VARCHAR(255), 
-    amount DOUBLE NOT NULL,
+    amount DECIMAL(18,2) NOT NULL,
     status VARCHAR(50) DEFAULT 'PENDING',
     gateway_txn_ref VARCHAR(255) NOT NULL,
     created_at DATETIME,

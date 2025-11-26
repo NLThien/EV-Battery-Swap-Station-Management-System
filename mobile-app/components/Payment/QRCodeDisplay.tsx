@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Image, ActivityIndicator } from 'react-native';
 
 interface QRCodeDisplayProps {
   uri: string | null;
@@ -7,32 +7,14 @@ interface QRCodeDisplayProps {
 
 const QRCodeDisplay: React.FC<QRCodeDisplayProps> = ({ uri }) => {
   return (
-    <View style={styles.container}>
+    <View className="w-64 h-64 justify-center items-center bg-gray-200 rounded-lg border border-gray-300">
       {uri ? (
-        <Image source={{ uri }} style={styles.qrCode} />
+        <Image source={{ uri }} className="w-full h-full" resizeMode="contain" />
       ) : (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#16A34A" />
       )}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: 250,
-    height: 250,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  qrCode: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'contain',
-  },
-});
 
 export default QRCodeDisplay;

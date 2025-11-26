@@ -9,7 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { changePasswordMyInfo } from "@/api/authenticationService/updatePassword";
 import Button from "@/components/button";
@@ -24,6 +24,7 @@ export interface ChangePasswordProps {
 
 function UpdatePasswordScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const {
     control,
@@ -93,7 +94,17 @@ function UpdatePasswordScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView className="flex-1">
+      <View
+        style={{
+          flex: 1,
+          // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          // Nên set màu nền
+        }}
+      >
         <View className="flex-1">
           {/* Header */}
           <Header
@@ -221,7 +232,7 @@ function UpdatePasswordScreen() {
             <Button title="Xác nhận" onPress={handleSubmit(onSubmit)} />
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
