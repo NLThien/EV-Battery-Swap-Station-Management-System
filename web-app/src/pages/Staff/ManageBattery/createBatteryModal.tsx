@@ -1,18 +1,29 @@
-import { Input, Modal, Select, InputNumber, message } from 'antd';
-import { useState } from 'react';
+import { Input, Modal, Select, InputNumber } from 'antd';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './CreateBatteryModal.css';
+
+interface Battery {
+  id: string;
+  model: string;
+  capacity: string;
+  chargeLevel: number;
+  status: 'FULL' | 'CHARGING' | 'MAINTENANCE';
+  health: number;
+  stationId: string;
+}
 
 interface ICModalProps {
   isOpen: boolean;
   setIsOpen: (v: boolean) => void;
-  onAdded?: () => void; // callback để reload danh sách pin
+  onAdded?: () => void; // callback reload danh sách pin
+  editingBattery?: Battery | null; // pin đang sửa
 }
 
 const { Option } = Select;
-const API_URL = "http://localhost:8083/api/inventory";
+const API_URL = 'http://localhost:8083/api/inventory';
 
-const CreateBatteryModal = ({ isOpen, setIsOpen, onAdded }: ICModalProps) => {
+const CreateBatteryModal = ({ isOpen, setIsOpen, onAdded, editingBattery }: ICModalProps) => {
   const [model, setModel] = useState('');
   const [capacity, setCapacity] = useState('');
   const [chargeLevel, setChargeLevel] = useState(0);
@@ -21,37 +32,71 @@ const CreateBatteryModal = ({ isOpen, setIsOpen, onAdded }: ICModalProps) => {
   const [stationId, setStationId] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  // Khi modal mở, nếu có editingBattery thì load dữ liệu lên form
+  useEffect(() => {
+    if (editingBattery) {
+      setModel(editingBattery.model);
+      setCapacity(editingBattery.capacity);
+      setChargeLevel(editingBattery.chargeLevel);
+      setStatus(editingBattery.status);
+      setHealth(editingBattery.health);
+      setStationId(editingBattery.stationId);
+    } else {
+      setModel('');
+      setCapacity('');
+      setChargeLevel(0);
+      setStatus('FULL');
+      setHealth(100);
+      setStationId('');
+    }
+  }, [editingBattery, isOpen]);
+
+  const handleSubmit = async () => {
     if (!model || !capacity || !stationId) {
       return;
     }
 
     setLoading(true);
 
-    axios.post(API_URL, {
-      model,
-      capacity,
-      chargeLevel,
-      status,
-      health,
-      stationId,
-    }).then(() => {
+    try {
+      if (editingBattery) {
+        // Sửa pin
+        await axios.put(`${API_URL}/${editingBattery.id}`, {
+          model,
+          capacity,
+          chargeLevel,
+          status,
+          health,
+          stationId,
+        });
+      } else {
+        // Thêm pin mới
+        await axios.post(API_URL, {
+          model,
+          capacity,
+          chargeLevel,
+          status,
+          health,
+          stationId,
+        });
+      }
+
       setIsOpen(false);
-      setModel(''); setCapacity(''); setChargeLevel(0);
-      setStatus('FULL'); setHealth(100); setStationId('');
-      if(onAdded) onAdded();
-    }).finally(() => {
+      if (onAdded) onAdded();
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
   return (
     <Modal
-      title="Thêm pin mới"
+      title={editingBattery ? 'Sửa thông tin pin' : 'Thêm pin mới'}
       open={isOpen}
       onOk={handleSubmit}
       onCancel={() => setIsOpen(false)}
-      okText="Thêm"
+      okText={editingBattery ? 'Lưu' : 'Thêm'}
       cancelText="Hủy"
       confirmLoading={loading}
     >

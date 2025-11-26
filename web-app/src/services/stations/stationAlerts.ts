@@ -1,6 +1,6 @@
 import { type StationAlert, type StationAlertRequest, type StationAlertResponse, type AlertType, type AlertSeverity } from '../../types/stationAlert';
 
-const API_BASE_URL = 'http://localhost:8082/api';
+const API_BASE_URL = 'http://localhost:8086/api';
 
 export const stationAlertService = {
   // Lấy tất cả alerts

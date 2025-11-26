@@ -87,7 +87,37 @@ public class ChargingSessionService {
                 })
                 .orElseThrow(() -> new RuntimeException("Charging session not found with id: " + sessionId));
     }
-
+    // thêm endpoint dừng cho phiên sạc
+    public ChargingSession pauseSession(String id) {
+        ChargingSession session = findById(id)
+                .orElseThrow(() -> new RuntimeException("Session not found with id: " + id));
+        
+        // Chỉ cho phép pause session đang ACTIVE
+        if (session.getStatus() != ChargingSession.ChargingStatus.ACTIVE) { // ✅ Sửa thành ChargingSession.ChargingStatus
+            throw new RuntimeException("Cannot pause session with status: " + session.getStatus());
+        }
+        
+        session.setStatus(ChargingSession.ChargingStatus.PAUSED); // ✅ Sửa thành ChargingSession.ChargingStatus
+        session.setUpdatedAt(LocalDateTime.now());
+        
+        return sessionRepository.save(session); // ✅ Sửa thành sessionRepository
+    }
+    // tiếp
+    public ChargingSession resumeSession(String id) {
+        ChargingSession session = findById(id)
+                .orElseThrow(() -> new RuntimeException("Session not found with id: " + id));
+        
+        // Chỉ cho phép resume session đang PAUSED
+        if (session.getStatus() != ChargingSession.ChargingStatus.PAUSED) { // ✅ Sửa thành ChargingSession.ChargingStatus
+            throw new RuntimeException("Cannot resume session with status: " + session.getStatus());
+        }
+        
+        session.setStatus(ChargingSession.ChargingStatus.ACTIVE); // ✅ Sửa thành ChargingSession.ChargingStatus
+        session.setUpdatedAt(LocalDateTime.now());
+        
+        return sessionRepository.save(session); // ✅ Sửa thành sessionRepository
+    }
+    // lấy tổng năng lượng dùng để sạc
     public Double getTotalEnergyDelivered(String stationId) {
         return sessionRepository.getTotalEnergyDeliveredByStation(stationId);
     }
@@ -104,9 +134,8 @@ public class ChargingSessionService {
         return sessionRepository.findByStartTimeBetween(start, end);
     }
 
-    // Create a new charging session
+    // tạo charging session mới
     public ChargingSession createSession(ChargingSession session) {
-        // Verify station exists and has available slots
         Station station = stationService.findById(session.getStation().getId())
                 .orElseThrow(() -> new RuntimeException("Station not found with id: " + session.getStation().getId()));
 

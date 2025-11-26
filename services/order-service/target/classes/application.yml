@@ -6,13 +6,12 @@ spring:
 
   # Cấu hình CSDL (MySQL)
   datasource:
-    # 'mysql' là tên service trong docker-compose.yml
-    url: "jdbc:mysql://localhost:3306/order_db"
+    url: "jdbc:mysql://mysql:3303/order_db"
     username: root
-    password: 0942868460
+    password: 0942868460"
   jpa:
     hibernate:
-      ddl-auto: update # Tự động cập nhật bảng
+      ddl-auto: update 
     show-sql: true
     properties:
       hibernate:
@@ -20,7 +19,10 @@ spring:
 
   # Cấu hình RabbitMQ
   rabbitmq:
-    host: localhost # 'rabbitmq' là tên service trong docker-compose.yml
+    host: ${RABBIT_HOST:rabbitmq}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USERNAME:guest}
+    password: ${RABBIT_PASSWORD:guest}
 
 
 # Tên hàng đợi

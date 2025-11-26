@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'expo-router';
-// import { apiClient } from ''; import api client
+import { useState, useEffect, useRef } from "react";
+import  apiClient  from "../lib/apiClient";
 
-const PAYMENT_CHECK_INTERVAL = 5000; // 5 giây
+const PAYMENT_CHECK_INTERVAL = 5000;
 
 interface UsePaymentFlowProps {
   orderId: string;
@@ -10,53 +9,52 @@ interface UsePaymentFlowProps {
   onFailure: () => void;
 }
 
-/**
- * Hook này quản lý toàn bộ luồng polling để kiểm tra trạng thái thanh toán.
- * @param orderId - ID của đơn hàng cần kiểm tra.
- * @param onSuccess - Callback được gọi khi thanh toán thành công.
- * @param onFailure - Callback được gọi khi thanh toán thất bại.
- * @returns Trạng thái văn bản để hiển thị cho người dùng.
- */
 export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlowProps) {
-  const [statusText, setStatusText] = useState('Vui lòng quét mã QR để thanh toán...');
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [statusText, setStatusText] = useState(
+    "Vui lòng quét mã QR để thanh toán..."
+  );
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!orderId) {
-      setStatusText('Lỗi: Không có mã đơn hàng.');
+      setStatusText("Lỗi: Không có mã đơn hàng.");
       return;
     }
 
     const checkPaymentStatus = async () => {
       try {
         const { data } = await apiClient.get(`/orders/${orderId}/status`);
-        
-        if (data.status === 'PAID') {
-          setStatusText('Thanh toán thành công!');
+
+        if (data.status === "PAID") {
+          setStatusText("Thanh toán thành công!");
           if (intervalRef.current) clearInterval(intervalRef.current);
-          onSuccess(orderId); // Gọi callback thành công
-        } else if (data.status === 'FAILED') {
-          setStatusText('Thanh toán đã thất bại.');
+          intervalRef.current = null;
+          onSuccess(orderId);
+        } else if (data.status === "FAILED") {
+          setStatusText("Thanh toán thất bại!");
           if (intervalRef.current) clearInterval(intervalRef.current);
-          onFailure(); // Gọi callback thất bại
+          intervalRef.current = null;
+          onFailure();
         }
-        // Nếu là 'PENDING', không làm gì, tiếp tục polling
+
+        // PENDING → không làm gì
       } catch (error) {
-        console.error('Lỗi khi kiểm tra trạng thái thanh toán:', error);
-        // Có thể thêm logic để dừng polling sau một số lần lỗi nhất định
+        console.log("Polling error:", error);
       }
     };
 
-    // Bắt đầu polling
+    // chạy ngay 1 lần
+    checkPaymentStatus();
+
+    // bắt đầu polling
     intervalRef.current = setInterval(checkPaymentStatus, PAYMENT_CHECK_INTERVAL);
 
-    // Dọn dẹp: Dừng polling khi component unmount
+    // cleanup
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      intervalRef.current = null;
     };
-  }, [orderId, onSuccess, onFailure]); // Dependencies
+  }, [orderId]);
 
   return { statusText };
 }

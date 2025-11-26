@@ -54,6 +54,7 @@ export const useStations = (): UseStationsReturn => {
     
     try {
       const station = await stationService.getStationById(id);
+      setSelectedStation(station);
       return station;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch station';
