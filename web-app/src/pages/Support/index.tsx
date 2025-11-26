@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CheckCircle, Clock, MessageSquare, Headphones, RefreshCcw } from "lucide-react";
 import axios from "axios";
 
-const API_URL = "http://localhost:8082/api/feedbacks"; // đổi port theo gateway của bạn
+const API_URL = "http://localhost:8088/api/feedbacks"; // đổi port theo gateway của bạn
 
 interface Feedback {
   id: number;
