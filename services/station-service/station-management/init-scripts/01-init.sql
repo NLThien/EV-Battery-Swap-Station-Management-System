@@ -1,4 +1,12 @@
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+SET character_set_connection = utf8mb4;
+SET character_set_server = utf8mb4;
+SET character_set_database = utf8mb4;
+SET character_set_client = utf8mb4;
+
 CREATE DATABASE  IF NOT EXISTS `station_management` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+ALTER DATABASE `station_management` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `station_management`;
 -- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
