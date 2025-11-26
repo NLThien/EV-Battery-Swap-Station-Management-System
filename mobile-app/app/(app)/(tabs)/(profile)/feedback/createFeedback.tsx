@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Image, ScrollView, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 // ✅ Các tiêu chí đánh giá cố định
 const ratingCategories = [
   { key: "facility", label: "Cơ sở vật chất" },

@@ -5,9 +5,7 @@ const SettingScreen = () => {
   return (
     <View style={styles.container}>
       <View className="flex-1 items-center justify-center ">
-        <Text className="text-xl font-bold text-red-500">
-          Welcome to Nativewind!
-        </Text>
+        <Text className="text-xl font-bold text-red-500"></Text>
       </View>
     </View>
   );
