@@ -9,6 +9,8 @@ interface ButtonProps {
   disabled?: boolean;
   style?: object;
   colorIcon?: string;
+  type?: "primary" | "secondary"|"ghost";
+  children?: React.ReactNode;
 }
 
 function Button({ title, iconName, onPress, style, colorIcon }: ButtonProps) {

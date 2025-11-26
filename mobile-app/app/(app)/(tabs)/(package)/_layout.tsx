@@ -9,6 +9,10 @@ export default function PackageLayout() {
           headerTitle: "Gói thuê pin",
         }}
       />
+      <Stack.Screen
+        name="order"
+        options={{headerTitle: "Chi tiết đơn hàng"}}
+      />
     </Stack>
   );
 }

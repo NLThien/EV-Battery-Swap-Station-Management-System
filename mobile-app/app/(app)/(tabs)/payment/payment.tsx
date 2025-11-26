@@ -19,13 +19,13 @@ export default function PaymentScreen() {
 
   const { statusText } = usePaymentFlow({
     orderId,
-    onSuccess: () => router.replace("/payment-success"),
-    onFailure: () => router.replace("/payment-failure"),
+    onSuccess: () => router.replace("../payment-success"),
+    onFailure: () => router.replace("../payment-failure"),
   });
 
   useEffect(() => {
     if (timeLeft === 0) {
-      router.replace("/payment-failure");
+      router.replace("../payment-failure");
       return;
     }
     const timer = setInterval(() => setTimeLeft((t) => (t > 0 ? t - 1 : 0)), 1000);

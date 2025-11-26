@@ -34,7 +34,7 @@ const DriverPackagesScreen: React.FC = () => {
 
   const onPressRent = (pkg: EVPackage) => {
     router.push({
-      pathname: "../payment/payment",
+      pathname: "../order",
       params: { packageId: pkg.id, packageName: pkg.type, price: pkg.price },
     });
   };
