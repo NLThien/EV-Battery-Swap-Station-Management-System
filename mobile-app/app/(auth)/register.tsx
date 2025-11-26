@@ -5,9 +5,16 @@ import {
 import Button from "@/components/button";
 import CustomInput from "@/components/custom-input";
 import Header from "@/components/header";
+import { OTPDialog } from "@/components/input-otp-dialog";
 import { SpinnerButton } from "@/components/SpinnerButton";
+import { useAuth } from "@/constants/authContext";
 import { formatBirthdayToApi } from "@/utils/formatDate";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
+import {
+  FirebaseAuthTypes,
+  getAuth,
+  signInWithPhoneNumber,
+} from "@react-native-firebase/auth";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
@@ -21,23 +28,28 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type RegisterFormValues = RegisterRequest & {
   confirmPassword: string;
 };
 
 function RegisterScreen() {
+  const { authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [visible, setVisible] = useState(false); // mở/đóng dialog OTP
+  const [confirm, setConfirm] =
+    useState<FirebaseAuthTypes.ConfirmationResult | null>(null); // object xác nhận OTP
+  const [otp, setOtp] = useState(""); // mã otp
+  const [loadingOtp, setLoadingOtp] = useState(false);
+
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<RegisterFormValues>({
     defaultValues: {
@@ -59,54 +71,109 @@ function RegisterScreen() {
     router.back();
   };
 
-  const onSubmit = async (data: RegisterFormValues) => {
-    setIsLoading(true);
-    console.log("Dữ liệu đăng ký:", data);
-    const birthdayApi = formatBirthdayToApi(data.birthday);
-    const formatPhone = formatPhoneNumberVN(data.phoneNumber);
-
-    const payload: RegisterRequest = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      phoneNumber: formatPhone,
-      birthday: birthdayApi,
-      password: data.password,
-    };
-
-    // call API đăng ký
+  const onSubmit = async (code: string) => {
     try {
-      const res = await Register(payload);
-      if (res) {
-        setIsLoading(false);
-        Alert.alert(
-          "Đăng ký thành công",
-          "Đăng ký tài khoản thành công, vui lòng đăng nhập",
-          [
-            {
-              text: "OK",
-              onPress: onPressBack,
-            },
-          ]
-        );
+      console.log("OTP gửi lên server:", code);
 
-        return res;
+      if (!confirm) {
+        console.log("Chưa có confirmation — chưa gửi OTP");
+        throw new Error("NO_CONFIRMATION");
       }
+      await confirm.confirm(code);
+
+      // call API đăng ký
+      try {
+        const data = getValues();
+        console.log("Dữ liệu đăng ký:", data);
+        const birthdayApi = formatBirthdayToApi(data.birthday);
+        const formatPhone = formatPhoneNumberVN(data.phoneNumber);
+
+        const payload: RegisterRequest = {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phoneNumber: formatPhone,
+          birthday: birthdayApi,
+          password: data.password,
+        };
+        const res = await Register(payload);
+        console.log("OTP confirmed — login success");
+        if (res) {
+          Alert.alert(
+            "Đăng ký thành công",
+            "Đăng ký tài khoản thành công, vui lòng đăng nhập",
+            [
+              {
+                text: "OK",
+                onPress: onPressBack,
+              },
+            ]
+          );
+
+          return res;
+        }
+      } catch (error) {
+        console.log("lỗi đăng kí: " + error);
+        Alert.alert(
+          "Đăng kí thất bại",
+          "Có thể bị trùng số điện thoạt hoặc email"
+        );
+      }
+      setVisible(false);
+      setOtp("");
     } catch (error) {
-      console.log("lỗi đăng kí: " + error);
-      Alert.alert(
-        "Đăng kí thất bại",
-        "Có thể bị trùng số điện thoạt hoặc email"
-      );
-    } finally {
-      setIsLoading(false);
+      setLoadingOtp(false);
+      console.log("Mã xác thực không hợp lệ:", error);
+      Alert.alert("Lỗi", "OTP không hợp lệ");
+    }
+  };
+
+  const onPressRegisterButton = async (data: RegisterFormValues) => {
+    try {
+      setLoadingOtp(true);
+      const formatPhone = formatPhoneNumberVN(data.phoneNumber); // +84...
+      console.log("Gửi OTP tới:", formatPhone);
+
+      // dùng API mới của react-native-firebase
+      const confirmation = await signInWithPhoneNumber(getAuth(), formatPhone);
+
+      setConfirm(confirmation);
+      setLoadingOtp(false);
+      setVisible(true);
+    } catch (error) {
+      setLoadingOtp(false);
+      console.log("Error sending OTP:", error);
+      Alert.alert("Lỗi", "Không gửi được OTP. Vui lòng thử lại.");
     }
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <SafeAreaView className="flex-1">
-        {isLoading && <SpinnerButton />}
+      <View
+        style={{
+          flex: 1,
+          // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+      >
+        {loadingOtp && <SpinnerButton />}
+        {/* Dialog nhập OTP */}
+        <OTPDialog
+          visible={visible}
+          value={otp}
+          onChange={setOtp}
+          onConfirm={onSubmit}
+          onClose={() => {
+            setVisible(false);
+            setOtp("");
+          }}
+          isSubmitting={authLoading}
+          pinCount={6}
+          title="Nhập mã OTP để xác thực"
+        />
         <Header
           title="Đăng ký"
           iconLeft="chevron-left"
@@ -322,11 +389,14 @@ function RegisterScreen() {
 
             {/* nút xác nhận đăng ký */}
             <View className="mt-8 px-4">
-              <Button title="Đăng ký" onPress={handleSubmit(onSubmit)} />
+              <Button
+                title="Đăng ký"
+                onPress={handleSubmit(onPressRegisterButton)}
+              />
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

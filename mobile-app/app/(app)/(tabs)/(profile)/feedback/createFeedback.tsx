@@ -5,7 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Alert, Image, ScrollView, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 // ✅ Các tiêu chí đánh giá cố định
 const ratingCategories = [
   { key: "facility", label: "Cơ sở vật chất" },
@@ -17,12 +17,12 @@ const ratingCategories = [
 ] as const;
 
 // ✅ Tạo kiểu tương ứng
-type RatingCategory = typeof ratingCategories[number]["key"];
+type RatingCategory = (typeof ratingCategories)[number]["key"];
 
 export default function CreateFeedback() {
   const router = useRouter();
   const [feedback, setFeedback] = useState("");
-  const [isSending, setIsSending] = useState(false); // Thêm state cho loading  
+  const [isSending, setIsSending] = useState(false); // Thêm state cho loading
   const [ratings, setRatings] = useState<Record<RatingCategory, number>>({
     facility: 0,
     speed: 0,
@@ -31,6 +31,7 @@ export default function CreateFeedback() {
     staff: 0,
     satisfaction: 0,
   });
+  const insets = useSafeAreaInsets();
 
   // ✅ Sự kiện đánh giá
   const onRate = (key: RatingCategory, value: number) => {
@@ -38,7 +39,7 @@ export default function CreateFeedback() {
   };
 
   // ✅ Gửi đánh giá
- const onPressSendFeedback = async () => { 
+  const onPressSendFeedback = async () => {
     const allRated = Object.values(ratings).every((v) => v > 0);
     if (!allRated) {
       Alert.alert("⚠️ Vui lòng đánh giá đầy đủ tất cả các mục!");
@@ -48,7 +49,7 @@ export default function CreateFeedback() {
     if (isSending) return;
 
     const payload = {
-      userId: "U001", 
+      userId: "U001",
       ...ratings,
       comment: feedback,
     };
@@ -57,8 +58,8 @@ export default function CreateFeedback() {
 
     try {
       // ✅ 'await' hợp lệ bên trong hàm 'async'
-      await createNewFeedback(payload); 
-      
+      await createNewFeedback(payload);
+
       Alert.alert("🎉 Gửi thành công", "Cảm ơn bạn đã đóng góp ý kiến!");
       router.back();
     } catch (error) {
@@ -67,10 +68,20 @@ export default function CreateFeedback() {
     } finally {
       setIsSending(false);
     }
-};
+  };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <View
+      style={{
+        flex: 1,
+        // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+        backgroundColor: "white", // Nên set màu nền
+      }}
+    >
       <ScrollView className="px-4" showsVerticalScrollIndicator={false}>
         {/* Logo & lời chào */}
         <View className="items-center mb-4 mt-2">
@@ -134,9 +145,13 @@ export default function CreateFeedback() {
 
         {/* Nút gửi */}
         <View className="mt-8 mb-10">
-          <Button title="Gửi đánh giá" onPress={onPressSendFeedback} disabled={isSending} />
+          <Button
+            title="Gửi đánh giá"
+            onPress={onPressSendFeedback}
+            disabled={isSending}
+          />
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
