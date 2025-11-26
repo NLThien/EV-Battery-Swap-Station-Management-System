@@ -3,15 +3,15 @@ import "./BatteryInventory.css";
 import axios from "axios";
 import CreateBatteryModal from "./createBatteryModal";
 
-interface Battery{
+interface Battery {
   id: string;
   model: string;
   capacity: string;
   chargeLevel: number;
-  status: "Full" | "Charging" | "Maintenance";
+  status: 'FULL' | 'CHARGING' | 'MAINTENANCE';
   health: number;
   stationId: string;
-};
+}
 
 const API_URL = "http://localhost:8083/api/inventory";
 
@@ -35,10 +35,41 @@ const BatteryInventory = () => {
     const chargingCount = batteries.filter((b) => b.status.toUpperCase() === "CHARGING").length;
     const maintenanceCount = batteries.filter((b) => b.status.toUpperCase() === "MAINTENANCE").length;
 
+  // Filter
+    const [filterModel, setFilterModel] = useState<string>("");
+    const [filterCapacity, setFilterCapacity] = useState<string>("");
+    const [filterHealth, setFilterHealth] = useState<string>("");
+
+    const [editingBattery, setEditingBattery] = useState<Battery | null>(null);
+
+    // Mở modal sửa
+    const openEditModal = (battery: Battery) => {
+      setEditingBattery(battery);
+      setIsModalOpen(true); // dùng chung modal CreateBatteryModal
+    };
+
+
+
     const deleteBattery = async (id: string) => {
       await axios.delete(`${API_URL}/${id}`);
       fetchBatteries();
     }
+
+    const filteredBatteries = batteries.filter(b => {
+    const matchModel = filterModel ? b.model === filterModel : true;
+    const matchCapacity = filterCapacity ? b.capacity === filterCapacity : true;
+    const matchHealth =
+      filterHealth
+        ? filterHealth === "good"
+          ? b.health > 90
+          : filterHealth === "medium"
+          ? b.health > 70 && b.health <= 90
+          : b.health <= 70
+        : true;
+
+    return matchModel && matchCapacity && matchHealth;
+  });
+
 
   return (
     <div className="battery-inventory-page">
@@ -67,11 +98,51 @@ const BatteryInventory = () => {
         </button>
       </div>
 
-      <CreateBatteryModal
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        onAdded={fetchBatteries}
-      />
+      <div className="filter-section">
+        <select value={filterModel} onChange={(e) => setFilterModel(e.target.value)}>
+          <option value="">Model</option>
+          {[...new Set(batteries.map((b) => b.model))].map((m) => (
+            <option key={m} value={m}>{m}</option>
+          ))}
+        </select>
+
+        <select value={filterCapacity} onChange={(e) => setFilterCapacity(e.target.value)}>
+          <option value="">Dung lượng</option>
+          {[...new Set(batteries.map((b) => b.capacity))].map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+
+        <select value={filterHealth} onChange={(e) => setFilterHealth(e.target.value)}>
+          <option value="">Sức khỏe (SoH)</option>
+          <option value="good">Tốt </option>
+          <option value="medium">Trung bình</option>
+          <option value="low">Kém</option>
+        </select>
+
+        {/* Nút reset */}
+        <button
+          className="reset-btn"
+          onClick={() => {
+            setFilterModel("");
+            setFilterCapacity("");
+            setFilterHealth("");
+          }}
+        >
+          Reset
+        </button>
+      </div>
+
+
+    <CreateBatteryModal
+      isOpen={isModalOpen}
+      setIsOpen={(open) => {
+        setIsModalOpen(open);
+        if (!open) setEditingBattery(null); // reset sau khi đóng
+      }}
+      onAdded={fetchBatteries}
+      editingBattery={editingBattery}
+    />
 
       {/* Bảng chi tiết */}
       <div className="battery-table-wrapper">
@@ -89,7 +160,7 @@ const BatteryInventory = () => {
               </tr>
             </thead>
             <tbody>
-              {batteries.map((b) => (
+              {filteredBatteries.map((b) => (
                 <tr key={b.id}>
                   <td>{b.id}</td>
                   <td>{b.model}</td>
@@ -106,6 +177,12 @@ const BatteryInventory = () => {
                   </td>
                   <td>{b.stationId}</td>
                   <td>
+                    <button className="edit-btn" onClick={() => {
+                        setEditingBattery(b);  // set pin đang sửa
+                        setIsModalOpen(true);  // mở modal
+                      }}>
+                      Sửa
+                    </button>
                     <button
                       className="delete-btn"
                       onClick={() => deleteBattery(b.id)}
