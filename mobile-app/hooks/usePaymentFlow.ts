@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import  apiClient  from "../lib/apiClient";
+import apiClient from "../lib/apiClient";
 
-const PAYMENT_CHECK_INTERVAL = 5000;
+const PAYMENT_CHECK_INTERVAL = 5000; // 5s
 
 interface UsePaymentFlowProps {
   orderId: string;
@@ -21,7 +21,11 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
       return;
     }
 
+    let isCancelled = false;
+
     const checkPaymentStatus = async () => {
+      if (isCancelled) return;
+
       try {
         const { data } = await apiClient.get(`/orders/${orderId}/status`);
 
@@ -36,7 +40,6 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
           intervalRef.current = null;
           onFailure();
         }
-
         // PENDING → không làm gì
       } catch (error) {
         console.log("Polling error:", error);
@@ -49,8 +52,8 @@ export function usePaymentFlow({ orderId, onSuccess, onFailure }: UsePaymentFlow
     // bắt đầu polling
     intervalRef.current = setInterval(checkPaymentStatus, PAYMENT_CHECK_INTERVAL);
 
-    // cleanup
     return () => {
+      isCancelled = true;
       if (intervalRef.current) clearInterval(intervalRef.current);
       intervalRef.current = null;
     };

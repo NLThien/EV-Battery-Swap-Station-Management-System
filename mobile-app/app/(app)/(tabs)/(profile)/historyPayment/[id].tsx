@@ -78,7 +78,6 @@ export default function TransactionDetailScreen() {
   if (!transaction) {
     return (
       <View className="flex-1 bg-white">
-        {/* Thêm padding top nếu header bị dính vào tai thỏ (nếu cần thì thêm pt-10) */}
         <Header
           iconLeft="chevron-left"
           onPressIconLeft={onPressBack}
@@ -96,7 +95,7 @@ export default function TransactionDetailScreen() {
   const statusInfo = getStatusInfo(transaction.status);
 
   return (
-    // Thay SafeAreaView bằng View thường
+
     <View className="flex-1 bg-white">
       <View className="flex-1">
         <Header
