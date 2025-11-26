@@ -1,9 +1,9 @@
-version: "3.8"
+
 
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: battery-station-mysql
+    container_name: feedback_service_db-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: feedback_service_db
@@ -15,28 +15,26 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init-scripts:/docker-entrypoint-initdb.d
     networks:
-      - station-network
+      - ev-network
 
   feedback-service:
     build: .
     container_name: feedback-service
     ports:
-      - "8081:8081"
+      - "8088:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/feedback_service_db
       - SPRING_DATASOURCE_USERNAME=feedback_user
       - SPRING_DATASOURCE_PASSWORD=feedback_password
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-    depends_on:
-      - mysql-db
     networks:
-      - station-network
+      - ev-network
 
 volumes:
   mysql_data:
 
 
 networks:
-  station-network:
+  ev-network:
     driver: bridge
