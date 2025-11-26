@@ -5,11 +5,13 @@ import { SpinnerButton } from "@/components/SpinnerButton";
 import { useAuth } from "@/constants/authContext";
 import { VAR } from "@/constants/varriable";
 import { formatPhoneNumberVN } from "@/utils/formatPhoneNumber";
+
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+
 import {
   Alert,
   Keyboard,
@@ -21,10 +23,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+  FirebaseAuthTypes,
+  getAuth,
+  signInWithPhoneNumber,
+} from "@react-native-firebase/auth";
 
 type SignInFormValues = {
   phoneNumber: string;
@@ -32,13 +37,17 @@ type SignInFormValues = {
 };
 
 export default function SignIn() {
-  const { signIn, signOut, authLoading } = useAuth(); // nhớ đã thêm authLoading trong context
+  const { signIn, authLoading } = useAuth();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [otp, setOtp] = useState("");
-  const [visible, setVisible] = useState(false);
 
+  const [otp, setOtp] = useState(""); // mã otp
+  const [visible, setVisible] = useState(false); // mở/đóng dialog OTP
+  const [confirm, setConfirm] =
+    useState<FirebaseAuthTypes.ConfirmationResult | null>(null); // object xác nhận OTP
   const [isSecure, setIsSecure] = useState(true);
+  const [loadingOtp, setLoadingOtp] = useState(false);
+
   const {
     control,
     handleSubmit,
@@ -52,15 +61,23 @@ export default function SignIn() {
   });
 
   const handleConfirm = async (code: string) => {
-    // setLoading(true);
     try {
-      // gọi API verify OTP ở đây
       console.log("OTP gửi lên server:", code);
-      //  xác thực otp nếu thành công thì sẽ gọi hàm đăng nhập còn thất bại ném try cactch
-      // await verifyOtpApi(code)
+
+      if (!confirm) {
+        console.log("Chưa có confirmation — chưa gửi OTP");
+        throw new Error("NO_CONFIRMATION");
+      }
+
+      // Xác thực OTP với Firebase
+      await confirm.confirm(code);
+      console.log("OTP confirmed — login success");
+
+      // OTP OK → gọi API đăng nhập backend
       try {
         const data = getValues();
         const formatPhone = formatPhoneNumberVN(data.phoneNumber);
+
         await signIn({
           phoneNumber: formatPhone,
           password: data.password,
@@ -70,7 +87,7 @@ export default function SignIn() {
         router.replace("/(app)/(tabs)");
       } catch (err: any) {
         console.log("Lỗi đăng nhập:", err);
-        if (err.message === "ROLE_NOT_ALLOWED") {
+        if (err?.message === "ROLE_NOT_ALLOWED") {
           Alert.alert(
             "Không thể đăng nhập",
             "Tài khoản này không được phép sử dụng ứng dụng mobile."
@@ -79,19 +96,31 @@ export default function SignIn() {
         }
         Alert.alert("Đăng nhập thất bại", "Sai số điện thoại hoặc mật khẩu");
       }
+
       setVisible(false);
       setOtp("");
     } catch (e) {
-      console.log("mã xác thực kh hợp lệ: " + e);
+      console.log("Mã xác thực không hợp lệ:", e);
       Alert.alert("Lỗi", "OTP không hợp lệ");
-    } finally {
-      // setLoading(false);
     }
   };
 
-  const onSubmitLogin = async (data: SignInFormValues) => {};
-  const onPressButtonLogin = () => {
-    setVisible(true);
+  const onPressButtonLogin = async (data: SignInFormValues) => {
+    try {
+      setLoadingOtp(true);
+      const formatPhone = formatPhoneNumberVN(data.phoneNumber); // +84...
+      console.log("Gửi OTP tới:", formatPhone);
+
+      // dùng API mới của react-native-firebase
+      const confirmation = await signInWithPhoneNumber(getAuth(), formatPhone);
+
+      setConfirm(confirmation);
+      setLoadingOtp(false);
+      setVisible(true);
+    } catch (error) {
+      console.log("Error sending OTP:", error);
+      Alert.alert("Lỗi", "Không gửi được OTP. Vui lòng thử lại.");
+    }
   };
 
   const onPressRegister = () => {
@@ -100,8 +129,19 @@ export default function SignIn() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView className="flex-1">
-        {authLoading && <SpinnerButton />}
+      <View
+        style={{
+          flex: 1,
+          // Trên Android: cộng thêm chiều cao thanh trạng thái nếu cần
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+      >
+        {loadingOtp && <SpinnerButton />}
+
+        {/* Dialog nhập OTP */}
         <OTPDialog
           visible={visible}
           value={otp}
@@ -214,15 +254,14 @@ export default function SignIn() {
             >
               <Button
                 title={authLoading ? "Đang đăng nhập..." : "Đăng nhập"}
-                //cái này cho thẻ form
-                // onPress={handleSubmit(onSubmitLogin)}
-                onPress={onPressButtonLogin}
-                // disabled={authLoading}
+                onPress={handleSubmit(onPressButtonLogin)}
+                // có thể disable khi đang loading hoặc đang chờ OTP:
+                // disabled={authLoading || visible}
               />
             </View>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

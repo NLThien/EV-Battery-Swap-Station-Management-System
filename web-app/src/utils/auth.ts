@@ -65,12 +65,6 @@ export function requireRole(requiredRoles: string[]) {
     console.log("token:" + token);
 
     // cho qua trang staff không cần kiểm tra quyền
-    const p = new URL(request.url).pathname;
-
-    if (p.startsWith("/staff")) {
-      return null;
-    }
-
 
     if (!token) {
       const url = new URL(request.url);

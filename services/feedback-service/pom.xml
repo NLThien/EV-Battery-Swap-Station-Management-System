@@ -6,11 +6,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example</groupId>
-    <artifactId>package-service</artifactId>
+    <artifactId>feedback-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>package-service</name>
+    <name>feedback-service</name>
     <description>Spring Boot microservice for managing battery rental packages</description>
 
     <parent>
