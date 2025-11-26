@@ -78,6 +78,15 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="(package)"
+        options={{
+          title: "Package",
+          tabBarIcon: ({ color }) => (
+            <IconSymbol size={28} name="person.fill" color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
