@@ -19,6 +19,10 @@ function ProfileLayout() {
         name="updatePassword"
         options={{ headerTitle: "Đổi mật khẩu", headerShown: false }}
       />
+      <Stack.Screen
+        name="historyPayment"
+        options={{ headerTitle: "Lịch sử thanh toán", headerShown: false }}
+      />
     </Stack>
   );
 }

@@ -10,5 +10,5 @@ public interface PaymentLogRepository extends JpaRepository<PaymentLog, String> 
     
     Optional<PaymentLog> findByGatewayTxnRef(String gatewayTxnRef);
     List<PaymentLog> findByUserId(String userId, Sort sort);
-    Optional<PaymentLog> findByOrderId(String orderId);
+    List<PaymentLog> findByOrderId(String orderId);
 }

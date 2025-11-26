@@ -1,23 +1,20 @@
 package com.evbattery.order_service.controller;
 
+import java.math.BigDecimal;
+import java.util.Map;
+
 import com.evbattery.order_service.dto.OrderRequest;
 import com.evbattery.order_service.dto.PaymentRequest;
 import com.evbattery.order_service.dto.PaymentResponse;
+import com.evbattery.order_service.dto.PackageResponse;
+import com.evbattery.order_service.dto.UserResponse; // Đảm bảo đã tạo DTO này
 import com.evbattery.order_service.entity.Order;
 import com.evbattery.order_service.repository.OrderRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpEntity; 
-import org.springframework.http.HttpHeaders; 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.List; 
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/")
@@ -25,6 +22,7 @@ public class OrderController {
 
     private final OrderRepository orderRepository;
     private final RestTemplate restTemplate;
+
 
     @Autowired
     public OrderController(OrderRepository orderRepository, RestTemplate restTemplate) {
@@ -34,59 +32,122 @@ public class OrderController {
 
     @PostMapping("/")
     public ResponseEntity<Object> createOrder(
-
-            @RequestHeader(name = "X-User-Id", required = false) String userId,
-            @RequestHeader(name = "X-User-Email", required = false) String userEmail,
-            @RequestHeader(name = "Authorization", required = false) String token,
+            @RequestHeader(name = "Authorization", required = false) String token, // Chỉ cần Token là đủ
             @RequestBody OrderRequest orderRequest
     ) {
         
-        // mock dữ liệu khi chạy local
-        if (userId == null) {
-            userId = "TEST_USER_ID"; // Dữ liệu giả
-        }
-        if (userEmail == null) {
-            userEmail = "test@user.com"; // Dữ liệu giả
+        // 1. KIỂM TRA TOKEN & LẤY THÔNG TIN USER THẬT
+        if (token == null || !token.startsWith("Bearer ")) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Vui lòng đăng nhập"));
         }
 
+        String realUserId;
+        String realUserEmail;
+
+        try {
+            // Chuẩn bị Header chứa Token để gọi Auth Service
+            HttpHeaders authHeaders = new HttpHeaders();
+            authHeaders.set("Authorization", token);
+            HttpEntity<String> authEntity = new HttpEntity<>(authHeaders);
+
+            // Gọi Auth Service để xác thực và lấy thông tin
+            ResponseEntity<UserResponse> authResponse = restTemplate.exchange(
+                    "http://auth-service/users/my-info",
+                    HttpMethod.GET,
+                    authEntity,
+                    UserResponse.class
+            );
+
+            UserResponse userInfo = authResponse.getBody();
+            if (userInfo == null) throw new RuntimeException("Token không hợp lệ");
+
+            // Lấy dữ liệu thật
+            realUserId = userInfo.id(); 
+            if(userInfo.email() != null && !userInfo.email().isEmpty()){
+                realUserEmail = userInfo.email();
+            } else {
+                realUserEmail = "no-email" + realUserId + "@system@local";
+            }
+
+            String fullName = userInfo.firstName() + " " + userInfo.lastName();
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Xác thực thất bại: " + e.getMessage()));
+        }
+
+        // 2. GỌI PACKAGE SERVICE (Lấy thông tin gói)
+        PackageResponse packageInfo = null;
+        try {
+            HttpHeaders pkgHeaders = new HttpHeaders();
+            pkgHeaders.set("Authorization", token);
+            HttpEntity<String> pkgEntity = new HttpEntity<>(pkgHeaders);
+            
+            ResponseEntity<PackageResponse> response = restTemplate.exchange(
+                    "http://package-service/api/packages/" + orderRequest.packageId(),
+                    HttpMethod.GET,
+                    pkgEntity,
+                    PackageResponse.class
+            );
+            packageInfo = response.getBody();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "Lỗi kết nối Package Service"));
+        }
+
+        if (packageInfo == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Không tìm thấy gói"));
+        }
+
+        // 3. LƯU ORDER (Dùng User ID thật)
         Order order = new Order();
-        order.setUserId(userId);
+        order.setUserId(realUserId);
         order.setStationId(orderRequest.stationId());
-        order.setItems(orderRequest.items()); 
-        order.setTotalAmount(orderRequest.totalAmount()); 
+        order.setPackageId(orderRequest.packageId());
+        order.setPackageType(packageInfo.type());
+        order.setTotalAmount(packageInfo.price());
+        
         order = orderRepository.save(order);
+
+        // 4. GỌI PAYMENT SERVICE
+        BigDecimal amountToSend = BigDecimal.valueOf(order.getTotalAmount());
 
         PaymentRequest paymentRequest = new PaymentRequest(
                 order.getId(),
-                order.getTotalAmount(),
-                "Thanh toan don hang " + order.getId(),
-                userId,
-                userEmail,
+                amountToSend,
+                "Thanh toan don hang " + packageInfo.type(),
+                realUserId,    // Gửi ID thật sang Payment Service
+                realUserEmail, // Gửi Email thật
                 orderRequest.stationId()
         );
         
-        HttpHeaders headers = new HttpHeaders();
-        // Chỉ gửi token nếu nó tồn tại
-        if (token != null) {
-            headers.set("Authorization", token);
-        }
-        HttpEntity<PaymentRequest> requestEntity = new HttpEntity<>(paymentRequest, headers);
+        HttpHeaders payHeaders = new HttpHeaders();
+        payHeaders.set("Authorization", token); // Truyền token tiếp
+        HttpEntity<PaymentRequest> requestEntity = new HttpEntity<>(paymentRequest, payHeaders);
 
-        ResponseEntity<PaymentResponse> paymentResponse = restTemplate.postForEntity(
-                "http://paymentservice/create-payment-request", 
-                requestEntity,
-                PaymentResponse.class
-        );
+        try {
+            ResponseEntity<PaymentResponse> paymentResponse = restTemplate.postForEntity(
+                    "http://paymentservice/create-payment-request", 
+                    requestEntity,
+                    PaymentResponse.class
+            );
 
-        if (paymentResponse.getBody() == null) {
+            if (paymentResponse.getBody() == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Map.of("error", "Payment service response is null"));
+            }
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "orderId", order.getId(),
+                    "packageType", packageInfo.type(),
+                    "amount", order.getTotalAmount(),
+                    "paymentUrl", paymentResponse.getBody().paymentUrl()
+            ));
+
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Payment service response is null"));
+                    .body(Map.of("error", "Lỗi tạo thanh toán: " + e.getMessage()));
         }
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "orderId", order.getId(),
-                "paymentUrl", paymentResponse.getBody().paymentUrl()
-        ));
     }
 
     @GetMapping("/{id}/status")
@@ -96,32 +157,5 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Không tìm thấy đơn hàng"));
         }
         return ResponseEntity.ok(Map.of("status", order.getStatus()));
-    }
-
-    @GetMapping("/transactions")
-    public ResponseEntity<Object> getTransactionHistory(
-            @RequestHeader(name = "X-User-Id", required = false) String userId, 
-            @RequestHeader(name = "X-User-Role", required = false) String userRole) { 
-        
-        // mock dữ liệu khi chạy local
-        if (userId == null) {
-            userId = "TEST_USER_ID"; 
-        }
-        if (userRole == null) {
-            userRole = "admin"; // Giả lập làm admin để thấy mọi thứ
-        }
-        
-        List<Order> transactions; 
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-
-        if ("customer".equalsIgnoreCase(userRole)) {
-            transactions = orderRepository.findByUserId(userId, sort); 
-        } else if ("admin".equalsIgnoreCase(userRole) || "staff".equalsIgnoreCase(userRole)) {
-            transactions = orderRepository.findAll(sort);
-        } else {
-            return ResponseEntity.status(403).body("Không có quyền truy cập");
-        }
-        
-        return ResponseEntity.ok(Map.of("transactions", transactions));
     }
 }
