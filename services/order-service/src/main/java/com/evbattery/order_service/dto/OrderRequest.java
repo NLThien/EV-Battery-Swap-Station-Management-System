@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 public record OrderRequest(
-    List<Map<String, Object>> items,
-    Double totalAmount,
+    Long packageId,
     String stationId
 ) {}

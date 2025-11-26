@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
     const status = error?.response?.status;
 
     if (status === 401) {
-      console.warn("⚠ Token hết hạn. Xóa token.");
+      console.warn("Token hết hạn. Xóa token.");
 
       await deleteToken();
 

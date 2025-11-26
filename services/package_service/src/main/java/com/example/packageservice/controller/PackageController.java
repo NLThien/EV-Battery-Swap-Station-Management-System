@@ -26,6 +26,13 @@ public class PackageController {
         return service.getAllPackages().stream().map(PackageDTO::new).collect(Collectors.toList());
     }
 
+    // @GetMapping("/{id}")
+    // public ResponseEntity<PackageDTO> getPackageById(@PathVariable Long id) {
+    //     return service.getPackageById(id)
+    //             .map(pkg -> ResponseEntity.ok(new PackageDTO(pkg)))
+    //             .orElse(ResponseEntity.notFound().build());
+    // }
+
     @GetMapping("/type/{type}")
     public List<PackageDTO> getPackagesByType(@PathVariable String type) {
         return service.getPackagesByType(type).stream().map(PackageDTO::new).collect(Collectors.toList());

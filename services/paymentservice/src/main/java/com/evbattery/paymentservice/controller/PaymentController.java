@@ -1,5 +1,12 @@
 package com.evbattery.paymentservice.controller;
 
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import com.evbattery.paymentservice.dto.PaymentCompletedEvent;
 import com.evbattery.paymentservice.dto.PaymentRequest;
 import com.evbattery.paymentservice.dto.SepayWebhookPayload;
@@ -7,6 +14,7 @@ import com.evbattery.paymentservice.dto.UserResponse;
 import com.evbattery.paymentservice.entity.PaymentLog;
 import com.evbattery.paymentservice.repository.PaymentLogRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +27,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 @RestController
 @RequestMapping("/")
 public class PaymentController {
@@ -34,7 +36,6 @@ public class PaymentController {
     private final Queue queue;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
-    
     
     private final String sepayWebhookApiKey;
     private final String sepayBankAccount;
@@ -79,8 +80,8 @@ public class PaymentController {
         log.setAmount(request.amount());
         log.setStationId(request.stationId());
         log.setGatewayTxnRef(gatewayTxnRef);
+        log.setStatus("PENDING");
 
-        // Gọi AuthService để lấy tên người dùng (hoặc dùng Mock nếu đang test)
         if (token != null) {
             try {
                 HttpHeaders headers = new HttpHeaders();
@@ -118,7 +119,7 @@ public class PaymentController {
                 "https://qr.sepay.vn/img?acc=%s&bank=%s&amount=%.0f&des=%s",
                 sepayBankAccount,
                 sepayBankName,
-                request.amount(),
+                request.amount().doubleValue(),
                 encodedDescription
             );
 
@@ -135,14 +136,12 @@ public class PaymentController {
             @RequestHeader("Authorization") String authorizationHeader) {
         
         try {
-          
             String expectedAuthHeader = "Apikey " + sepayWebhookApiKey;
             
             if (authorizationHeader == null || !Objects.equals(authorizationHeader, expectedAuthHeader)) {
                  return ResponseEntity.status(401).body("Invalid or missing API Key");
             }
 
-            // B. Chỉ xử lý giao dịch tiền vào ("in")
             if (!"in".equalsIgnoreCase(payload.transferType())) {
                 return ResponseEntity.ok("Ignored outgoing transaction");
             }
@@ -151,43 +150,45 @@ public class PaymentController {
             String gatewayTxnRef = null;
             
             if (content != null && content.contains(sepayDefaultDescription)) {
-                
                 String[] parts = content.split(sepayDefaultDescription);
                 if (parts.length > 1) {
-                    
                     gatewayTxnRef = parts[1].trim().split(" ")[0]; 
                 }
             }
 
             if (gatewayTxnRef == null) {
-                // Không tìm thấy mã đơn trong nội dung -> Bỏ qua
                 return ResponseEntity.ok("Transaction ref not found in content");
             }
 
-            // D. Tìm đơn hàng trong Database
             PaymentLog log = paymentLogRepository.findByGatewayTxnRef(gatewayTxnRef).orElse(null);
             
             if (log == null) {
                 return ResponseEntity.ok("Transaction not found in system");
             }
             
-            // Nếu đơn đã xử lý rồi thì thôi
             if (!"PENDING".equals(log.getStatus())) {
                 return ResponseEntity.ok("Transaction already processed");
             }
 
-            // E. Kiểm tra số tiền
-            if (payload.transferAmount() < log.getAmount()) {
+            if (payload.transferAmount() == null) {
+                return ResponseEntity.ok("Amount is null");
+            }
+
+
+            BigDecimal receivedAmount = BigDecimal.valueOf(payload.transferAmount());
+            BigDecimal expectedAmount = log.getAmount();
+
+
+            if (receivedAmount.compareTo(expectedAmount) < 0) {
                 log.setStatus("FAILED");
                 paymentLogRepository.save(log);
                 return ResponseEntity.ok("Amount mismatch");
             }
+            // -------------------------------
 
-            // F. Thành công -> Cập nhật & Gửi sự kiện
             log.setStatus("PAID");
             paymentLogRepository.save(log);
             
-            // Gửi tin nhắn sang OrderService qua RabbitMQ
             rabbitTemplate.convertAndSend(queue.getName(), new PaymentCompletedEvent(log.getOrderId()));
             
             return ResponseEntity.ok("Webhook processed successfully");
@@ -198,15 +199,11 @@ public class PaymentController {
         }
     }
 
-    /**
-     * 3. LỊCH SỬ GIAO DỊCH
-     */
     @GetMapping("/transactions")
     public ResponseEntity<Object> getTransactionHistory(
             @RequestHeader(name = "X-User-Id", required = false) String userId,
             @RequestHeader(name = "X-User-Role", required = false) String userRole) {
         
-        // Mock dữ liệu để test
         if (userId == null) userId = "TEST_USER_ID_MOCK";
         if (userRole == null) userRole = "ADMIN"; 
         
@@ -225,12 +222,13 @@ public class PaymentController {
         return ResponseEntity.ok(Map.of("transactions", transactions));
     }
 
-    //giả lập webhook sepay thành công
     @GetMapping("/simulate-success")
     public ResponseEntity<String> simulateSepaySuccess(@RequestParam String orderId) {
         
-        PaymentLog log = paymentLogRepository.findByOrderId(orderId).orElse(null);
-        
+        List<PaymentLog> logs = paymentLogRepository.findByOrderId(orderId);
+
+        PaymentLog log = (logs.isEmpty()) ? null : logs.get(logs.size() - 1);
+
         if (log == null || !"PENDING".equals(log.getStatus())) {
             return ResponseEntity.badRequest().body("Giao dịch không hợp lệ hoặc đã xử lý.");
         }

@@ -1,20 +1,8 @@
 package com.evbattery.order_service.entity;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes; // Dùng Map để lưu JSON
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "orders")
@@ -29,22 +17,25 @@ public class Order {
 
     @Column(nullable = false)
     private String stationId;
-    
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "json")
-    private List<Map<String, Object>> items;
 
     @Column(nullable = false)
+    private Long packageId;
+
+
+    @Column(name = "package_type") 
+    private String packageType; 
+
+    @Column(nullable = false) 
     private Double totalAmount;
-    
+
     private String status;
     
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    // Constructor rỗng cho JPA
     public Order() {}
-    
+
+    // Getters and Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     
@@ -54,9 +45,12 @@ public class Order {
     public String getStationId() { return stationId; }
     public void setStationId(String stationId) { this.stationId = stationId; }
     
-    public List<Map<String, Object>> getItems() { return items; }
-    public void setItems(List<Map<String, Object>> items) { this.items = items; }
-    
+    public Long getPackageId() { return packageId; }
+    public void setPackageId(Long packageId) { this.packageId = packageId; }
+
+    public String getPackageType() { return packageType; }
+    public void setPackageType(String packageType) { this.packageType = packageType; }
+
     public Double getTotalAmount() { return totalAmount; }
     public void setTotalAmount(Double totalAmount) { this.totalAmount = totalAmount; }
     
@@ -68,9 +62,7 @@ public class Order {
 
     @PrePersist
     protected void onCreate() {
-        if (this.id == null) {
-            this.id = UUID.randomUUID().toString();
-        }
+        if (this.id == null) this.id = UUID.randomUUID().toString();
         this.createdAt = new Date();
         this.status = "PENDING";
     }
